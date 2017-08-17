@@ -3,17 +3,18 @@ package entities
 import "errors"
 
 type Slot struct {
-	capacity      int
-	isAccessible  bool
-	itemValidator func(item *Item) bool
-	item          *Item
+	name         string
+	capacity     int
+	isAccessible bool
+	item         *Item
 }
 
-func DefaultSlot(capacity int) *Slot {
+func NewSlot(name string, capacity int, isAccessible bool) *Slot {
 	return &Slot{
-		capacity:      capacity,
-		itemValidator: func(item *Item) bool { return true },
-		item:          nil,
+		name:         name,
+		capacity:     capacity,
+		item:         nil,
+		isAccessible: isAccessible,
 	}
 }
 
@@ -23,6 +24,10 @@ func (s *Slot) IsAccessible() bool {
 
 func (s *Slot) SetAccessible(isAccessible bool) {
 	s.isAccessible = isAccessible
+}
+
+func (s *Slot) Name() string {
+	return s.name
 }
 
 func (s *Slot) Empty() bool {
@@ -47,10 +52,7 @@ func (s *Slot) canPut(item *Item) error {
 	if !s.isAccessible {
 		return errors.New("Can slot is not open")
 	}
-	if !s.itemValidator(item) {
-		return errors.New("Item does not fit the slot")
-	}
-	if item.size > s.capacity {
+	if item.Size > s.capacity {
 		return errors.New("Item is too big")
 	}
 	return nil

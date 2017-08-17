@@ -3,6 +3,7 @@ package entities
 import "errors"
 
 type Door struct {
+	name string
 	isAccessible bool
 	room1        *Room
 	room2        *Room
@@ -14,6 +15,10 @@ func (door *Door) IsAccessible() bool {
 
 func (door *Door) SetAccessible(isAccessible bool) {
 	door.isAccessible = isAccessible
+}
+
+func (door *Door) Name() string {
+	return door.name
 }
 
 func (door *Door) Enter(player *Player) error {
