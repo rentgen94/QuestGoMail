@@ -1,9 +1,9 @@
 package impl
 
 import (
+	"fmt"
 	"github.com/rentgen94/QuestGoMail/entities"
 	"testing"
-	"fmt"
 )
 
 const (

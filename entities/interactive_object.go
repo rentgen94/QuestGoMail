@@ -1,5 +1,11 @@
 package entities
 
+import "errors"
+
+const (
+	objectNotAccessible = "Object not accessible"
+)
+
 type actionCodeGeneratorType func(args []string, items []*Item) (code int, err error)
 
 type InteractiveObject interface {
@@ -35,6 +41,10 @@ func NewInteractiveObject(
 }
 
 func (inter *boundInteractiveObject) Interact(args []string, items []*Item) (string, error) {
+	if !inter.isAccessible {
+		return "", errors.New(objectNotAccessible)
+	}
+
 	var code, codeErr = inter.actionCodeGenerator(args, items)
 	if codeErr != nil {
 		return "", codeErr

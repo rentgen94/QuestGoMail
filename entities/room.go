@@ -6,7 +6,7 @@ import (
 )
 
 const (
-	actionNotFoundTemplate = "Action %d not found"
+	actionNotFoundTemplate     = "Action %d not found"
 	actionNotAvailableTemplate = "Action %d not available"
 )
 

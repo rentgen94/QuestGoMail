@@ -1,9 +1,9 @@
 package entities
 
 import (
-	"testing"
-	"fmt"
 	"errors"
+	"fmt"
+	"testing"
 )
 
 func getRoom(action *Action) *Room {
@@ -14,47 +14,47 @@ func getRoom(action *Action) *Room {
 
 func TestRoom_PerformAction(t *testing.T) {
 	var testData = []struct {
-		action *Action
-		code   int
-		msg    string
+		action   *Action
+		code     int
+		msg      string
 		isErrNil bool
-		errMsg string
+		errMsg   string
 	}{
 		{
-			action:NewAction("", false, func(r *Room) (msg string, err error) {
+			action: NewAction("", false, func(r *Room) (msg string, err error) {
 				return "", nil
 			}),
-			code:   0,
-			msg:    "",
+			code:     0,
+			msg:      "",
 			isErrNil: false,
-			errMsg: fmt.Sprintf(actionNotAvailableTemplate, 0),
+			errMsg:   fmt.Sprintf(actionNotAvailableTemplate, 0),
 		},
 		{
-			action:NewAction("", true, func(r *Room) (msg string, err error) {
+			action: NewAction("", true, func(r *Room) (msg string, err error) {
 				return "", nil
 			}),
-			code:   1,
-			msg:    "",
+			code:     1,
+			msg:      "",
 			isErrNil: false,
-			errMsg: fmt.Sprintf(actionNotFoundTemplate, 1),
+			errMsg:   fmt.Sprintf(actionNotFoundTemplate, 1),
 		},
 		{
-			action:NewAction("", true, func(r *Room) (msg string, err error) {
+			action: NewAction("", true, func(r *Room) (msg string, err error) {
 				return "", errors.New("Error")
 			}),
-			code:   0,
-			msg:    "",
+			code:     0,
+			msg:      "",
 			isErrNil: false,
-			errMsg: "Error",
+			errMsg:   "Error",
 		},
 		{
-			action:NewAction("", true, func(r *Room) (msg string, err error) {
+			action: NewAction("", true, func(r *Room) (msg string, err error) {
 				return "Msg", nil
 			}),
-			code:   0,
-			msg:    "Msg",
+			code:     0,
+			msg:      "Msg",
 			isErrNil: true,
-			errMsg: "",
+			errMsg:   "",
 		},
 	}
 
@@ -72,6 +72,31 @@ func TestRoom_PerformAction(t *testing.T) {
 
 		if item.isErrNil && err != nil && err.Error() != item.errMsg {
 			t.Error(fmt.Sprintf("Expected errMsg = \"%s\", got \"%s\" (%d)", item.errMsg, err.Error(), i))
+		}
+	}
+}
+
+func TestRoom_Equals(t *testing.T) {
+	var testData = []struct {
+		room1   *Room
+		room2   *Room
+		isEqual bool
+	}{
+		{
+			NewRoom(0, "Some", "d"),
+			NewRoom(0, "Any", "I"),
+			true,
+		},
+		{
+			NewRoom(0, "", ""),
+			NewRoom(1, "", ""),
+			false,
+		},
+	}
+
+	for i, item := range testData {
+		if item.room1.Equals(item.room2) != item.isEqual {
+			t.Error(fmt.Sprintf("Expected %v, got %v (%d)", item.isEqual, item.room1.Equals(item.room2), i))
 		}
 	}
 }

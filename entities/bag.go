@@ -3,15 +3,15 @@ package entities
 import "sort"
 
 type Bag struct {
-	slots    []*Slot
+	slots []*Slot
 }
 
 func NewBag(slots []*Slot) *Bag {
 	sort.Slice(slots, func(i, j int) bool {
 		return slots[i].capacity < slots[j].capacity
-	})	// TODO maybe should copy slice before sorting
+	}) // TODO maybe should copy slice before sorting
 	return &Bag{
-		slots:slots,
+		slots: slots,
 	}
 }
 
@@ -19,7 +19,5 @@ func NewBag(slots []*Slot) *Bag {
 type AltBag struct {
 	capacity int
 	contains int
-	items map[string]*Item
+	items    map[string]*Item
 }
-
-
