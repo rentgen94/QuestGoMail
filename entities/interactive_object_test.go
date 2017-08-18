@@ -55,7 +55,7 @@ func TestBoundInteractiveObject_Interact(t *testing.T) {
 	}{
 		{
 			getSuccessRoom(),
-			func(args []string, items []*Item) (code int, err error) {
+			func(args []string, items []Item) (code int, err error) {
 				return 0, nil
 			},
 			false,
@@ -65,17 +65,17 @@ func TestBoundInteractiveObject_Interact(t *testing.T) {
 		},
 		{
 			getFailRoom(),
-			func(args []string, items []*Item) (code int, err error) {
+			func(args []string, items []Item) (code int, err error) {
 				return 0, nil
 			},
 			true,
 			false,
 			"",
-			fmt.Sprintf(actionNotAvailableTemplate, 0),
+			fmt.Sprintf(ActionNotAvailableTemplate, 0),
 		},
 		{
 			getSuccessRoom(),
-			func(args []string, items []*Item) (code int, err error) {
+			func(args []string, items []Item) (code int, err error) {
 				return 0, errors.New("Error")
 			},
 			true,
@@ -85,7 +85,7 @@ func TestBoundInteractiveObject_Interact(t *testing.T) {
 		},
 		{
 			getSuccessRoom(),
-			func(args []string, items []*Item) (code int, err error) {
+			func(args []string, items []Item) (code int, err error) {
 				return 0, nil
 			},
 			true,
@@ -107,15 +107,15 @@ func TestBoundInteractiveObject_Interact(t *testing.T) {
 		var msg, err = inter.Interact(nil, nil)
 
 		if (err == nil) != item.errIsNil {
-			t.Error(fmt.Sprintf("Expected (err == nil) = %v, got %v (%d)", item.errIsNil, err == nil, i))
+			t.Errorf("Expected (err == nil) = %v, got %v (%d)", item.errIsNil, err == nil, i)
 		}
 
 		if err != nil && err.Error() != item.errMsg {
-			t.Error(fmt.Sprintf("Expected errMsg \"%s\", got %s (%d)", item.errMsg, err.Error(), i))
+			t.Errorf("Expected errMsg \"%s\", got %s (%d)", item.errMsg, err.Error(), i)
 		}
 
 		if msg != item.msg {
-			t.Error(fmt.Sprintf("Expected msg \"%s\", got \"%s\" (%d)", item.msg, msg, i))
+			t.Errorf("Expected msg \"%s\", got \"%s\" (%d)", item.msg, msg, i)
 		}
 	}
 }

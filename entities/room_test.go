@@ -27,7 +27,7 @@ func TestRoom_PerformAction(t *testing.T) {
 			code:     0,
 			msg:      "",
 			isErrNil: false,
-			errMsg:   fmt.Sprintf(actionNotAvailableTemplate, 0),
+			errMsg:   fmt.Sprintf(ActionNotAvailableTemplate, 0),
 		},
 		{
 			action: NewAction("", true, func(r *Room) (msg string, err error) {
@@ -36,7 +36,7 @@ func TestRoom_PerformAction(t *testing.T) {
 			code:     1,
 			msg:      "",
 			isErrNil: false,
-			errMsg:   fmt.Sprintf(actionNotFoundTemplate, 1),
+			errMsg:   fmt.Sprintf(ActionNotFoundTemplate, 1),
 		},
 		{
 			action: NewAction("", true, func(r *Room) (msg string, err error) {
@@ -63,15 +63,15 @@ func TestRoom_PerformAction(t *testing.T) {
 		var msg, err = room.PerformAction(item.code)
 
 		if msg != item.msg {
-			t.Error(fmt.Sprintf("Expected msg %s, got %s (%d)", item.msg, msg, i))
+			t.Errorf("Expected msg %s, got %s (%d)", item.msg, msg, i)
 		}
 
 		if (err == nil) != item.isErrNil {
-			t.Error(fmt.Sprintf("Expected err == nil = %v, got %v (%d)", item.isErrNil, err == nil, i))
+			t.Errorf("Expected err == nil = %v, got %v (%d)", item.isErrNil, err == nil, i)
 		}
 
 		if item.isErrNil && err != nil && err.Error() != item.errMsg {
-			t.Error(fmt.Sprintf("Expected errMsg = \"%s\", got \"%s\" (%d)", item.errMsg, err.Error(), i))
+			t.Errorf("Expected errMsg = \"%s\", got \"%s\" (%d)", item.errMsg, err.Error(), i)
 		}
 	}
 }
@@ -96,7 +96,7 @@ func TestRoom_Equals(t *testing.T) {
 
 	for i, item := range testData {
 		if item.room1.Equals(item.room2) != item.isEqual {
-			t.Error(fmt.Sprintf("Expected %v, got %v (%d)", item.isEqual, item.room1.Equals(item.room2), i))
+			t.Errorf("Expected %v, got %v (%d)", item.isEqual, item.room1.Equals(item.room2), i)
 		}
 	}
 }

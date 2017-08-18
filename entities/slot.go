@@ -1,13 +1,24 @@
 package entities
 
-import "errors"
+import (
+	"errors"
+	"fmt"
+)
+
+const (
+	SlotNotAccessible      = "Slot is not accessible"
+	ItemTooBig             = "Item is too big"
+	ItemNotPresentTemplate = "Item id = %d not present"
+)
+
+type itemsType map[int][]Item
 
 type Slot struct {
 	capacity     int
 	contains     int
 	isAccessible bool
 	name         string
-	items        map[int][]*Item
+	items        itemsType
 }
 
 func NewSlot(name string, capacity int, isAccessible bool) *Slot {
@@ -16,6 +27,7 @@ func NewSlot(name string, capacity int, isAccessible bool) *Slot {
 		contains:     0,
 		name:         name,
 		isAccessible: isAccessible,
+		items:        make(itemsType),
 	}
 }
 
@@ -31,43 +43,47 @@ func (s *Slot) Name() string {
 	return s.name
 }
 
-func (s *Slot) canPut(item *Item) error {
-	if !s.isAccessible {
-		return errors.New("Can slot is not open")
+func (s *Slot) GetItem(id int) (item Item, err error) {
+	return s.getItem(id)
+}
+
+func (s *Slot) PutItem(item Item) error {
+	return s.putItem(item)
+}
+
+func (s *Slot) MoveItem(itemId int, another *Slot) error {
+	// TODO synchronize on this method
+	var item, getErr = s.getItem(itemId)
+	if getErr != nil {
+		return getErr
 	}
-	if item.Size+s.contains > s.capacity {
-		return errors.New("Item is too big")
+
+	var putErr = another.putItem(item)
+	if putErr != nil {
+		s.putItem(item) // if not sync, may fail here
+		return putErr
 	}
+
 	return nil
 }
 
-func (s *Slot) hasItem(id int) error {
-	if !s.isAccessible {
-		return errors.New("Can slot is not open")
-	}
-
-	_, err := s.items[id]
-
-	if !err {
-		return errors.New("No such item in this slot")
-	}
-
-	return nil
-}
-
-func (s *Slot) getItem(id int) (item *Item, err error) {
-	err = s.hasItem(id)
-	if err != nil {
-		return nil, err
+func (s *Slot) getItem(id int) (item Item, err error) {
+	var has = s.hasItem(id)
+	if !has {
+		return Item{}, errors.New(fmt.Sprintf(ItemNotPresentTemplate, id))
 	}
 
 	item = s.items[id][len(s.items[id])-1]
-	s.items[id] = s.items[id][:len(s.items)-2]
+	s.items[id] = s.items[id][:len(s.items)-1]
+	if len(s.items[id]) == 0 {
+		delete(s.items, id)
+	}
+
 	s.contains -= item.Size
 	return item, nil
 }
 
-func (s *Slot) putItem(item *Item) error {
+func (s *Slot) putItem(item Item) error {
 	err := s.canPut(item)
 	if err != nil {
 		return err
@@ -77,4 +93,19 @@ func (s *Slot) putItem(item *Item) error {
 	s.items[item.Id] = append(s.items[item.Id], item)
 
 	return nil
+}
+
+func (s *Slot) canPut(item Item) error {
+	//if !s.isAccessible {	commented out cos while constructing labyrinth it may be necessary to put item to the inaccessible slot1
+	//	return errors.New(SlotNotAccessible)
+	//}
+	if item.Size+s.contains > s.capacity {
+		return errors.New(ItemTooBig)
+	}
+	return nil
+}
+
+func (s *Slot) hasItem(id int) bool {
+	_, has := s.items[id]
+	return has
 }

@@ -6,14 +6,14 @@ const (
 	objectNotAccessible = "Object not accessible"
 )
 
-type actionCodeGeneratorType func(args []string, items []*Item) (code int, err error)
+type actionCodeGeneratorType func(args []string, items []Item) (code int, err error)
 
 type InteractiveObject interface {
 	Namer
 	Descriptable
 	IsAccessible() bool
 	SetAccessible(isAccessible bool)
-	Interact(args []string, items []*Item) (string, error)
+	Interact(args []string, items []Item) (string, error)
 }
 
 type boundInteractiveObject struct {
@@ -40,7 +40,7 @@ func NewInteractiveObject(
 	}
 }
 
-func (inter *boundInteractiveObject) Interact(args []string, items []*Item) (string, error) {
+func (inter *boundInteractiveObject) Interact(args []string, items []Item) (string, error) {
 	if !inter.isAccessible {
 		return "", errors.New(objectNotAccessible)
 	}

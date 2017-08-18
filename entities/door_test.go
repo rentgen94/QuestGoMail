@@ -1,7 +1,6 @@
 package entities
 
 import (
-	"fmt"
 	"testing"
 )
 
@@ -14,13 +13,13 @@ func TestDoor_Enter(t *testing.T) {
 	var player = &Player{room: room1}
 
 	if player.room.name != "Room1" {
-		t.Error(fmt.Sprintf("Expected %s, got %s", "Room1", player.room.name))
+		t.Errorf("Expected %s, got %s", "Room1", player.room.name)
 	}
 
 	door.Enter(player)
 
 	if player.room.name != "Room2" {
-		t.Error(fmt.Sprintf("Expected %s, got %s", "Room2", player.room.name))
+		t.Errorf("Expected %s, got %s", "Room2", player.room.name)
 	}
 
 	player.room = room3
