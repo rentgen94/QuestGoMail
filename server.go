@@ -8,7 +8,7 @@ import (
 	"fmt"
 	"strconv"
 
-	"github.com/rentgen94/HttpServer/services"
+	"github.com/rentgen94/QuestGoMail/services"
 )
 
 var users map[int]*services.User
