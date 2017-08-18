@@ -16,10 +16,10 @@ const (
 )
 
 type PlayerManager struct {
-	player     *entities.Player
-	inChan     chan Command
-	outChan    chan Response
-	finishChan chan interface{}
+	player   *entities.Player
+	inChan   chan Command
+	outChan  chan Response
+	stopChan chan interface{}
 }
 
 func NewPlayerManager(player *entities.Player) (*PlayerManager, error) {
@@ -34,6 +34,14 @@ func NewPlayerManager(player *entities.Player) (*PlayerManager, error) {
 	}, nil
 }
 
+func (manager *PlayerManager) CommandChan() chan Command {
+	return manager.inChan
+}
+
+func (manager *PlayerManager) RespChan() chan Response {
+	return manager.outChan
+}
+
 func (manager *PlayerManager) Run() {
 	// TODO add possibility to break by victory
 	for {
@@ -41,11 +49,16 @@ func (manager *PlayerManager) Run() {
 		case command := <-manager.inChan:
 			var resp = manager.getCommandResponse(command)
 			manager.outChan <- resp
-		case <-manager.finishChan:
+		case <-manager.stopChan:
 			break
+		default:
 		}
 	}
 
+}
+
+func (manager *PlayerManager) Stop() {
+	manager.stopChan <- 1
 }
 
 func (manager *PlayerManager) getCommandResponse(command Command) (resp Response) {
