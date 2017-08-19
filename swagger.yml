@@ -1,0 +1,338 @@
+swagger: '2.0'
+
+# This is your document metadata
+info:
+  version: "0.0.0"
+  title: API текстового квеста
+
+# Describe your paths here
+paths:
+  /player/register:
+    post:
+      summary: |
+        Регистрация пользователя
+      parameters:
+        - name: registration
+          in: body
+          description: Информация о пользователе
+          required: true
+          schema:
+            $ref: '#/definitions/User'
+      responses:
+        201:
+          description: |
+            Пользователь успешно зарегистрирован.
+        409:
+          description: |
+            Пользователь уже присутствует в базе данных
+
+  /player/login:
+    post:
+      summary: |
+        Логин пользователя
+      parameters:
+        - name: login
+          in: body
+          description: Информация о пользователе
+          required: true
+          schema:
+            $ref: '#/definitions/User'
+      responses:
+        200:
+          description: |
+            Пользователь успешно залогинен.
+        404:
+          description: |
+            Пользователь не найден в базе
+
+  /game/look_around:
+    get:
+      summary: |
+        Получить информацию о комнате, в которой находится игрок
+      responses:
+        200:
+          description: |
+            Информация о комнате успешно получена
+          schema:
+            $ref: '#/definitions/Room'
+        403:
+          description: |
+            Пользователь не залогинен или не находится в игре
+
+  /game/look_around/bag:
+    get:
+      summary: |
+        Получить список предметов в сумке
+      responses:
+        200:
+          description: |
+            Информация о сумке успешно получена
+          schema:
+            $ref: '#/definitions/Items'
+        403:
+          description: |
+            Пользователь не залогинен или не находится в игре
+
+
+  /game/look_around/entities/items:
+    get:
+      summary: |
+        Получить список доступных предметов в комнате, в которой находится игрок
+      responses:
+        200:
+          description: |
+            Список доступных предметов успешно получен.
+            В ответе возвращается список доступных предметов в комнате.
+          schema:
+            $ref: '#/definitions/Items'
+        403:
+          description: |
+            Пользователь не залогинен или не находится в игре
+
+  /game/look_around/entities/slots:
+    get:
+      summary: |
+        Получить список доступных слотов в комнате, в которой находится игрок
+      responses:
+        200:
+          description: |
+            Список доступных слотов успешно получен.
+            В ответе возвращается список слотов в комнате.
+          schema:
+            $ref: '#/definitions/Slots'
+        403:
+          description: |
+            Пользователь не залогинен или не находится в игре
+
+  /game/look_around/entities/interactives:
+    get:
+      summary: |
+        Получить список доступных интерактивных объектов в комнате, в которой находится игрок
+      responses:
+        200:
+          description: |
+            Список доступных интерактивных объектов успешно получен.
+            В ответе возвращается список интерактивных объектов в комнате.
+          schema:
+            $ref: '#/definitions/Interactives'
+        403:
+          description: |
+            Пользователь не залогинен или не находится в игре
+
+  /game/look_around/entities/doors:
+    get:
+      summary: |
+        Получить список дверей в комнате, в которой находится игрок
+      responses:
+        200:
+          description: |
+            Список дверей успешно получен.
+            В ответе возвращается список дверей в комнате.
+          schema:
+            $ref: '#/definitions/Doors'
+        403:
+          description: |
+            Пользователь не залогинен или не находится в игре
+
+  /game/command:
+    post:
+      summary: |
+        Послать команду по управлению игроком
+      parameters:
+      - name: command
+        in: body
+        description: Команда, которую нужно исполнить игроку
+        required: true
+        schema:
+          $ref: '#/definitions/Command'
+      responses:
+        200:
+          description: |
+            Команда успешно исполнена
+          schema:
+            $ref: '#/definitions/CommandResult'
+        400:
+          description: |
+            Плохо сформированная команда
+        403:
+          description: |
+            Пользователь не залогинен или не находится в игре
+
+
+definitions:
+  User:
+    type: object
+    properties:
+      login:
+        type: string
+        description: Логин пользователя
+        example: Some
+      password:
+        type: string
+        description: Пароль пользователя
+        example: some78pass
+    required:
+    - login
+    - password
+
+  Room:
+    type: object
+    properties:
+      name:
+        type: string
+        description: Название комнаты
+        example: Страшная черная комната
+      description:
+        type: string
+        description: Описание комнаты
+        example: Черная в комната, в которой темно и никого нет
+    required:
+    - name
+    - description
+
+  Item:
+    type: object
+    properties:
+      id:
+        type: number
+        description: Индентификатор предмета
+        example: 1
+      name:
+        type: string
+        description: Название предмета
+        example: Большой золотой ключ
+      description:
+        type: string
+        description: Описание предмета
+        example: На ключе имеются странные бороздки и выемки
+      size:
+        type: number
+        description: Размер предмета
+        example: 100
+    required:
+    - name
+    - description
+    - size
+    - id
+
+  Items:
+    type: array
+    items:
+      $ref: '#/definitions/Item'
+
+  Slot:
+    type: object
+    properties:
+      name:
+        type: string
+        description: Имя слота
+        example: Большая вместительная коробка
+      capacity:
+        type: number
+        description: Максимальная вместительность слота
+        example: 100
+      contains:
+        type: number
+        description: Занятое место в слоте
+        example: 50
+    required:
+    - name
+    - capacity
+    - contains
+
+  Slots:
+    type: array
+    items:
+      $ref: '#/definitions/Slot'
+
+  Interactive:
+    type: object
+    properties:
+      id:
+        type: number
+        description: Уникальный индентификатор интерактивного объекта
+        example: 1
+      name:
+        type: string
+        description: Имя интерактивного объекта
+        example: Заржавленный переключатель
+      description:
+        type: string
+        description: Описание интерактивного объета
+        example: Вероятно, открывает одну из дверей в этой комнате
+    required:
+    - id
+    - name
+    - description
+
+  Interactives:
+    type: array
+    items:
+      $ref: '#/definitions/Interactive'
+
+  Door:
+    type: object
+    properties:
+      id:
+        type: number
+        description: Id двери
+        example: 1
+      name:
+        type: string
+        description: Название двери
+    required:
+    - id
+    - name
+
+  Doors:
+    type: array
+    items:
+      $ref: '#/definitions/Door'
+
+  Command:
+    type: object
+    properties:
+      code:
+        type: number
+        description: Код команды
+        example: 1
+      itemKey:
+        type: string
+        description: |
+          Идентификатор объекта (предмета, слота, интерактивного объекта
+          или двери), к которым применяется команда
+        example: Восточная дверь
+      args:
+        type: array
+        items:
+          type: string
+        description: |
+          Набор дополнительных аргументов для выполнения команды.
+          Например, пароль от сейфа.
+        example: 12345
+      items:
+        type: array
+        items:
+          type: number
+        description: |
+          Идентификаторы предметов в сумке, которые будут использованы при
+          выполнении команды
+        example: [1, 2, 3, 4, 5]
+    required:
+    - code
+
+
+
+  CommandResult:
+    type: object
+    properties:
+      msg:
+        type: string
+        description: Сообщение о результате успешного исполнения команды
+        example: Дверь 1 открыта
+      errMsg:
+        type: string
+        description: Сообщение о неуспешном исполнении команды
+        example: Некуда положить большой красивый меч
+
+
