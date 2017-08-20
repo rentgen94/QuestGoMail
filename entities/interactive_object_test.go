@@ -10,8 +10,8 @@ func getFailRoom() *Room {
 	var action = NewAction(
 		"",
 		false,
-		func(r *Room) (msg string, err error) {
-			return "", nil
+		func(r *Room) (res InteractionResult, err error) {
+			return ContinueResult(""), nil
 		},
 	)
 
@@ -29,8 +29,8 @@ func getSuccessRoom() *Room {
 	var action = NewAction(
 		"",
 		true,
-		func(r *Room) (msg string, err error) {
-			return "Success", nil
+		func(r *Room) (res InteractionResult, err error) {
+			return ContinueResult("Success"), nil
 		},
 	)
 
@@ -104,7 +104,7 @@ func TestBoundInteractiveObject_Interact(t *testing.T) {
 			item.codeGen,
 		)
 
-		var msg, err = inter.Interact(nil, nil)
+		var res, err = inter.Interact(nil, nil)
 
 		if (err == nil) != item.errIsNil {
 			t.Errorf("Expected (err == nil) = %v, got %v (%d)", item.errIsNil, err == nil, i)
@@ -114,8 +114,8 @@ func TestBoundInteractiveObject_Interact(t *testing.T) {
 			t.Errorf("Expected errMsg \"%s\", got %s (%d)", item.errMsg, err.Error(), i)
 		}
 
-		if msg != item.msg {
-			t.Errorf("Expected msg \"%s\", got \"%s\" (%d)", item.msg, msg, i)
+		if res.Msg != item.msg {
+			t.Errorf("Expected res \"%s\", got \"%s\" (%d)", item.msg, res, i)
 		}
 	}
 }

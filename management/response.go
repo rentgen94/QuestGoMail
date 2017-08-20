@@ -1,7 +1,17 @@
 package management
 
+import "github.com/rentgen94/QuestGoMail/entities"
+
 type Response struct {
-	msg    string
-	errMsg string
-	data   interface{}
+	Result entities.InteractionResult
+	ErrMsg string
+	Data   interface{}
+}
+
+func NewResponse() Response {
+	return Response{
+		Result: entities.ContinueResult(""),
+		ErrMsg: "",
+		Data:   nil,
+	}
 }

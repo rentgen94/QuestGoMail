@@ -48,14 +48,14 @@ func (r *Room) Description() string {
 	return r.description
 }
 
-func (r *Room) PerformAction(actionCode int) (string, error) {
+func (r *Room) PerformAction(actionCode int) (InteractionResult, error) {
 	var action, ok = r.actions[actionCode]
 	if !ok {
-		return "", errors.New(fmt.Sprintf(ActionNotFoundTemplate, actionCode))
+		return ContinueResult(""), errors.New(fmt.Sprintf(ActionNotFoundTemplate, actionCode))
 	}
 
 	if !action.isAccessible {
-		return "", errors.New(fmt.Sprintf(ActionNotAvailableTemplate, actionCode))
+		return ContinueResult(""), errors.New(fmt.Sprintf(ActionNotAvailableTemplate, actionCode))
 	}
 
 	return action.act(r)

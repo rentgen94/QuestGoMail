@@ -13,7 +13,7 @@ type InteractiveObject interface {
 	Descriptable
 	IsAccessible() bool
 	SetAccessible(isAccessible bool)
-	Interact(args []string, items []Item) (string, error)
+	Interact(args []string, items []Item) (result InteractionResult, err error)
 }
 
 type boundInteractiveObject struct {
@@ -40,14 +40,14 @@ func NewInteractiveObject(
 	}
 }
 
-func (inter *boundInteractiveObject) Interact(args []string, items []Item) (string, error) {
+func (inter *boundInteractiveObject) Interact(args []string, items []Item) (InteractionResult, error) {
 	if !inter.isAccessible {
-		return "", errors.New(objectNotAccessible)
+		return ContinueResult(""), errors.New(objectNotAccessible)
 	}
 
 	var code, codeErr = inter.actionCodeGenerator(args, items)
 	if codeErr != nil {
-		return "", codeErr
+		return ContinueResult(""), codeErr
 	}
 
 	return inter.room.PerformAction(code)

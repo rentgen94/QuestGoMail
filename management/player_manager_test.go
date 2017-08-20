@@ -22,8 +22,8 @@ func getRoom() *entities.Room {
 	var action = entities.NewAction(
 		"open",
 		true,
-		func(r *entities.Room) (msg string, err error) {
-			return "Success", nil
+		func(r *entities.Room) (res entities.InteractionResult, err error) {
+			return entities.ContinueResult("Success"), nil
 		},
 	)
 	room.Actions()[0] = action
@@ -129,15 +129,17 @@ func TestPlayerManager_getCommandResponse(t *testing.T) {
 
 	for i, item := range testData {
 		var player = getPlayer()
-		var manager, err = NewPlayerManager(player)
+		var manager, err = NewPlayerManager(player, 10, 10)
 		if err != nil {
 			t.Fatal(err)
 		}
-
-		var resp = manager.getCommandResponse(item.command)
-		if resp.errMsg != item.errMsg {
-			t.Errorf("Expected errMsg \"%s\", got \"%f\" (%v)", item.errMsg, resp.errMsg, i)
+		go manager.Run()
+		manager.CommandChan() <- item.command
+		var resp = <- manager.RespChan()
+		if resp.ErrMsg != item.errMsg {
+			t.Errorf("Expected ErrMsg \"%s\", got \"%f\" (%v)", item.errMsg, resp.ErrMsg, i)
 		}
+		manager.Stop()
 	}
 }
 
@@ -210,7 +212,7 @@ func TestPlayerManager_Run(t *testing.T) {
 
 	for i, item := range testData {
 		var player = getPlayer()
-		var manager, err = NewPlayerManager(player)
+		var manager, err = NewPlayerManager(player, 10, 10)
 		if err != nil {
 			t.Fatal(err)
 		}
@@ -218,8 +220,9 @@ func TestPlayerManager_Run(t *testing.T) {
 		manager.inChan <- item.command
 		var resp = <-manager.outChan
 
-		if resp.errMsg != item.errMsg {
-			t.Errorf("Expected errMsg \"%s\", got \"%f\" (%v)", item.errMsg, resp.errMsg, i)
+		if resp.ErrMsg != item.errMsg {
+			t.Errorf("Expected ErrMsg \"%s\", got \"%f\" (%v)", item.errMsg, resp.ErrMsg, i)
 		}
+		manager.Stop()
 	}
 }

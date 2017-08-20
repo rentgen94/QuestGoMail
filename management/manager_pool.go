@@ -25,13 +25,13 @@ type ManagerPool struct {
 	running     bool
 }
 
-func NewManagerPool() *ManagerPool {
+func NewManagerPool(commandBuffSize int, respBuffSize int) *ManagerPool {
 	return &ManagerPool{
 		cnt:         0,
 		managers:    make(map[int]*PlayerManager),
-		commandChan: make(chan AddressedCommand),
-		respChan:    make(chan AddressedResponse),
-		stopChan:    make(chan interface{}),
+		commandChan: make(chan AddressedCommand, commandBuffSize),
+		respChan:    make(chan AddressedResponse, respBuffSize),
+		stopChan:    make(chan interface{}, 1),
 		running:     false,
 	}
 }
@@ -41,6 +41,7 @@ func (pool *ManagerPool) Run() {
 	for _, manager := range pool.managers {
 		go manager.Run()
 	}
+	go pool.monitorManagers()
 
 	for {
 		pool.handleCommandChan()
@@ -50,6 +51,8 @@ func (pool *ManagerPool) Run() {
 		default:
 		}
 	}
+
+	pool.stop()
 }
 
 func (pool *ManagerPool) Stop() {
@@ -57,12 +60,7 @@ func (pool *ManagerPool) Stop() {
 		return
 	}
 
-	pool.running = false
-	pool.stopChan <- 1
-
-	for _, manager := range pool.managers {
-		manager.Stop()
-	}
+	pool.stop()
 }
 
 func (pool *ManagerPool) AddManager(manager *PlayerManager) {
@@ -83,11 +81,30 @@ func (pool *ManagerPool) GetResponseSync(gameId int) Response {
 	var manager, ok = pool.managers[gameId]
 	if !ok {
 		return Response{
-			errMsg: fmt.Sprintf(managerNotFoundTemplate, gameId),
+			ErrMsg: fmt.Sprintf(managerNotFoundTemplate, gameId),
 		}
 	}
 
 	return <-manager.outChan
+}
+
+func (pool *ManagerPool) stop() {
+	pool.running = false
+	pool.stopChan <- 1
+
+	for _, manager := range pool.managers {
+		manager.Stop()
+	}
+}
+
+func (pool *ManagerPool) monitorManagers() {
+	for pool.running {
+		for key, manager := range pool.managers {
+			if manager.Finished() {
+				delete(pool.managers, key)
+			}
+		}
+	}
 }
 
 func (pool *ManagerPool) handleCommandChan() {
@@ -98,7 +115,7 @@ func (pool *ManagerPool) handleCommandChan() {
 			pool.respChan <- AddressedResponse{
 				Address: command.Address,
 				Response: Response{
-					errMsg: fmt.Sprintf(managerNotFoundTemplate, command.Address),
+					ErrMsg: fmt.Sprintf(managerNotFoundTemplate, command.Address),
 				},
 			}
 		}

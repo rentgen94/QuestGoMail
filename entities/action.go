@@ -1,6 +1,6 @@
 package entities
 
-type actType func(r *Room) (msg string, err error)
+type actType func(r *Room) (result InteractionResult, err error)
 
 type Action struct {
 	isAccessible bool

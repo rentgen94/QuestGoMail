@@ -21,8 +21,8 @@ func TestRoom_PerformAction(t *testing.T) {
 		errMsg   string
 	}{
 		{
-			action: NewAction("", false, func(r *Room) (msg string, err error) {
-				return "", nil
+			action: NewAction("", false, func(r *Room) (res InteractionResult, err error) {
+				return ContinueResult(""), nil
 			}),
 			code:     0,
 			msg:      "",
@@ -30,8 +30,8 @@ func TestRoom_PerformAction(t *testing.T) {
 			errMsg:   fmt.Sprintf(ActionNotAvailableTemplate, 0),
 		},
 		{
-			action: NewAction("", true, func(r *Room) (msg string, err error) {
-				return "", nil
+			action: NewAction("", true, func(r *Room) (res InteractionResult, err error) {
+				return ContinueResult(""), nil
 			}),
 			code:     1,
 			msg:      "",
@@ -39,8 +39,8 @@ func TestRoom_PerformAction(t *testing.T) {
 			errMsg:   fmt.Sprintf(ActionNotFoundTemplate, 1),
 		},
 		{
-			action: NewAction("", true, func(r *Room) (msg string, err error) {
-				return "", errors.New("Error")
+			action: NewAction("", true, func(r *Room) (res InteractionResult, err error) {
+				return ContinueResult(""), errors.New("Error")
 			}),
 			code:     0,
 			msg:      "",
@@ -48,8 +48,8 @@ func TestRoom_PerformAction(t *testing.T) {
 			errMsg:   "Error",
 		},
 		{
-			action: NewAction("", true, func(r *Room) (msg string, err error) {
-				return "Msg", nil
+			action: NewAction("", true, func(r *Room) (res InteractionResult, err error) {
+				return ContinueResult("Msg"), nil
 			}),
 			code:     0,
 			msg:      "Msg",
@@ -60,10 +60,10 @@ func TestRoom_PerformAction(t *testing.T) {
 
 	for i, item := range testData {
 		var room = getRoom(item.action)
-		var msg, err = room.PerformAction(item.code)
+		var result, err = room.PerformAction(item.code)
 
-		if msg != item.msg {
-			t.Errorf("Expected msg %s, got %s (%d)", item.msg, msg, i)
+		if result.Msg != item.msg {
+			t.Errorf("Expected result %s, got %s (%d)", item.msg, result, i)
 		}
 
 		if (err == nil) != item.isErrNil {
