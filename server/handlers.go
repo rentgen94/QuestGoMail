@@ -38,7 +38,7 @@ func GameCommandPost(w http.ResponseWriter, r *http.Request) {
 		}
 
 		//Todo Привязать к основному PoolManager
-		managerPool := management.NewManagerPool()
+		managerPool := management.NewManagerPool(10, 10)
 		//Todo получать game_id
 		game_id, _ := session.Values[authToken].(int)
 		managerPool.SendCommand(management.AddressedCommand{game_id, command})

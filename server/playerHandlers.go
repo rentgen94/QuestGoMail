@@ -57,16 +57,14 @@ func PlayerRegisterPost(w http.ResponseWriter, r *http.Request) {
 	parsePlayer(w, r, &player)
 
 	msg := database.CreateUser(&player)
+	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
 	if msg == database.RegisterOk {
-		w.Header().Set("Content-Type", "application/json; charset=UTF-8")
 		w.WriteHeader(http.StatusCreated)
 		return
 	} else if msg == database.AlreadyRegistered {
-		w.Header().Set("Content-Type", "application/json; charset=UTF-8")
 		w.WriteHeader(http.StatusConflict)
 		return
 	} else {
-		w.Header().Set("Content-Type", "application/json; charset=UTF-8")
 		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
