@@ -44,7 +44,6 @@ func (pool *ManagerPool) Run() {
 
 	for {
 		pool.handleCommandChan()
-		pool.handleManagers()
 		select {
 		case <-pool.stopChan:
 			break
@@ -80,14 +79,15 @@ func (pool *ManagerPool) SendCommand(command AddressedCommand) {
 	pool.commandChan <- command
 }
 
-func (pool *ManagerPool) ReceiveBlock() (resp AddressedResponse) {
-	for {
-		select {
-		case resp = <-pool.respChan:
-			return
-		default:
+func (pool *ManagerPool) GetResponseSync(gameId int) Response {
+	var manager, ok = pool.managers[gameId]
+	if !ok {
+		return Response{
+			errMsg: fmt.Sprintf(managerNotFoundTemplate, gameId),
 		}
 	}
+
+	return <-manager.outChan
 }
 
 func (pool *ManagerPool) handleCommandChan() {
@@ -105,18 +105,5 @@ func (pool *ManagerPool) handleCommandChan() {
 		manager.CommandChan() <- command.Command
 	default:
 		return
-	}
-}
-
-func (pool *ManagerPool) handleManagers() {
-	for i, manager := range pool.managers {
-		select {
-		case resp := <-manager.RespChan():
-			pool.respChan <- AddressedResponse{
-				Address:  i,
-				Response: resp,
-			}
-		default:
-		}
 	}
 }

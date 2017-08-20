@@ -24,6 +24,7 @@ func TestManagerPool_Run(t *testing.T) {	// smoke test :)
 	}
 
 	pool.SendCommand(command)
-	var resp = pool.ReceiveBlock()
+	//var resp = pool.ReceiveSync()
+	var resp = pool.GetResponseSync(0)
 	fmt.Println(resp)
 }
