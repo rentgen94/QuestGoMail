@@ -1,8 +1,8 @@
-package services
-
+package database
 
 import (
 	_ "github.com/lib/pq"
+
 	"database/sql"
 	"fmt"
 	"log"
