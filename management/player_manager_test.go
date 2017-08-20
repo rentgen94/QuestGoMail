@@ -135,7 +135,7 @@ func TestPlayerManager_getCommandResponse(t *testing.T) {
 		}
 		go manager.Run()
 		manager.CommandChan() <- item.command
-		var resp = <- manager.RespChan()
+		var resp = <-manager.RespChan()
 		if resp.ErrMsg != item.errMsg {
 			t.Errorf("Expected ErrMsg \"%s\", got \"%f\" (%v)", item.errMsg, resp.ErrMsg, i)
 		}

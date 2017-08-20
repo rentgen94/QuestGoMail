@@ -1,8 +1,8 @@
-package services
-
+package database
 
 import (
 	_ "github.com/lib/pq"
+
 	"database/sql"
 	"fmt"
 	"log"
@@ -10,10 +10,10 @@ import (
 
 const (
 	PostgresUser = "postgres"
-	Password = "qwerty456"
-	Server = "localhost:5432"
-	DbName = "testdb"
-	Schema = "QuestGoMail"
+	Password     = "qwerty456"
+	Server       = "localhost:5432"
+	DbName       = "testdb"
+	Schema       = "QuestGoMail"
 )
 
 var db *sql.DB

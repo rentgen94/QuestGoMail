@@ -21,10 +21,10 @@ const (
 
 type PlayerManager struct {
 	stateCode int
-	player   *entities.Player
-	inChan   chan Command
-	outChan  chan Response
-	stopChan chan interface{}
+	player    *entities.Player
+	inChan    chan Command
+	outChan   chan Response
+	stopChan  chan interface{}
 }
 
 func NewPlayerManager(player *entities.Player, commandBuffSize int, responseBuffSize int) (*PlayerManager, error) {
@@ -34,10 +34,10 @@ func NewPlayerManager(player *entities.Player, commandBuffSize int, responseBuff
 
 	return &PlayerManager{
 		stateCode: managerNotStartedCode,
-		player:  player,
-		inChan:  make(chan Command, commandBuffSize),
-		outChan: make(chan Response, responseBuffSize),
-		stopChan: make(chan interface{}, 1),
+		player:    player,
+		inChan:    make(chan Command, commandBuffSize),
+		outChan:   make(chan Response, responseBuffSize),
+		stopChan:  make(chan interface{}, 1),
 	}, nil
 }
 
@@ -57,7 +57,7 @@ func (manager *PlayerManager) Run() {
 		case command := <-manager.inChan:
 			var resp = manager.getCommandResponse(command)
 			manager.outChan <- resp
-			if resp.Result.IsFinish() {
+			if resp.IsFinish() {
 				break
 			}
 		case <-manager.stopChan:
@@ -78,7 +78,7 @@ func (manager *PlayerManager) Finished() bool {
 	return manager.stateCode == managerFinishedCode
 }
 
-func (manager *PlayerManager) getCommandResponse(command Command) (Response) {
+func (manager *PlayerManager) getCommandResponse(command Command) Response {
 	var methodMap = map[int]func(*Response, *PlayerManager, Command){
 		getDoorsCode:        handleDoorsCode,
 		getSlotsCode:        handleSlotsCode,
@@ -141,7 +141,8 @@ func handleInteractCode(resp *Response, manager *PlayerManager, command Command)
 		resp.ErrMsg = err.Error()
 		return
 	}
-	resp.Result = result
+	resp.Msg = result.Msg
+	resp.Code = result.Code
 }
 
 func handleTakeCode(resp *Response, manager *PlayerManager, command Command) {

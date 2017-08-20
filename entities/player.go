@@ -1,8 +1,11 @@
 package entities
 
 type Player struct {
-	room *Room
-	bag  *Slot
+	Id       int    `json:"id"`
+	Login    string `json:"login"`
+	Password string `json:"password"`
+	room     *Room
+	bag      *Slot
 }
 
 func NewPlayer(room *Room, bagCapacity int) *Player {

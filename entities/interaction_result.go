@@ -6,24 +6,24 @@ const (
 )
 
 type InteractionResult struct {
-	code int
+	Code int
 	Msg  string
 }
 
 func ContinueResult(msg string) InteractionResult {
 	return InteractionResult{
-		code: GameContinue,
+		Code: GameContinue,
 		Msg:  msg,
 	}
 }
 
 func FinishResult(msg string) InteractionResult {
 	return InteractionResult{
-		code: GameFinished,
+		Code: GameFinished,
 		Msg:  msg,
 	}
 }
 
 func (res InteractionResult) IsFinish() bool {
-	return res.code == GameFinished
+	return res.Code == GameFinished
 }

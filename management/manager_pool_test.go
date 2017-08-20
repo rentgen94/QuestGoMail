@@ -1,11 +1,11 @@
 package management
 
 import (
-	"testing"
 	"fmt"
+	"testing"
 )
 
-func TestManagerPool_Run(t *testing.T) {	// smoke test :)
+func TestManagerPool_Run(t *testing.T) { // smoke test :)
 	var player1 = getPlayer()
 	var player2 = getPlayer()
 	var manager1, _ = NewPlayerManager(player1, 10, 10)
@@ -19,8 +19,8 @@ func TestManagerPool_Run(t *testing.T) {	// smoke test :)
 	pool.AddManager(manager2)
 
 	var command = AddressedCommand{
-		Address:0,
-		Command:NewCommand(getSlotsCode, "", nil, nil),
+		Address: 0,
+		Command: NewCommand(getSlotsCode, "", nil, nil),
 	}
 
 	pool.SendCommand(command)
