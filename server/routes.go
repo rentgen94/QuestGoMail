@@ -17,6 +17,13 @@ type Routes []Route
 var routes = Routes{
 
 	Route{
+		"Index",
+		"GET",
+		"/",
+		Index,
+	},
+
+	Route{
 		"GameCommandPost",
 		"POST",
 		"/game/command",

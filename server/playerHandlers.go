@@ -7,34 +7,38 @@ import (
 	"io"
 	"github.com/rentgen94/QuestGoMail/entities"
 	"github.com/rentgen94/QuestGoMail/server/database"
-	"fmt"
 )
 
 func PlayerLoginPost(w http.ResponseWriter, r *http.Request) {
 	// Get a session. Get() always returns a session, even if empty.
-	session, err := Store.Get(r, "session-name")
+	session, err := store.Get(r, sessionName)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 
-	fmt.Println("this is party id", session.Values["party_id"])
+	player := new(entities.Player)
+	var msg string
+	parsePlayer(w, r, player)
 
-	if id := session.Values["party_id"]; id != nil {
-		w.Header().Set("Content-Type", "application/json; charset=UTF-8")
-		w.WriteHeader(http.StatusOK)
-		return
+	if id := session.Values[authToken]; id != nil {
+		if founded, _ := database.FindPlayerById(id.(int));
+			founded != nil && founded.Login == player.Login && founded.Password == player.Password  {
+			w.Header().Set("Content-Type", "application/json; charset=UTF-8")
+			w.WriteHeader(http.StatusOK)
+			return
+		} else {
+			session.Values[authToken] = nil
+			session.Save(r, w)
+			w.WriteHeader(http.StatusBadRequest)
+			return
+		}
 	} else {
-		var player entities.Player
-		parsePlayer(w, r, &player)
-
-		_, msg := database.FindPlayer(&player)
+		player, msg = database.FindPlayer(player)
 
 		if msg == database.PlayerFoundOk {
-
-			fmt.Println("this is player id", player.Id)
 			// Set some session values.
-			session.Values["party_id"] = player.Id
+			session.Values[authToken] = player.Id
 			// Save it before we write to the response/return from the handler.
 			session.Save(r, w)
 

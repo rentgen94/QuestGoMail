@@ -13,14 +13,13 @@ type Default struct {
 }
 
 func GameCommandPost(w http.ResponseWriter, r *http.Request) {
-	// Получаю
-	session, err := Store.Get(r, "session-name")
+	session, err := store.Get(r, sessionName)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 
-	if session.Values["party_id"] != nil {
+	if session.Values[authToken] != nil {
 		var command management.Command
 
 		body, err := ioutil.ReadAll(io.LimitReader(r.Body, 1048576))
@@ -40,14 +39,23 @@ func GameCommandPost(w http.ResponseWriter, r *http.Request) {
 		}
 
 		//Todo Привязать к основному PoolManager
-		//managerPool := management.NewManagerPool();
-		//party_id, _ := strconv.Atoi(string(session.Values["party_id"]))
-		//managerPool.SendCommand(management.AddressedCommand{party_id, command})
+		managerPool := management.NewManagerPool();
+		//Todo получать game_id
+		game_id, _ := session.Values[authToken].(int)
+		managerPool.SendCommand(management.AddressedCommand{game_id, command})
+		response := managerPool.GetResponseSync(game_id)
 		w.Header().Set("Content-Type", "application/json; charset=UTF-8")
 		w.WriteHeader(http.StatusOK)
+		if err := json.NewEncoder(w).Encode(response); err != nil {
+			panic(err)
+		}
 	} else {
 		// Игрок не авторизован
 		w.Header().Set("Content-Type", "application/json; charset=UTF-8")
 		w.WriteHeader(http.StatusForbidden)
 	}
+}
+
+func Index(w http.ResponseWriter, r *http.Request) {
+	w.Write([]byte("hello world!"))
 }

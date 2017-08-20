@@ -45,8 +45,8 @@ func FindPlayer(player *entities.Player) (*entities.Player, string) {
 	return founded, PlayerFoundOk
 }
 
-func FindPlayerById(player *entities.Player) (*entities.Player, string) {
-	row := db.QueryRow("SELECT * FROM users WHERE id=$1", player.Id)
+func FindPlayerById(id int) (*entities.Player, string) {
+	row := db.QueryRow("SELECT * FROM users WHERE id=$1", id)
 
 	founded := new(entities.Player)
 	err := row.Scan(&founded.Id, &founded.Login, &founded.Password)

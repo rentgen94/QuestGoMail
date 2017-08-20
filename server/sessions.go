@@ -4,5 +4,10 @@ import (
 	"github.com/gorilla/sessions"
 )
 
-var Store = sessions.NewCookieStore([]byte("something-very-secret"))
+const (
+	sessionName = "Session-for-new-user"
+	authToken = "auth_token"
+)
+
+var store = sessions.NewCookieStore([]byte("server-cookie-store"))
 
