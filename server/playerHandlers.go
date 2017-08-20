@@ -10,12 +10,7 @@ import (
 )
 
 func PlayerLoginPost(w http.ResponseWriter, r *http.Request) {
-	// Get a session. Get() always returns a session, even if empty.
-	session, err := store.Get(r, sessionName)
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
-	}
+	session := getSession(w, r)
 
 	player := new(entities.Player)
 	var msg string
@@ -36,11 +31,8 @@ func PlayerLoginPost(w http.ResponseWriter, r *http.Request) {
 		player, msg = database.FindPlayer(player)
 
 		if msg == database.PlayerFoundOk {
-			// Set some session values.
 			session.Values[authToken] = player.Id
-			// Save it before we write to the response/return from the handler.
 			session.Save(r, w)
-
 			w.Header().Set("Content-Type", "application/json; charset=UTF-8")
 			w.WriteHeader(http.StatusOK)
 			return
@@ -57,18 +49,16 @@ func PlayerRegisterPost(w http.ResponseWriter, r *http.Request) {
 	parsePlayer(w, r, &player)
 
 	msg := database.CreateUser(&player)
-	if msg == database.RegisterOk {
+	switch msg {
+	case database.RegisterOk:
 		w.Header().Set("Content-Type", "application/json; charset=UTF-8")
 		w.WriteHeader(http.StatusCreated)
-		return
-	} else if msg == database.AlreadyRegistered {
+	case database.AlreadyRegistered:
 		w.Header().Set("Content-Type", "application/json; charset=UTF-8")
 		w.WriteHeader(http.StatusConflict)
-		return
-	} else {
+	default:
 		w.Header().Set("Content-Type", "application/json; charset=UTF-8")
 		w.WriteHeader(http.StatusInternalServerError)
-		return
 	}
 }
 
@@ -89,3 +79,4 @@ func parsePlayer(w http.ResponseWriter, r *http.Request, player *entities.Player
 		return
 	}
 }
+

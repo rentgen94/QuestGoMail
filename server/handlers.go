@@ -12,11 +12,7 @@ type Default struct {
 }
 
 func GameCommandPost(w http.ResponseWriter, r *http.Request) {
-	session, err := store.Get(r, sessionName)
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
-	}
+	session := getSession(w, r)
 
 	if session.Values[authToken] != nil {
 		var command management.Command
@@ -56,5 +52,5 @@ func GameCommandPost(w http.ResponseWriter, r *http.Request) {
 }
 
 func Index(w http.ResponseWriter, r *http.Request) {
-	w.Write([]byte("hello world!"))
+	w.Write([]byte("Hello world!"))
 }
