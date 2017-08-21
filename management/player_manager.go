@@ -1,6 +1,7 @@
 package management
 
 import (
+	"encoding/json"
 	"errors"
 	"fmt"
 	"github.com/rentgen94/QuestGoMail/entities"
@@ -13,6 +14,7 @@ const (
 	doorNotFoundTemplate        = "Door \"%s\" not found"
 	interactiveNotFoundTemplate = "Interactive \"%s\" not found"
 	itemCodeNotSupplied         = "Item code not supplied"
+	cant_create_json            = "can't get data"
 
 	managerNotStartedCode = iota
 	managerWorkCode
@@ -80,14 +82,16 @@ func (manager *PlayerManager) Finished() bool {
 
 func (manager *PlayerManager) getCommandResponse(command Command) Response {
 	var methodMap = map[int]func(*Response, *PlayerManager, Command){
-		getDoorsCode:        handleDoorsCode,
-		getSlotsCode:        handleSlotsCode,
-		getInteractivesCode: handleInteractivesCode,
-		getItemsCode:        handleItemsCode,
-		enterCode:           handleEnterCode,
-		interactCode:        handleInteractCode,
-		takeCode:            handleTakeCode,
-		putCode:             handlePutCode,
+		getRoomCode:        handleRoomCode,
+		getSlotsCode:       handleSlotsCode,
+		getDoorsCode:       handleDoorsCode,
+		getItemsCode:       handleItemsCode,
+		getBagCode:         handleBagCode,
+		getIteractivesCode: handleIteractivesCode,
+		enterCode:          handleEnterCode,
+		interactCode:       handleInteractCode,
+		takeCode:           handleTakeCode,
+		putCode:            handlePutCode,
 	}
 
 	var f, ok = methodMap[command.typeCode]
@@ -102,20 +106,140 @@ func (manager *PlayerManager) getCommandResponse(command Command) Response {
 	return resp
 }
 
-func handleDoorsCode(resp *Response, manager *PlayerManager, command Command) {
-	resp.Data = manager.player.Room().AccessibleDoors()
+type roomResponse struct {
+	name        string `json:"name"`
+	description string `json:"description"`
+}
+
+func handleRoomCode(resp *Response, manager *PlayerManager, command Command) {
+	a := &roomResponse{
+		name:        manager.player.Room().Name(),
+		description: manager.player.Room().Description(),
+	}
+	res, err := json.Marshal(a)
+	if err != nil {
+		resp.ErrMsg = cant_create_json
+		return
+	}
+	resp.Data = res
+}
+
+type slotsResponse struct {
+	id       int    `json:"id"`
+	name     string `json:"name"`
+	capacity int    `json:"capacity"`
+	contains int    `json:"contains"`
 }
 
 func handleSlotsCode(resp *Response, manager *PlayerManager, command Command) {
-	resp.Data = manager.player.Room().AccessibleSlots()
+	a := []slotsResponse{}
+	for _, elem := range manager.player.Room().Slots() {
+		slt := &slotsResponse{
+			name:     elem.Name(),
+			capacity: elem.Capacity(),
+			contains: elem.Contains(),
+			id:       elem.Id(),
+		}
+		a = append(a, *slt)
+	}
+	res, err := json.Marshal(a)
+	if err != nil {
+		resp.ErrMsg = cant_create_json
+		return
+	}
+	resp.Data = res
 }
 
-func handleInteractivesCode(resp *Response, manager *PlayerManager, command Command) {
-	resp.Data = manager.player.Room().AccessibleInteractives()
+type doorsResponse struct {
+	id   int    `json:"id"`
+	name string `json:"name"`
+}
+
+func handleDoorsCode(resp *Response, manager *PlayerManager, command Command) {
+	a := []doorsResponse{}
+	for _, elem := range manager.player.Room().Doors() {
+		slt := &doorsResponse{
+			name: elem.Name(),
+			id:   elem.Id(),
+		}
+		a = append(a, *slt)
+	}
+	res, err := json.Marshal(a)
+	if err != nil {
+		resp.ErrMsg = cant_create_json
+		return
+	}
+	resp.Data = res
+}
+
+type itemResponse struct {
+	id          int    `json:"id"`
+	name        string `json:"name"`
+	description string `json:"description"`
+	size        int    `json:"size"`
 }
 
 func handleItemsCode(resp *Response, manager *PlayerManager, command Command) {
-	resp.Data = manager.player.Room().AccessibleItems()
+	a := []itemResponse{}
+	for _, elem := range manager.player.Room().AccessibleItems() {
+		slt := &itemResponse{
+			name:        elem.Name,
+			id:          elem.Id,
+			description: elem.Description,
+			size:        elem.Size,
+		}
+		a = append(a, *slt)
+	}
+	res, err := json.Marshal(a)
+	if err != nil {
+		resp.ErrMsg = cant_create_json
+		return
+	}
+	resp.Data = res
+}
+
+func handleBagCode(resp *Response, manager *PlayerManager, command Command) {
+	a := []itemResponse{}
+	for k, _ := range *manager.player.Bag().Items() {
+		it, _ := manager.player.Bag().GetItem(k)
+		slt := &itemResponse{
+			name:        it.Name,
+			id:          it.Id,
+			description: it.Description,
+			size:        it.Size,
+		}
+		a = append(a, *slt)
+	}
+	res, err := json.Marshal(a)
+	if err != nil {
+		resp.ErrMsg = cant_create_json
+		return
+	}
+	resp.Data = res
+}
+
+type intaractiveResponse struct {
+	id          int    `json:"id"`
+	name        string `json:"name"`
+	description string `json:"description"`
+}
+
+func handleIteractivesCode(resp *Response, manager *PlayerManager, command Command) {
+	a := []intaractiveResponse{}
+	for _, elem := range manager.player.Room().Interactives() {
+		slt := &intaractiveResponse{
+			name:        elem.Name(),
+			id:          elem.Id(),
+			description: elem.Description(),
+		}
+		a = append(a, *slt)
+	}
+	res, err := json.Marshal(a)
+	if err != nil {
+		resp.ErrMsg = cant_create_json
+		return
+	}
+	resp.Data = res
 }
 
 func handleEnterCode(resp *Response, manager *PlayerManager, command Command) {

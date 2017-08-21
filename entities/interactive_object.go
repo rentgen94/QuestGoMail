@@ -11,12 +11,14 @@ type actionCodeGeneratorType func(args []string, items []Item) (code int, err er
 type InteractiveObject interface {
 	Namer
 	Descriptable
+	HasId
 	IsAccessible() bool
 	SetAccessible(isAccessible bool)
 	Interact(args []string, items []Item) (result InteractionResult, err error)
 }
 
 type boundInteractiveObject struct {
+	id                  int
 	name                string
 	description         string
 	isAccessible        bool
@@ -26,6 +28,7 @@ type boundInteractiveObject struct {
 
 func NewInteractiveObject(
 	name string,
+	id int,
 	description string,
 	isAccessible bool,
 	room *Room,
@@ -33,6 +36,7 @@ func NewInteractiveObject(
 ) InteractiveObject {
 	return &boundInteractiveObject{
 		name:                name,
+		id:                  id,
 		description:         description,
 		isAccessible:        isAccessible,
 		room:                room,
@@ -55,6 +59,10 @@ func (inter *boundInteractiveObject) Interact(args []string, items []Item) (Inte
 
 func (inter *boundInteractiveObject) IsAccessible() bool {
 	return inter.isAccessible
+}
+
+func (inter *boundInteractiveObject) Id() int {
+	return inter.id
 }
 
 func (inter *boundInteractiveObject) SetAccessible(isAccessible bool) {

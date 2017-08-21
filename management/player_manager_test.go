@@ -66,19 +66,11 @@ func TestPlayerManager_getCommandResponse(t *testing.T) {
 		errMsg  string
 	}{
 		{
-			command: NewCommand(getSlotsCode, "", nil, nil),
+			command: NewCommand(getRoomCode, "", nil, nil),
 			errMsg:  "",
 		},
 		{
-			command: NewCommand(getItemsCode, "", nil, nil),
-			errMsg:  "",
-		},
-		{
-			command: NewCommand(getInteractivesCode, "", nil, nil),
-			errMsg:  "",
-		},
-		{
-			command: NewCommand(getDoorsCode, "", nil, nil),
+			command: NewCommand(getBagCode, "", nil, nil),
 			errMsg:  "",
 		},
 		{
@@ -149,19 +141,11 @@ func TestPlayerManager_Run(t *testing.T) {
 		errMsg  string
 	}{
 		{
-			command: NewCommand(getSlotsCode, "", nil, nil),
+			command: NewCommand(getRoomCode, "", nil, nil),
 			errMsg:  "",
 		},
 		{
-			command: NewCommand(getItemsCode, "", nil, nil),
-			errMsg:  "",
-		},
-		{
-			command: NewCommand(getInteractivesCode, "", nil, nil),
-			errMsg:  "",
-		},
-		{
-			command: NewCommand(getDoorsCode, "", nil, nil),
+			command: NewCommand(getBagCode, "", nil, nil),
 			errMsg:  "",
 		},
 		{

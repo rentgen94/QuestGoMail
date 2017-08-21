@@ -3,10 +3,12 @@ package management
 import "github.com/rentgen94/QuestGoMail/entities"
 
 const (
-	getDoorsCode = iota
+	getRoomCode = iota
 	getSlotsCode
+	getBagCode
+	getDoorsCode
 	getItemsCode
-	getInteractivesCode
+	getIteractivesCode
 
 	enterCode
 	interactCode

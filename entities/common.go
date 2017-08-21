@@ -12,3 +12,7 @@ type Namer interface {
 type Descriptable interface {
 	Description() string
 }
+
+type HasId interface {
+	Id() int
+}

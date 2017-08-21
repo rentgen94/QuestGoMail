@@ -14,6 +14,7 @@ const (
 type itemsType map[int][]Item
 
 type Slot struct {
+	id           int
 	capacity     int
 	contains     int
 	isAccessible bool
@@ -29,6 +30,22 @@ func NewSlot(name string, capacity int, isAccessible bool) *Slot {
 		isAccessible: isAccessible,
 		items:        make(itemsType),
 	}
+}
+
+func (s *Slot) Capacity() int {
+	return s.capacity
+}
+
+func (s *Slot) Id() int {
+	return s.id
+}
+
+func (s *Slot) Contains() int {
+	return s.contains
+}
+
+func (s *Slot) Items() *itemsType {
+	return &s.items
 }
 
 func (s *Slot) IsAccessible() bool {

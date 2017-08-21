@@ -79,4 +79,3 @@ func parsePlayer(w http.ResponseWriter, r *http.Request, player *entities.Player
 		return
 	}
 }
-

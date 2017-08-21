@@ -8,6 +8,7 @@ const (
 )
 
 type Door struct {
+	id           int
 	name         string
 	isAccessible bool
 	room1        *Room
@@ -33,6 +34,10 @@ func (door *Door) SetAccessible(isAccessible bool) {
 
 func (door *Door) Name() string {
 	return door.name
+}
+
+func (door *Door) Id() int {
+	return door.id
 }
 
 func (door *Door) Enter(player *Player) error {
