@@ -48,37 +48,37 @@ var routes = Routes{
 		"GameLookAroundGet",
 		"GET",
 		"/game/look_around",
-		GameLookAroundGet,
+		env.GameLookAroundGet,
 	},
 	Route{
 		"GameBagGet",
 		"GET",
 		"/game/look_around/bag",
-		GameBagGet,
+		env.GameBagGet,
 	},
 	Route{
 		"GameItemsGet",
 		"GET",
 		"/game/look_around/entities/items",
-		GameItemsGet,
+		env.GameItemsGet,
 	},
 	Route{
 		"GameSlotsGet",
 		"GET",
 		"/game/look_around/entities/slots",
-		GameSlotsGet,
+		env.GameSlotsGet,
 	},
 	Route{
 		"GameInteractivesGet",
 		"GET",
 		"/game/look_around/entities/interactives",
-		GameIteractivesGet,
+		env.GameIteractivesGet,
 	},
 	Route{
 		"GameDoorsGet",
 		"GET",
 		"/game/look_around/entities/doors",
-		GameDoorsGet,
+		env.GameDoorsGet,
 	},
 
 }

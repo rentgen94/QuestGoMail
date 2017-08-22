@@ -7,40 +7,39 @@ import (
 	"github.com/rentgen94/QuestGoMail/entities"
 )
 
-
-func GameLookAroundGet (w http.ResponseWriter, r *http.Request) {
-	GameComandGet (w, r, management.GetRoomCode)
+func (env *Env) GameLookAroundGet (w http.ResponseWriter, r *http.Request) {
+	env.GameComandGet (w, r, management.GetRoomCode)
 }
 
-func GameSlotsGet (w http.ResponseWriter, r *http.Request) {
-	GameComandGet (w, r, management.GetSlotsCode)
-}
-
-
-func GameBagGet (w http.ResponseWriter, r *http.Request) {
-	GameComandGet (w, r, management.GetBagCode)
+func (env *Env)  GameSlotsGet (w http.ResponseWriter, r *http.Request) {
+	env.GameComandGet (w, r, management.GetSlotsCode)
 }
 
 
-func GameDoorsGet (w http.ResponseWriter, r *http.Request) {
-	GameComandGet (w, r, management.GetDoorsCode)
+func (env *Env)  GameBagGet (w http.ResponseWriter, r *http.Request) {
+	env.GameComandGet (w, r, management.GetBagCode)
 }
 
 
-func GameItemsGet (w http.ResponseWriter, r *http.Request) {
-	GameComandGet (w, r, management.GetItemsCode)
+func (env *Env)  GameDoorsGet (w http.ResponseWriter, r *http.Request) {
+	env.GameComandGet (w, r, management.GetDoorsCode)
 }
 
 
-func GameIteractivesGet (w http.ResponseWriter, r *http.Request) {
-	GameComandGet (w, r, management.GetIteractivesCode)
+func (env *Env)  GameItemsGet (w http.ResponseWriter, r *http.Request) {
+	env.GameComandGet (w, r, management.GetItemsCode)
 }
 
 
-func GameComandGet(w http.ResponseWriter, r *http.Request, comandType int) {
-	session := getSession(w, r)
+func (env *Env)  GameIteractivesGet (w http.ResponseWriter, r *http.Request) {
+	env.GameComandGet (w, r, management.GetIteractivesCode)
+}
 
-	if session.Values[authToken] == nil {
+
+func (env *Env)  GameComandGet(w http.ResponseWriter, r *http.Request, comandType int) {
+	session := env.getSession(w, r)
+
+	if session.Values[env.authToken] == nil {
 		// Игрок не авторизован
 		w.Header().Set("Content-Type", "application/json; charset=UTF-8")
 		w.WriteHeader(http.StatusForbidden)
@@ -50,7 +49,7 @@ func GameComandGet(w http.ResponseWriter, r *http.Request, comandType int) {
 	//Todo Привязать к основному PoolManager
 	managerPool := management.NewManagerPool(10, 10)
 	//Todo получать game_id
-	game_id, _ := session.Values[authToken].(int)
+	game_id, _ := session.Values[env.authToken].(int)
 	room := entities.NewRoom(0, "ny first room", "our demons hide in the dark")
 	player := entities.NewPlayer(room, 100)
 	var manager, _ = management.NewPlayerManager(player, 10, 10)
