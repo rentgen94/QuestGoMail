@@ -3,7 +3,7 @@ package entities
 import "testing"
 
 func TestAction_IsAccessible(t *testing.T) {
-	var action = NewAction("name", true, func(r *Room) (result InteractionResult, err error) {
+	var action = NewAction("name", nil, true, func(l *Labyrinth) (result InteractionResult, err error) {
 		return ContinueResult(""), nil
 	})
 
@@ -19,7 +19,7 @@ func TestAction_IsAccessible(t *testing.T) {
 }
 
 func TestAction_Name(t *testing.T) {
-	var action = NewAction("name", true, func(r *Room) (result InteractionResult, err error) {
+	var action = NewAction("name", nil, true, func(l *Labyrinth) (result InteractionResult, err error) {
 		return ContinueResult(""), nil
 	})
 

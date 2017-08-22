@@ -11,7 +11,7 @@ type Player struct {
 func NewPlayer(room *Room, bagCapacity int) *Player {
 	return &Player{
 		room: room,
-		bag:  NewSlot("bag", bagCapacity, true),
+		bag:  NewSlot(-1, "bag", bagCapacity, true),
 	}
 }
 

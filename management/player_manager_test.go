@@ -22,7 +22,7 @@ func getRoom() *entities.Room {
 	var action = entities.NewAction(
 		"open",
 		true,
-		func(r *entities.Room) (res entities.InteractionResult, err error) {
+		func(r map[int]*entities.Room) (res entities.InteractionResult, err error) {
 			return entities.ContinueResult("Success"), nil
 		},
 	)
@@ -30,6 +30,7 @@ func getRoom() *entities.Room {
 
 	var box = entities.NewInteractiveObject(
 		interactiveName,
+		0,
 		"",
 		true,
 		room,
@@ -39,7 +40,7 @@ func getRoom() *entities.Room {
 	)
 	room.Interactives()[box.Name()] = box
 
-	var slot = entities.NewSlot(slotName, 10, true)
+	var slot = entities.NewSlot(0, slotName, 10, true)
 	room.Slots()[slot.Name()] = slot
 
 	var item = entities.Item{Name: itemName, Size: 1, Id: itemId}

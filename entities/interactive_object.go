@@ -6,8 +6,6 @@ const (
 	objectNotAccessible = "Object not accessible"
 )
 
-type actionCodeGeneratorType func(args []string, items []Item) (code int, err error)
-
 type InteractiveObject interface {
 	Namer
 	Descriptable
@@ -17,13 +15,16 @@ type InteractiveObject interface {
 	Interact(args []string, items []Item) (result InteractionResult, err error)
 }
 
+type InputChecker func(args []string, items []Item) error
+
 type boundInteractiveObject struct {
 	id                  int
 	name                string
 	description         string
 	isAccessible        bool
 	room                *Room
-	actionCodeGenerator actionCodeGeneratorType
+	checker InputChecker
+	action *Action
 }
 
 func NewInteractiveObject(
@@ -31,16 +32,16 @@ func NewInteractiveObject(
 	id int,
 	description string,
 	isAccessible bool,
-	room *Room,
-	actionCodeGenerator actionCodeGeneratorType,
+	checker InputChecker,
+	action *Action,
 ) InteractiveObject {
 	return &boundInteractiveObject{
 		name:                name,
 		id:                  id,
 		description:         description,
 		isAccessible:        isAccessible,
-		room:                room,
-		actionCodeGenerator: actionCodeGenerator,
+		checker: checker,
+		action: action,
 	}
 }
 
@@ -49,12 +50,12 @@ func (inter *boundInteractiveObject) Interact(args []string, items []Item) (Inte
 		return ContinueResult(""), errors.New(objectNotAccessible)
 	}
 
-	var code, codeErr = inter.actionCodeGenerator(args, items)
-	if codeErr != nil {
-		return ContinueResult(""), codeErr
+	var checkErr = inter.checker(args, items)
+	if checkErr != nil {
+		return ContinueResult(""), checkErr
 	}
 
-	return inter.room.PerformAction(code)
+	return inter.action.Act()
 }
 
 func (inter *boundInteractiveObject) IsAccessible() bool {

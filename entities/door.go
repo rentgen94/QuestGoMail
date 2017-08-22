@@ -3,7 +3,7 @@ package entities
 import "errors"
 
 const (
-	wrongPlayerNum = "Player is not in the neighbour room"
+	wrongPlayerNum = "Player is not in the neighbour action"
 	doorClosed     = "Door is closed"
 )
 

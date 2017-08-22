@@ -11,20 +11,20 @@ func TestSlot_PutItem_SingleItem(t *testing.T) {
 		errMsg           string
 	}{
 		{
-			slot:             NewSlot("", 100, true),
+			slot:             NewSlot(0, "", 100, true),
 			itemToPut:        Item{Id: 100, Size: 50},
 			expectedContains: 50,
 			errIsNil:         true,
 		},
 		{
-			slot:             NewSlot("", 10, true),
+			slot:             NewSlot(0, "", 10, true),
 			itemToPut:        Item{Id: 100, Size: 50},
 			expectedContains: 0,
 			errIsNil:         false,
 			errMsg:           ItemTooBig,
 		},
 		{
-			slot:             NewSlot("", 100, false),
+			slot:             NewSlot(0, "", 100, false),
 			itemToPut:        Item{Id: 100, Size: 50},
 			expectedContains: 50,
 			errIsNil:         true,
@@ -54,7 +54,7 @@ func TestSlot_PutItem_MultipleItem(t *testing.T) {
 		expectedContains int
 	}{
 		{
-			slot: NewSlot("", 100, true),
+			slot: NewSlot(0, "", 100, true),
 			itemsToPut: []Item{
 				{Id: 0, Size: 10},
 				{Id: 1, Size: 20},
@@ -62,7 +62,7 @@ func TestSlot_PutItem_MultipleItem(t *testing.T) {
 			expectedContains: 30,
 		},
 		{
-			slot: NewSlot("", 100, true),
+			slot: NewSlot(0, "", 100, true),
 			itemsToPut: []Item{
 				{Id: 0, Size: 10},
 				{Id: 1, Size: 20},
@@ -71,7 +71,7 @@ func TestSlot_PutItem_MultipleItem(t *testing.T) {
 			expectedContains: 30,
 		},
 		{
-			slot: NewSlot("", 100, true),
+			slot: NewSlot(0, "", 100, true),
 			itemsToPut: []Item{
 				{Id: 0, Size: 10},
 				{Id: 1, Size: 200},
@@ -100,7 +100,7 @@ func TestSlot_GetItem(t *testing.T) {
 		expectedContains int
 	}{
 		{
-			slot: NewSlot("", 100, true),
+			slot: NewSlot(0, "", 100, true),
 			itemsToPut: []Item{
 				{Id: 0, Size: 10},
 				{Id: 1, Size: 20},
@@ -109,7 +109,7 @@ func TestSlot_GetItem(t *testing.T) {
 			expectedContains: 20,
 		},
 		{
-			slot: NewSlot("", 100, true),
+			slot: NewSlot(0, "", 100, true),
 			itemsToPut: []Item{
 				{Id: 0, Size: 10},
 				{Id: 1, Size: 20},
@@ -119,7 +119,7 @@ func TestSlot_GetItem(t *testing.T) {
 			expectedContains: 20,
 		},
 		{
-			slot: NewSlot("", 100, true),
+			slot: NewSlot(0, "", 100, true),
 			itemsToPut: []Item{
 				{Id: 0, Size: 10},
 				{Id: 1, Size: 200},
@@ -152,8 +152,8 @@ func TestSlot_MoveItem(t *testing.T) {
 		contains2  int
 	}{
 		{
-			slot1: NewSlot("", 100, true),
-			slot2: NewSlot("", 0, true),
+			slot1: NewSlot(0, "", 100, true),
+			slot2: NewSlot(0, "", 0, true),
 			itemsToPut: []Item{
 				{Id: 0, Size: 10},
 				{Id: 1, Size: 20},
@@ -163,8 +163,8 @@ func TestSlot_MoveItem(t *testing.T) {
 			contains2: 0,
 		},
 		{
-			slot1: NewSlot("", 100, true),
-			slot2: NewSlot("", 100, true),
+			slot1: NewSlot(0, "", 100, true),
+			slot2: NewSlot(0, "", 100, true),
 			itemsToPut: []Item{
 				{Id: 0, Size: 10},
 				{Id: 1, Size: 20},
@@ -175,8 +175,8 @@ func TestSlot_MoveItem(t *testing.T) {
 			contains2: 10,
 		},
 		{
-			slot1: NewSlot("", 100, true),
-			slot2: NewSlot("", 100, true),
+			slot1: NewSlot(0, "", 100, true),
+			slot2: NewSlot(0, "", 100, true),
 			itemsToPut: []Item{
 				{Id: 0, Size: 10},
 				{Id: 1, Size: 200},

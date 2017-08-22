@@ -22,8 +22,9 @@ type Slot struct {
 	items        itemsType
 }
 
-func NewSlot(name string, capacity int, isAccessible bool) *Slot {
+func NewSlot(id int, name string, capacity int, isAccessible bool) *Slot {
 	return &Slot{
+		id: id,
 		capacity:     capacity,
 		contains:     0,
 		name:         name,
@@ -44,8 +45,8 @@ func (s *Slot) Contains() int {
 	return s.contains
 }
 
-func (s *Slot) Items() *itemsType {
-	return &s.items
+func (s *Slot) Items() itemsType {
+	return s.items
 }
 
 func (s *Slot) IsAccessible() bool {

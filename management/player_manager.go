@@ -200,7 +200,7 @@ func handleItemsCode(resp *Response, manager *PlayerManager, command Command) {
 
 func handleBagCode(resp *Response, manager *PlayerManager, command Command) {
 	a := []itemResponse{}
-	for k, _ := range *manager.player.Bag().Items() {
+	for k, _ := range manager.player.Bag().Items() {
 		it, _ := manager.player.Bag().GetItem(k)
 		slt := &itemResponse{
 			name:        it.Name,

@@ -20,24 +20,25 @@ var onlyRoom = func() *entities.Room {
 		"Пустая комната с коробкой посередине",
 	)
 
-	room.Slots()[treasureSlotName] = entities.NewSlot(treasureSlotName, 1000, false)
+	room.Slots()[treasureSlotName] = entities.NewSlot(0, treasureSlotName, 1000, false)
 
 	var openAction = entities.NewAction(
 		"open",
 		true,
-		func(r *entities.Room) (string, error) {
-			r.Slots()[treasureSlotName].SetAccessible(true)
-			return "Treasure slot opened", nil
+		func(r map[int]*entities.Room) (entities.InteractionResult, error) {
+			r[0].Slots()[treasureSlotName].SetAccessible(true)
+			return entities.ContinueResult("Treasure slot opened"), nil
 		},
 	)
 	room.Actions()[openCode] = openAction
 
 	var box = entities.NewInteractiveObject(
 		boxName,
+		0,
 		"Коробка с сокровищем внутри",
 		true,
 		room,
-		func(args []string, items []*entities.Item) (code int, err error) {
+		func(args []string, items []entities.Item) (code int, err error) {
 			return 0, nil
 		},
 	)

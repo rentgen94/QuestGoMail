@@ -17,22 +17,26 @@ type AddressedResponse struct {
 }
 
 type ManagerPool struct {
-	cnt         int
-	managers    map[int]*PlayerManager
-	commandChan chan AddressedCommand
-	respChan    chan AddressedResponse
-	stopChan    chan interface{}
-	running     bool
+	cnt          int
+	workerNum    int
+	managers     map[int]*PlayerManager
+	commandChan  chan AddressedCommand
+	respMap      map[int]chan Response
+	stopChan     chan interface{}
+	running      bool
+	respBuffSize int
 }
 
-func NewManagerPool(commandBuffSize int, respBuffSize int) *ManagerPool {
+func NewManagerPool(workerNum int, commandBuffSize int, respBuffSize int) *ManagerPool {
 	return &ManagerPool{
-		cnt:         0,
-		managers:    make(map[int]*PlayerManager),
-		commandChan: make(chan AddressedCommand, commandBuffSize),
-		respChan:    make(chan AddressedResponse, respBuffSize),
-		stopChan:    make(chan interface{}, 1),
-		running:     false,
+		cnt:          0,
+		workerNum:    workerNum,
+		managers:     make(map[int]*PlayerManager),
+		commandChan:  make(chan AddressedCommand, commandBuffSize),
+		respMap:      make(map[int]chan Response),
+		stopChan:     make(chan interface{}, 1),
+		running:      false,
+		respBuffSize: respBuffSize,
 	}
 }
 
@@ -43,8 +47,11 @@ func (pool *ManagerPool) Run() {
 	}
 	go pool.monitorManagers()
 
+	for i := 0; i != pool.workerNum; i++ {
+		go pool.handleCommandChanLoop()
+	}
+
 	for {
-		pool.handleCommandChan()
 		select {
 		case <-pool.stopChan:
 			break
@@ -67,10 +74,12 @@ func (pool *ManagerPool) AddManager(manager *PlayerManager) {
 	var id = pool.cnt
 	pool.cnt++
 	pool.managers[id] = manager
+	pool.respMap[id] = make(chan Response, pool.respBuffSize)
 }
 
 func (pool *ManagerPool) DeleteManager(id int) {
 	delete(pool.managers, id)
+	delete(pool.respMap, id)
 }
 
 func (pool *ManagerPool) SendCommand(command AddressedCommand) {
@@ -78,14 +87,14 @@ func (pool *ManagerPool) SendCommand(command AddressedCommand) {
 }
 
 func (pool *ManagerPool) GetResponseSync(gameId int) Response {
-	var manager, ok = pool.managers[gameId]
+	var ch, ok = pool.respMap[gameId]
 	if !ok {
 		return Response{
 			ErrMsg: fmt.Sprintf(managerNotFoundTemplate, gameId),
 		}
 	}
 
-	return <-manager.outChan
+	return <-ch
 }
 
 func (pool *ManagerPool) stop() {
@@ -107,19 +116,23 @@ func (pool *ManagerPool) monitorManagers() {
 	}
 }
 
+func (pool *ManagerPool) handleCommandChanLoop() {
+	for pool.running {
+		pool.handleCommandChan()
+	}
+}
+
 func (pool *ManagerPool) handleCommandChan() {
 	select {
 	case command := <-pool.commandChan:
 		var manager, ok = pool.managers[command.Address]
 		if !ok {
-			pool.respChan <- AddressedResponse{
-				Address: command.Address,
-				Response: Response{
-					ErrMsg: fmt.Sprintf(managerNotFoundTemplate, command.Address),
-				},
+			pool.respMap[command.Address] <- Response{
+				ErrMsg: fmt.Sprintf(managerNotFoundTemplate, command.Address),
 			}
 		}
 		manager.CommandChan() <- command.Command
+		pool.respMap[command.Address] <- <-manager.RespChan()
 	default:
 		return
 	}

@@ -10,13 +10,12 @@ const (
 	ActionNotFoundTemplate     = "Action %d not found"
 	ActionNotAvailableTemplate = "Action %d not available"
 	FailedToTakeTemplate       = "Failed to take item (id = %d)"
-	CanNotPutItemTemplate      = "Can not put item \"%d\" to the room \"%s\""
+	CanNotPutItemTemplate      = "Can not put item \"%d\" to the action \"%s\""
 )
 
-type slotsType map[string]*Slot
-type doorsType map[string]*Door
-type interactivesType map[string]InteractiveObject
-type actionsType map[int]*Action
+type slotsType map[int]*Slot
+type doorsType map[int]*Door
+type interactivesType map[int]InteractiveObject
 
 type Room struct {
 	id           int
@@ -25,7 +24,6 @@ type Room struct {
 	slots        slotsType
 	interactives interactivesType
 	doors        doorsType
-	actions      actionsType
 }
 
 func NewRoom(id int, name string, description string) *Room {
@@ -36,7 +34,6 @@ func NewRoom(id int, name string, description string) *Room {
 		slots:        make(slotsType),
 		interactives: make(interactivesType),
 		doors:        make(doorsType),
-		actions:      make(actionsType),
 	}
 }
 
@@ -46,19 +43,6 @@ func (r *Room) Name() string {
 
 func (r *Room) Description() string {
 	return r.description
-}
-
-func (r *Room) PerformAction(actionCode int) (InteractionResult, error) {
-	var action, ok = r.actions[actionCode]
-	if !ok {
-		return ContinueResult(""), errors.New(fmt.Sprintf(ActionNotFoundTemplate, actionCode))
-	}
-
-	if !action.isAccessible {
-		return ContinueResult(""), errors.New(fmt.Sprintf(ActionNotAvailableTemplate, actionCode))
-	}
-
-	return action.act(r)
 }
 
 func (r *Room) Equals(another *Room) bool {
@@ -137,10 +121,6 @@ func (r *Room) AccessibleDoors() (doors []*Door) {
 		}
 	}
 	return
-}
-
-func (r *Room) Actions() actionsType {
-	return r.actions
 }
 
 func (r *Room) accessibleSlots() (slots []*Slot) {

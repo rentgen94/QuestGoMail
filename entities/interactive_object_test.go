@@ -6,57 +6,41 @@ import (
 	"testing"
 )
 
-func getFailRoom() *Room {
-	var action = NewAction(
+func getFailAction() *Action {
+	return NewAction(
 		"",
+		nil,
 		false,
-		func(r *Room) (res InteractionResult, err error) {
+		func(l *Labyrinth) (res InteractionResult, err error) {
 			return ContinueResult(""), nil
 		},
 	)
-
-	var room = NewRoom(
-		0,
-		"",
-		"",
-	)
-
-	room.Actions()[0] = action
-	return room
 }
 
-func getSuccessRoom() *Room {
-	var action = NewAction(
+func getSuccessAction() *Action {
+	return NewAction(
 		"",
+		nil,
 		true,
-		func(r *Room) (res InteractionResult, err error) {
+		func(l *Labyrinth) (res InteractionResult, err error) {
 			return ContinueResult("Success"), nil
 		},
 	)
-
-	var room = NewRoom(
-		0,
-		"",
-		"",
-	)
-
-	room.Actions()[0] = action
-	return room
 }
 
 func TestBoundInteractiveObject_Interact(t *testing.T) {
 	var testData = []struct {
-		room         *Room
-		codeGen      actionCodeGeneratorType
+		action       *Action
+		checker InputChecker
 		isAccessible bool
 		errIsNil     bool
 		msg          string
 		errMsg       string
 	}{
 		{
-			getSuccessRoom(),
-			func(args []string, items []Item) (code int, err error) {
-				return 0, nil
+			getSuccessAction(),
+			func(args []string, items []Item) error {
+				return nil
 			},
 			false,
 			false,
@@ -64,9 +48,9 @@ func TestBoundInteractiveObject_Interact(t *testing.T) {
 			objectNotAccessible,
 		},
 		{
-			getFailRoom(),
-			func(args []string, items []Item) (code int, err error) {
-				return 0, nil
+			getFailAction(),
+			func(args []string, items []Item) error {
+				return nil
 			},
 			true,
 			false,
@@ -74,9 +58,9 @@ func TestBoundInteractiveObject_Interact(t *testing.T) {
 			fmt.Sprintf(ActionNotAvailableTemplate, 0),
 		},
 		{
-			getSuccessRoom(),
-			func(args []string, items []Item) (code int, err error) {
-				return 0, errors.New("Error")
+			getSuccessAction(),
+			func(args []string, items []Item) error {
+				return errors.New("Error")
 			},
 			true,
 			false,
@@ -84,9 +68,9 @@ func TestBoundInteractiveObject_Interact(t *testing.T) {
 			"Error",
 		},
 		{
-			getSuccessRoom(),
-			func(args []string, items []Item) (code int, err error) {
-				return 0, nil
+			getSuccessAction(),
+			func(args []string, items []Item) error {
+				return nil
 			},
 			true,
 			true,
@@ -98,10 +82,11 @@ func TestBoundInteractiveObject_Interact(t *testing.T) {
 	for i, item := range testData {
 		var inter = NewInteractiveObject(
 			"",
+			0,
 			"",
 			item.isAccessible,
-			item.room,
-			item.codeGen,
+			item.checker,
+			item.action,
 		)
 
 		var res, err = inter.Interact(nil, nil)
