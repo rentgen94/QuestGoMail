@@ -20,7 +20,7 @@ func TestManagerPool_Run(t *testing.T) { // smoke test :)
 
 	var command = AddressedCommand{
 		Address: 0,
-		Command: NewCommand(getSlotsCode, "", nil, nil),
+		Command: NewCommand(GetSlotsCode, "", nil, nil),
 	}
 
 	pool.SendCommand(command)

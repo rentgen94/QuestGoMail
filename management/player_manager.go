@@ -82,12 +82,12 @@ func (manager *PlayerManager) Finished() bool {
 
 func (manager *PlayerManager) getCommandResponse(command Command) Response {
 	var methodMap = map[int]func(*Response, *PlayerManager, Command){
-		getRoomCode:        handleRoomCode,
-		getSlotsCode:       handleSlotsCode,
-		getDoorsCode:       handleDoorsCode,
-		getItemsCode:       handleItemsCode,
-		getBagCode:         handleBagCode,
-		getIteractivesCode: handleIteractivesCode,
+		GetRoomCode:        handleRoomCode,
+		GetSlotsCode:       handleSlotsCode,
+		GetDoorsCode:       handleDoorsCode,
+		GetItemsCode:       handleItemsCode,
+		GetBagCode:         handleBagCode,
+		GetIteractivesCode: handleIteractivesCode,
 		enterCode:          handleEnterCode,
 		interactCode:       handleInteractCode,
 		takeCode:           handleTakeCode,

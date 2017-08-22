@@ -44,4 +44,41 @@ var routes = Routes{
 		"/player/register",
 		env.PlayerRegisterPost,
 	},
+	Route{
+		"GameLookAroundGet",
+		"GET",
+		"/game/look_around",
+		GameLookAroundGet,
+	},
+	Route{
+		"GameBagGet",
+		"GET",
+		"/game/look_around/bag",
+		GameBagGet,
+	},
+	Route{
+		"GameItemsGet",
+		"GET",
+		"/game/look_around/entities/items",
+		GameItemsGet,
+	},
+	Route{
+		"GameSlotsGet",
+		"GET",
+		"/game/look_around/entities/slots",
+		GameSlotsGet,
+	},
+	Route{
+		"GameInteractivesGet",
+		"GET",
+		"/game/look_around/entities/interactives",
+		GameIteractivesGet,
+	},
+	Route{
+		"GameDoorsGet",
+		"GET",
+		"/game/look_around/entities/doors",
+		GameDoorsGet,
+	},
+
 }
