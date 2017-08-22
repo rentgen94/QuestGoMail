@@ -15,26 +15,26 @@ func (env *Env) GameCommandPost(w http.ResponseWriter, r *http.Request) {
 	session := env.getSession(w, r)
 	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
 
-	if session.Values[env.authToken] == nil {
+	if session.IsNew {
 		// Игрок не авторизован
 		w.WriteHeader(http.StatusForbidden)
 		return
 	}
 	var command management.Command
 
-	body, err := ioutil.ReadAll(io.LimitReader(r.Body, 1048576))
+	body, err := ioutil.ReadAll(io.LimitReader(r.Body, maxReadBytes))
 	if err != nil {
-		w.WriteHeader(http.StatusInternalServerError)
+		writeInternalError(w)
 		return
 	}
 	if err := r.Body.Close(); err != nil {
-		w.WriteHeader(http.StatusInternalServerError)
+		writeInternalError(w)
 		return
 	}
 	if err := json.Unmarshal(body, &command); err != nil {
 		w.WriteHeader(http.StatusBadRequest) // unprocessable entity
 		if err := json.NewEncoder(w).Encode(err); err != nil {
-			w.WriteHeader(http.StatusInternalServerError)
+			writeInternalError(w)
 			return
 		}
 		return
@@ -43,12 +43,12 @@ func (env *Env) GameCommandPost(w http.ResponseWriter, r *http.Request) {
 	//Todo Привязать к основному PoolManager
 	managerPool := management.NewManagerPool(10, 10)
 	//Todo получать game_id
-	game_id, _ := session.Values[env.authToken].(int)
+	game_id, _ := session.Values[env.playerId].(int)
 	managerPool.SendCommand(management.AddressedCommand{game_id, command})
 	response := managerPool.GetResponseSync(game_id)
 	w.WriteHeader(http.StatusOK)
 	if err := json.NewEncoder(w).Encode(response); err != nil {
-		w.WriteHeader(http.StatusInternalServerError)
+		writeInternalError(w)
 		return
 	}
 }

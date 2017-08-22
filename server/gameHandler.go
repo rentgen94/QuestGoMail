@@ -39,7 +39,7 @@ func (env *Env)  GameIteractivesGet (w http.ResponseWriter, r *http.Request) {
 func (env *Env)  GameComandGet(w http.ResponseWriter, r *http.Request, comandType int) {
 	session := env.getSession(w, r)
 
-	if session.Values[env.authToken] == nil {
+	if session.Values[env.playerId] == nil {
 		// Игрок не авторизован
 		w.Header().Set("Content-Type", "application/json; charset=UTF-8")
 		w.WriteHeader(http.StatusForbidden)
@@ -49,7 +49,7 @@ func (env *Env)  GameComandGet(w http.ResponseWriter, r *http.Request, comandTyp
 	//Todo Привязать к основному PoolManager
 	managerPool := management.NewManagerPool(10, 10)
 	//Todo получать game_id
-	game_id, _ := session.Values[env.authToken].(int)
+	game_id, _ := session.Values[env.playerId].(int)
 	room := entities.NewRoom(0, "ny first room", "our demons hide in the dark")
 	player := entities.NewPlayer(room, 100)
 	var manager, _ = management.NewPlayerManager(player, 10, 10)

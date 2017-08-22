@@ -6,18 +6,22 @@ import (
 	"net/http"
 )
 
+const (
+	maxReadBytes = 1048576
+)
+
 type Env struct {
-	PlayerDAO database.PlayerDAO
-	Store *sessions.CookieStore
-	authToken string
+	PlayerDAO  database.PlayerDAO
+	Store      *sessions.CookieStore
+	playerId   string
 	cookieName string
 }
 
 func NewEnv() Env {
-	return Env {
-		PlayerDAO: database.NewDBPlayerDAO(database.Init()),
-		Store: sessions.NewCookieStore([]byte("server-cookie-store")),
-		authToken: "auth_token",
+	return Env{
+		PlayerDAO:  database.NewDBPlayerDAO(database.Init()),
+		Store:      sessions.NewCookieStore([]byte("server-cookie-store")),
+		playerId:   "player_id",
 		cookieName: "quest_go_mail",
 	}
 }
@@ -30,4 +34,8 @@ func (env *Env) getSession(w http.ResponseWriter, r *http.Request) *sessions.Ses
 		return nil
 	}
 	return session
+}
+
+func writeInternalError(w http.ResponseWriter) {
+	w.WriteHeader(http.StatusInternalServerError)
 }
