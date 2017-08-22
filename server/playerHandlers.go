@@ -22,33 +22,19 @@ func (env *Env) PlayerLoginPost(w http.ResponseWriter, r *http.Request) {
 	player := new(entities.Player)
 	parsePlayer(w, r, player)
 
-	if id := session.Values[env.authToken]; id != nil {
-		founded, err := env.PlayerDAO.FindPlayerById(id.(int))
-		if equal(founded, player) && err == nil {
-			w.WriteHeader(http.StatusOK)
-			w.Write([]byte(PlayerFoundOk))
-			return
-		} else {
-			session.Values[env.authToken] = nil
-			session.Save(r, w)
-			w.WriteHeader(http.StatusBadRequest)
-			w.Write([]byte(PlayerNotFound))
-			return
-		}
+	founded, err := env.PlayerDAO.FindPlayer(player)
+	if equal(founded, player) && err == nil {
+		session.Values[env.authToken] = founded.Id
+		session.Save(r, w)
+		w.WriteHeader(http.StatusOK)
+		w.Write([]byte(PlayerFoundOk))
+		return
 	} else {
-		player, err := env.PlayerDAO.FindPlayer(player)
-
-		if player != nil && err == nil {
-			session.Values[env.authToken] = player.Id
-			session.Save(r, w)
-			w.WriteHeader(http.StatusOK)
-			w.Write([]byte(PlayerFoundOk))
-			return
-		} else {
-			w.WriteHeader(http.StatusNotFound)
-			w.Write([]byte(PlayerNotFound))
-			return
-		}
+		session.Values[env.authToken] = nil
+		session.Save(r, w)
+		w.WriteHeader(http.StatusBadRequest)
+		w.Write([]byte(PlayerNotFound))
+		return
 	}
 }
 
@@ -72,9 +58,11 @@ func parsePlayer(w http.ResponseWriter, r *http.Request, player *entities.Player
 	body, err := ioutil.ReadAll(io.LimitReader(r.Body, 1048576))
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
+		return
 	}
 	if err := r.Body.Close(); err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
+		return
 	}
 	if err := json.Unmarshal(body, &player); err != nil {
 		w.WriteHeader(422) // unprocessable entity
@@ -86,7 +74,9 @@ func parsePlayer(w http.ResponseWriter, r *http.Request, player *entities.Player
 }
 
 func equal(this, other *entities.Player) (bool) {
-	if this.Login != other.Login {
+	if this == nil || other == nil {
+		return false
+	} else if this.Login != other.Login {
 		return false
 	} else if this.Password != other.Password {
 		return false
