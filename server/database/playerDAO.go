@@ -2,25 +2,39 @@ package database
 
 import (
 	"database/sql"
-	"fmt"
 	"log"
 
 	"github.com/rentgen94/QuestGoMail/entities"
 )
 
 const (
-	RegisterOk        = "Пользователь успешно зарегистрирован."
-	AlreadyRegistered = "Пользователь уже присутствует в базе данных."
-	RegisterError     = "Не удалось зарегестрировать пользователя."
-	PlayerNotFound    = "Не удалось найти игрока."
-	PlayerFoundError  = "Ошибка поиска игрока при обращении к базе данных."
-	PlayerFoundOk     = "Игрок найден."
+	RegisterOk        = "\"Player login successful.\""
+	AlreadyRegistered = "\"Player already registered.\""
+	RegisterError     = "\"Player register error.\""
+	PlayerNotFound    = "\"Player not found.\""
+	PlayerFoundError  = "\"Player found error.\""
+	PlayerFoundOk     = "\"Player found successful.\""
+
+	createPlayer   = "INSERT INTO users(name, password) VALUES ($1, $2);"
+	findPlayer     = "SELECT * FROM users WHERE name=$1 AND password=$2"
+	findById       = "SELECT * FROM users WHERE id=$1"
+	findAllPlayers = "SELECT * FROM users"
 )
 
-func CreateUser(player *entities.Player) string {
-	founded, _ := FindPlayer(player)
+type dbPlayerDAO struct {
+	db *sql.DB
+}
+
+func NewDBPlayerDAO(db *sql.DB) PlayerDAO {
+	var result = new(dbPlayerDAO)
+	result.db = db
+	return result
+}
+
+func (dao *dbPlayerDAO) CreatePlayer(player *entities.Player) string {
+	founded, _ := dao.FindPlayer(player)
 	if founded == nil {
-		_, err := db.Exec("INSERT INTO users(name, password) VALUES ($1, $2);", player.Login, player.Password)
+		_, err := dao.db.Exec(createPlayer, player.Login, player.Password)
 		if err != nil {
 			return RegisterError
 		}
@@ -31,8 +45,8 @@ func CreateUser(player *entities.Player) string {
 	return RegisterOk
 }
 
-func FindPlayer(player *entities.Player) (*entities.Player, string) {
-	row := db.QueryRow("SELECT * FROM users WHERE name=$1 AND password=$2", player.Login, player.Password)
+func (dao *dbPlayerDAO) FindPlayer(player *entities.Player) (*entities.Player, string) {
+	row := dao.db.QueryRow(findPlayer, player.Login, player.Password)
 
 	founded := new(entities.Player)
 	err := row.Scan(&founded.Id, &founded.Login, &founded.Password)
@@ -45,8 +59,8 @@ func FindPlayer(player *entities.Player) (*entities.Player, string) {
 	return founded, PlayerFoundOk
 }
 
-func FindPlayerById(id int) (*entities.Player, string) {
-	row := db.QueryRow("SELECT * FROM users WHERE id=$1", id)
+func (dao *dbPlayerDAO) FindPlayerById(id int) (*entities.Player, string) {
+	row := dao.db.QueryRow(findById, id)
 
 	founded := new(entities.Player)
 	err := row.Scan(&founded.Id, &founded.Login, &founded.Password)
@@ -59,8 +73,8 @@ func FindPlayerById(id int) (*entities.Player, string) {
 	return founded, PlayerFoundOk
 }
 
-func ShowAllUser() []*entities.Player {
-	rows, err := db.Query("SELECT * FROM users")
+func (dao *dbPlayerDAO) SelectAllPlayers() []*entities.Player {
+	rows, err := dao.db.Query(findAllPlayers)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -78,10 +92,6 @@ func ShowAllUser() []*entities.Player {
 
 	if err = rows.Err(); err != nil {
 		log.Fatal(err)
-	}
-
-	for _, us := range usrs {
-		fmt.Printf("%d, %s, %s\n", us.Id, us.Login, us.Password)
 	}
 
 	return usrs

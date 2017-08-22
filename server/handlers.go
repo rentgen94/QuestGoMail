@@ -11,13 +11,14 @@ import (
 type Default struct {
 }
 
-func GameCommandPost(w http.ResponseWriter, r *http.Request) {
+func (env *Env) GameCommandPost(w http.ResponseWriter, r *http.Request) {
 	session := getSession(w, r)
+	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
 
 	if session.Values[authToken] == nil {
 		// Игрок не авторизован
-		w.Header().Set("Content-Type", "application/json; charset=UTF-8")
 		w.WriteHeader(http.StatusForbidden)
+		return
 	}
 	var command management.Command
 
@@ -29,7 +30,6 @@ func GameCommandPost(w http.ResponseWriter, r *http.Request) {
 		panic(err)
 	}
 	if err := json.Unmarshal(body, &command); err != nil {
-		w.Header().Set("Content-Type", "application/json; charset=UTF-8")
 		w.WriteHeader(http.StatusBadRequest) // unprocessable entity
 		if err := json.NewEncoder(w).Encode(err); err != nil {
 			panic(err)
@@ -43,13 +43,12 @@ func GameCommandPost(w http.ResponseWriter, r *http.Request) {
 	game_id, _ := session.Values[authToken].(int)
 	managerPool.SendCommand(management.AddressedCommand{game_id, command})
 	response := managerPool.GetResponseSync(game_id)
-	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
 	w.WriteHeader(http.StatusOK)
 	if err := json.NewEncoder(w).Encode(response); err != nil {
 		panic(err)
 	}
 }
 
-func Index(w http.ResponseWriter, r *http.Request) {
+func (env *Env) Index(w http.ResponseWriter, r *http.Request) {
 	w.Write([]byte("Hello world!"))
 }

@@ -9,16 +9,16 @@ import (
 	"net/http"
 )
 
-func PlayerLoginPost(w http.ResponseWriter, r *http.Request) {
+func (env *Env) PlayerLoginPost(w http.ResponseWriter, r *http.Request) {
 	session := getSession(w, r)
+	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
 
 	player := new(entities.Player)
 	var msg string
 	parsePlayer(w, r, player)
 
 	if id := session.Values[authToken]; id != nil {
-		if founded, _ := database.FindPlayerById(id.(int)); founded != nil && founded.Login == player.Login && founded.Password == player.Password {
-			w.Header().Set("Content-Type", "application/json; charset=UTF-8")
+		if founded, _ := env.PlayerDAO.FindPlayerById(id.(int)); founded != nil && founded.Login == player.Login && founded.Password == player.Password {
 			w.WriteHeader(http.StatusOK)
 			return
 		} else {
@@ -28,36 +28,32 @@ func PlayerLoginPost(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 	} else {
-		player, msg = database.FindPlayer(player)
+		player, msg = env.PlayerDAO.FindPlayer(player)
 
 		if msg == database.PlayerFoundOk {
 			session.Values[authToken] = player.Id
 			session.Save(r, w)
-			w.Header().Set("Content-Type", "application/json; charset=UTF-8")
 			w.WriteHeader(http.StatusOK)
 			return
 		} else {
-			w.Header().Set("Content-Type", "application/json; charset=UTF-8")
 			w.WriteHeader(http.StatusNotFound)
 			return
 		}
 	}
 }
 
-func PlayerRegisterPost(w http.ResponseWriter, r *http.Request) {
+func (env *Env) PlayerRegisterPost(w http.ResponseWriter, r *http.Request) {
 	var player entities.Player
+	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
 	parsePlayer(w, r, &player)
 
-	msg := database.CreateUser(&player)
+	msg := env.PlayerDAO.CreatePlayer(&player)
 	switch msg {
 	case database.RegisterOk:
-		w.Header().Set("Content-Type", "application/json; charset=UTF-8")
 		w.WriteHeader(http.StatusCreated)
 	case database.AlreadyRegistered:
-		w.Header().Set("Content-Type", "application/json; charset=UTF-8")
 		w.WriteHeader(http.StatusConflict)
 	default:
-		w.Header().Set("Content-Type", "application/json; charset=UTF-8")
 		w.WriteHeader(http.StatusInternalServerError)
 	}
 }
@@ -71,7 +67,6 @@ func parsePlayer(w http.ResponseWriter, r *http.Request, player *entities.Player
 		panic(err)
 	}
 	if err := json.Unmarshal(body, &player); err != nil {
-		w.Header().Set("Content-Type", "application/json; charset=UTF-8")
 		w.WriteHeader(422) // unprocessable entity
 		if err := json.NewEncoder(w).Encode(err); err != nil {
 			panic(err)
