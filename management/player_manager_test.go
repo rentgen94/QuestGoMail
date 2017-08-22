@@ -67,11 +67,11 @@ func TestPlayerManager_getCommandResponse(t *testing.T) {
 		errMsg  string
 	}{
 		{
-			command: NewCommand(getRoomCode, "", nil, nil),
+			command: NewCommand(GetRoomCode, "", nil, nil),
 			errMsg:  "",
 		},
 		{
-			command: NewCommand(getBagCode, "", nil, nil),
+			command: NewCommand(GetBagCode, "", nil, nil),
 			errMsg:  "",
 		},
 		{
@@ -142,11 +142,11 @@ func TestPlayerManager_Run(t *testing.T) {
 		errMsg  string
 	}{
 		{
-			command: NewCommand(getRoomCode, "", nil, nil),
+			command: NewCommand(GetRoomCode, "", nil, nil),
 			errMsg:  "",
 		},
 		{
-			command: NewCommand(getBagCode, "", nil, nil),
+			command: NewCommand(GetBagCode, "", nil, nil),
 			errMsg:  "",
 		},
 		{
