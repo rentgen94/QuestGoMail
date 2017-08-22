@@ -3,40 +3,50 @@ package server
 import (
 	"encoding/json"
 	"github.com/rentgen94/QuestGoMail/entities"
-	"github.com/rentgen94/QuestGoMail/server/database"
 	"io"
 	"io/ioutil"
 	"net/http"
 )
 
+const (
+	RegisterOk        = "\"Player register successful.\""
+	RegisterError     = "\"Player register error.\""
+	PlayerNotFound    = "\"Player not found.\""
+	PlayerFoundOk     = "\"Player found successful.\""
+)
+
 func (env *Env) PlayerLoginPost(w http.ResponseWriter, r *http.Request) {
-	session := getSession(w, r)
+	session:= env.getSession(w, r)
 	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
 
 	player := new(entities.Player)
-	var msg string
 	parsePlayer(w, r, player)
 
-	if id := session.Values[authToken]; id != nil {
-		if founded, _ := env.PlayerDAO.FindPlayerById(id.(int)); founded != nil && founded.Login == player.Login && founded.Password == player.Password {
+	if id := session.Values[env.authToken]; id != nil {
+		founded, err := env.PlayerDAO.FindPlayerById(id.(int))
+		if equal(founded, player) && err == nil {
 			w.WriteHeader(http.StatusOK)
+			w.Write([]byte(PlayerFoundOk))
 			return
 		} else {
-			session.Values[authToken] = nil
+			session.Values[env.authToken] = nil
 			session.Save(r, w)
 			w.WriteHeader(http.StatusBadRequest)
+			w.Write([]byte(PlayerNotFound))
 			return
 		}
 	} else {
-		player, msg = env.PlayerDAO.FindPlayer(player)
+		player, err := env.PlayerDAO.FindPlayer(player)
 
-		if msg == database.PlayerFoundOk {
-			session.Values[authToken] = player.Id
+		if player != nil && err == nil {
+			session.Values[env.authToken] = player.Id
 			session.Save(r, w)
 			w.WriteHeader(http.StatusOK)
+			w.Write([]byte(PlayerFoundOk))
 			return
 		} else {
 			w.WriteHeader(http.StatusNotFound)
+			w.Write([]byte(PlayerNotFound))
 			return
 		}
 	}
@@ -47,30 +57,40 @@ func (env *Env) PlayerRegisterPost(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
 	parsePlayer(w, r, &player)
 
-	msg := env.PlayerDAO.CreatePlayer(&player)
-	switch msg {
-	case database.RegisterOk:
+	err := env.PlayerDAO.CreatePlayer(&player)
+	if err == nil {
 		w.WriteHeader(http.StatusCreated)
-	case database.AlreadyRegistered:
+		w.Write([]byte(RegisterOk))
+	} else {
 		w.WriteHeader(http.StatusConflict)
-	default:
-		w.WriteHeader(http.StatusInternalServerError)
+		w.Write([]byte(RegisterError))
 	}
 }
 
 func parsePlayer(w http.ResponseWriter, r *http.Request, player *entities.Player) {
+	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
 	body, err := ioutil.ReadAll(io.LimitReader(r.Body, 1048576))
 	if err != nil {
-		panic(err)
+		w.WriteHeader(http.StatusInternalServerError)
 	}
 	if err := r.Body.Close(); err != nil {
-		panic(err)
+		w.WriteHeader(http.StatusInternalServerError)
 	}
 	if err := json.Unmarshal(body, &player); err != nil {
 		w.WriteHeader(422) // unprocessable entity
 		if err := json.NewEncoder(w).Encode(err); err != nil {
-			panic(err)
+			w.WriteHeader(http.StatusInternalServerError)
 		}
 		return
 	}
+}
+
+func equal(this, other *entities.Player) (bool) {
+	if this.Login != other.Login {
+		return false
+	} else if this.Password != other.Password {
+		return false
+	}
+
+	return true
 }
