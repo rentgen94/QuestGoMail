@@ -11,7 +11,7 @@ import (
 const (
 	playerInTheVoid             = "Player is not in a room"
 	badCode                     = "Bad code"
-	doorNotFoundTemplate        = "Door \"%s\" not found"
+	doorNotFoundTemplate        = "Door %v not found"
 	interactiveNotFoundTemplate = "Interactive \"%s\" not found"
 	itemCodeNotSupplied         = "Item code not supplied"
 	cant_create_json            = "can't get data"
@@ -200,7 +200,7 @@ func handleItemsCode(resp *Response, manager *PlayerManager, command Command) {
 
 func handleBagCode(resp *Response, manager *PlayerManager, command Command) {
 	a := []itemResponse{}
-	for k, _ := range manager.player.Bag().Items() {
+	for k := range manager.player.Bag().Items() {
 		it, _ := manager.player.Bag().GetItem(k)
 		slt := &itemResponse{
 			name:        it.Name,
@@ -242,6 +242,7 @@ func handleIteractivesCode(resp *Response, manager *PlayerManager, command Comma
 	resp.Data = res
 }
 
+// TODO choose identifier type
 func handleEnterCode(resp *Response, manager *PlayerManager, command Command) {
 	var door, ok = manager.player.Room().Doors()[command.itemKey]
 	if !ok {
@@ -254,6 +255,7 @@ func handleEnterCode(resp *Response, manager *PlayerManager, command Command) {
 	}
 }
 
+// TODO choose identifier type
 func handleInteractCode(resp *Response, manager *PlayerManager, command Command) {
 	var inter, ok = manager.player.Room().Interactives()[command.itemKey]
 	if !ok {

@@ -33,8 +33,8 @@ var onlyRoom = func() *entities.Room {
 	room.Actions()[openCode] = openAction
 
 	var box = entities.NewInteractiveObject(
-		boxName,
 		0,
+		boxName,
 		"Коробка с сокровищем внутри",
 		true,
 		room,

@@ -1,33 +1,21 @@
 package entities
 
-type roomsType map[int]*Room
-type actType func(labyrinth *Labyrinth) (result InteractionResult, err error)
+type RoomsType map[int]*Room
+type ActType func(labyrinth *Labyrinth) (result InteractionResult, err error)
 
 type Action struct {
-	id int
-	isAccessible bool
-	name         string
+	id        int
+	name      string
 	labyrinth *Labyrinth
-	act          actType
+	act       ActType
 }
 
-func NewAction(name string, labyrinth *Labyrinth, isAccessible bool, act actType) *Action {
+func NewAction(name string, act ActType) *Action {
 	return &Action{
-		name:         name,
-		isAccessible: isAccessible,
-		act:          act,
-		labyrinth: labyrinth,
+		name:      name,
+		act:       act,
+		labyrinth: nil,
 	}
-}
-
-
-// TODO maybe Action does not need isAccessible member
-func (a *Action) IsAccessible() bool {
-	return a.isAccessible
-}
-
-func (a *Action) SetAccessible(isAccessible bool) {
-	a.isAccessible = isAccessible
 }
 
 func (a *Action) Name() string {
@@ -36,4 +24,12 @@ func (a *Action) Name() string {
 
 func (a *Action) Act() (result InteractionResult, err error) {
 	return a.act(a.labyrinth)
+}
+
+func (a *Action) GetLabyrinth() *Labyrinth {
+	return a.labyrinth
+}
+
+func (a *Action) SetLabyrinth(labyrinth *Labyrinth) {
+	a.labyrinth = labyrinth
 }

@@ -9,10 +9,8 @@ import (
 func getFailAction() *Action {
 	return NewAction(
 		"",
-		nil,
-		false,
 		func(l *Labyrinth) (res InteractionResult, err error) {
-			return ContinueResult(""), nil
+			return ContinueResult(""), errors.New(fmt.Sprintf(ActionNotAvailableTemplate, 0))
 		},
 	)
 }
@@ -20,8 +18,6 @@ func getFailAction() *Action {
 func getSuccessAction() *Action {
 	return NewAction(
 		"",
-		nil,
-		true,
 		func(l *Labyrinth) (res InteractionResult, err error) {
 			return ContinueResult("Success"), nil
 		},
@@ -31,7 +27,7 @@ func getSuccessAction() *Action {
 func TestBoundInteractiveObject_Interact(t *testing.T) {
 	var testData = []struct {
 		action       *Action
-		checker InputChecker
+		checker      InputChecker
 		isAccessible bool
 		errIsNil     bool
 		msg          string
@@ -81,8 +77,8 @@ func TestBoundInteractiveObject_Interact(t *testing.T) {
 
 	for i, item := range testData {
 		var inter = NewInteractiveObject(
-			"",
 			0,
+			"",
 			"",
 			item.isAccessible,
 			item.checker,

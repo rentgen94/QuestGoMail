@@ -13,35 +13,36 @@ type InteractiveObject interface {
 	IsAccessible() bool
 	SetAccessible(isAccessible bool)
 	Interact(args []string, items []Item) (result InteractionResult, err error)
+	SetAction(action *Action)
 }
 
 type InputChecker func(args []string, items []Item) error
 
 type boundInteractiveObject struct {
-	id                  int
-	name                string
-	description         string
-	isAccessible        bool
-	room                *Room
-	checker InputChecker
-	action *Action
+	id           int
+	name         string
+	description  string
+	isAccessible bool
+	room         *Room
+	checker      InputChecker
+	action       *Action
 }
 
 func NewInteractiveObject(
-	name string,
 	id int,
+	name string,
 	description string,
 	isAccessible bool,
 	checker InputChecker,
 	action *Action,
 ) InteractiveObject {
 	return &boundInteractiveObject{
-		name:                name,
-		id:                  id,
-		description:         description,
-		isAccessible:        isAccessible,
-		checker: checker,
-		action: action,
+		name:         name,
+		id:           id,
+		description:  description,
+		isAccessible: isAccessible,
+		checker:      checker,
+		action:       action,
 	}
 }
 
@@ -76,4 +77,8 @@ func (inter *boundInteractiveObject) Name() string {
 
 func (inter *boundInteractiveObject) Description() string {
 	return inter.description
+}
+
+func (inter *boundInteractiveObject) SetAction(action *Action) {
+	inter.action = action
 }

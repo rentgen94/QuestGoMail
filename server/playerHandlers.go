@@ -9,14 +9,14 @@ import (
 )
 
 const (
-	RegisterOk        = "\"Player register successful.\""
-	RegisterError     = "\"Player register error.\""
-	PlayerNotFound    = "\"Player not found.\""
-	PlayerFoundOk     = "\"Player found successful.\""
+	RegisterOk     = "\"Player register successful.\""
+	RegisterError  = "\"Player register error.\""
+	PlayerNotFound = "\"Player not found.\""
+	PlayerFoundOk  = "\"Player found successful.\""
 )
 
 func (env *Env) PlayerLoginPost(w http.ResponseWriter, r *http.Request) {
-	session:= env.getSession(w, r)
+	session := env.getSession(w, r)
 	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
 
 	player := new(entities.Player)
@@ -73,7 +73,7 @@ func parsePlayer(w http.ResponseWriter, r *http.Request, player *entities.Player
 	}
 }
 
-func equal(this, other *entities.Player) (bool) {
+func equal(this, other *entities.Player) bool {
 	if this == nil || other == nil {
 		return false
 	} else if this.Login != other.Login {

@@ -2,41 +2,36 @@ package server
 
 import (
 	"encoding/json"
+	"github.com/rentgen94/QuestGoMail/entities"
 	"github.com/rentgen94/QuestGoMail/management"
 	"net/http"
-	"github.com/rentgen94/QuestGoMail/entities"
 )
 
-func (env *Env) GameLookAroundGet (w http.ResponseWriter, r *http.Request) {
-	env.GameComandGet (w, r, management.GetRoomCode)
+func (env *Env) GameLookAroundGet(w http.ResponseWriter, r *http.Request) {
+	env.GameComandGet(w, r, management.GetRoomCode)
 }
 
-func (env *Env)  GameSlotsGet (w http.ResponseWriter, r *http.Request) {
-	env.GameComandGet (w, r, management.GetSlotsCode)
+func (env *Env) GameSlotsGet(w http.ResponseWriter, r *http.Request) {
+	env.GameComandGet(w, r, management.GetSlotsCode)
 }
 
-
-func (env *Env)  GameBagGet (w http.ResponseWriter, r *http.Request) {
-	env.GameComandGet (w, r, management.GetBagCode)
+func (env *Env) GameBagGet(w http.ResponseWriter, r *http.Request) {
+	env.GameComandGet(w, r, management.GetBagCode)
 }
 
-
-func (env *Env)  GameDoorsGet (w http.ResponseWriter, r *http.Request) {
-	env.GameComandGet (w, r, management.GetDoorsCode)
+func (env *Env) GameDoorsGet(w http.ResponseWriter, r *http.Request) {
+	env.GameComandGet(w, r, management.GetDoorsCode)
 }
 
-
-func (env *Env)  GameItemsGet (w http.ResponseWriter, r *http.Request) {
-	env.GameComandGet (w, r, management.GetItemsCode)
+func (env *Env) GameItemsGet(w http.ResponseWriter, r *http.Request) {
+	env.GameComandGet(w, r, management.GetItemsCode)
 }
 
-
-func (env *Env)  GameIteractivesGet (w http.ResponseWriter, r *http.Request) {
-	env.GameComandGet (w, r, management.GetIteractivesCode)
+func (env *Env) GameIteractivesGet(w http.ResponseWriter, r *http.Request) {
+	env.GameComandGet(w, r, management.GetIteractivesCode)
 }
 
-
-func (env *Env)  GameComandGet(w http.ResponseWriter, r *http.Request, comandType int) {
+func (env *Env) GameComandGet(w http.ResponseWriter, r *http.Request, comandType int) {
 	session := env.getSession(w, r)
 
 	if session.Values[env.authToken] == nil {
@@ -44,7 +39,7 @@ func (env *Env)  GameComandGet(w http.ResponseWriter, r *http.Request, comandTyp
 		w.Header().Set("Content-Type", "application/json; charset=UTF-8")
 		w.WriteHeader(http.StatusForbidden)
 	}
-	command := management.NewCommand (comandType, "", nil, nil)
+	command := management.NewCommand(comandType, "", nil, nil)
 
 	//Todo Привязать к основному PoolManager
 	managerPool := management.NewManagerPool(10, 10)

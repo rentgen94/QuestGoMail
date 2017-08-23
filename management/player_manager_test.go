@@ -15,33 +15,34 @@ const (
 	itemId          = 100
 	bigItemId       = 200
 	playerItemId    = 300
+	doorId = 10
+	interactiveId = 15
 )
 
 func getRoom() *entities.Room {
 	var room = entities.NewRoom(0, "", "")
 	var action = entities.NewAction(
 		"open",
-		true,
-		func(r map[int]*entities.Room) (res entities.InteractionResult, err error) {
+		func(labyrinth *entities.Labyrinth) (result entities.InteractionResult, err error) {
 			return entities.ContinueResult("Success"), nil
 		},
 	)
-	room.Actions()[0] = action
 
 	var box = entities.NewInteractiveObject(
+		interactiveId,
 		interactiveName,
-		0,
 		"",
 		true,
-		room,
-		func(args []string, items []entities.Item) (code int, err error) {
-			return 0, nil
+		func(args []string, items []entities.Item) error {
+			return nil
 		},
+		action,
 	)
-	room.Interactives()[box.Name()] = box
+
+	room.Interactives()[box.Id()] = box
 
 	var slot = entities.NewSlot(0, slotName, 10, true)
-	room.Slots()[slot.Name()] = slot
+	room.Slots()[slot.Id()] = slot
 
 	var item = entities.Item{Name: itemName, Size: 1, Id: itemId}
 	slot.PutItem(item)
@@ -49,8 +50,8 @@ func getRoom() *entities.Room {
 	var bigItem = entities.Item{Name: itemName, Size: 6, Id: bigItemId}
 	slot.PutItem(bigItem)
 
-	var door = entities.NewDoor(doorName, true, room, room)
-	room.Doors()[door.Name()] = door
+	var door = entities.NewDoor(doorId, doorName, true, room, room)
+	room.Doors()[door.Id()] = door
 
 	return room
 }
@@ -67,55 +68,55 @@ func TestPlayerManager_getCommandResponse(t *testing.T) {
 		errMsg  string
 	}{
 		{
-			command: NewCommand(GetRoomCode, "", nil, nil),
+			command: NewCommand(GetRoomCode, 0, nil, nil),
 			errMsg:  "",
 		},
 		{
-			command: NewCommand(GetBagCode, "", nil, nil),
+			command: NewCommand(GetBagCode, 0, nil, nil),
 			errMsg:  "",
 		},
 		{
-			command: NewCommand(enterCode, doorName, nil, nil),
+			command: NewCommand(enterCode, doorId, nil, nil),
 			errMsg:  "",
 		},
 		{
-			command: NewCommand(enterCode, "Some", nil, nil),
-			errMsg:  fmt.Sprintf(doorNotFoundTemplate, "Some"),
+			command: NewCommand(enterCode, 1, nil, nil),
+			errMsg:  fmt.Sprintf(doorNotFoundTemplate, 1),
 		},
 		{
-			command: NewCommand(interactCode, interactiveName, nil, nil),
+			command: NewCommand(interactCode, interactiveId, nil, nil),
 			errMsg:  "",
 		},
 		{
-			command: NewCommand(interactCode, "Some", nil, nil),
-			errMsg:  fmt.Sprintf(interactiveNotFoundTemplate, "Some"),
+			command: NewCommand(interactCode, 100, nil, nil),
+			errMsg:  fmt.Sprintf(interactiveNotFoundTemplate, 100),
 		},
 		{
-			command: NewCommand(takeCode, "", make([]string, 0), nil),
+			command: NewCommand(takeCode, 0, make([]string, 0), nil),
 			errMsg:  itemCodeNotSupplied,
 		},
 		{
-			command: NewCommand(takeCode, "", []string{strconv.Itoa(itemId)}, nil),
+			command: NewCommand(takeCode, 0, []string{strconv.Itoa(itemId)}, nil),
 			errMsg:  "",
 		},
 		{
-			command: NewCommand(takeCode, "", []string{strconv.Itoa(itemId + 1)}, nil),
+			command: NewCommand(takeCode, 0, []string{strconv.Itoa(itemId + 1)}, nil),
 			errMsg:  fmt.Sprintf(entities.FailedToTakeTemplate, itemId+1),
 		},
 		{
-			command: NewCommand(takeCode, "", []string{strconv.Itoa(bigItemId)}, nil),
+			command: NewCommand(takeCode, 0, []string{strconv.Itoa(bigItemId)}, nil),
 			errMsg:  fmt.Sprintf(entities.FailedToTakeTemplate, bigItemId),
 		},
 		{
-			command: NewCommand(putCode, "", []string{strconv.Itoa(playerItemId)}, nil),
+			command: NewCommand(putCode, 0, []string{strconv.Itoa(playerItemId)}, nil),
 			errMsg:  "",
 		},
 		{
-			command: NewCommand(putCode, "", []string{strconv.Itoa(playerItemId + 1)}, nil),
+			command: NewCommand(putCode, 0, []string{strconv.Itoa(playerItemId + 1)}, nil),
 			errMsg:  fmt.Sprintf(entities.CanNotPutItemTemplate, playerItemId+1, ""),
 		},
 		{
-			command: NewCommand(-100, "", nil, nil),
+			command: NewCommand(-100, 0, nil, nil),
 			errMsg:  badCode,
 		},
 	}
@@ -142,55 +143,55 @@ func TestPlayerManager_Run(t *testing.T) {
 		errMsg  string
 	}{
 		{
-			command: NewCommand(GetRoomCode, "", nil, nil),
+			command: NewCommand(GetRoomCode, 0, nil, nil),
 			errMsg:  "",
 		},
 		{
-			command: NewCommand(GetBagCode, "", nil, nil),
+			command: NewCommand(GetBagCode, 0, nil, nil),
 			errMsg:  "",
 		},
 		{
-			command: NewCommand(enterCode, doorName, nil, nil),
+			command: NewCommand(enterCode, doorId, nil, nil),
 			errMsg:  "",
 		},
 		{
-			command: NewCommand(enterCode, "Some", nil, nil),
-			errMsg:  fmt.Sprintf(doorNotFoundTemplate, "Some"),
+			command: NewCommand(enterCode, 100, nil, nil),
+			errMsg:  fmt.Sprintf(doorNotFoundTemplate, 100),
 		},
 		{
-			command: NewCommand(interactCode, interactiveName, nil, nil),
+			command: NewCommand(interactCode, interactiveId, nil, nil),
 			errMsg:  "",
 		},
 		{
-			command: NewCommand(interactCode, "Some", nil, nil),
-			errMsg:  fmt.Sprintf(interactiveNotFoundTemplate, "Some"),
+			command: NewCommand(interactCode, 100, nil, nil),
+			errMsg:  fmt.Sprintf(interactiveNotFoundTemplate, 100),
 		},
 		{
-			command: NewCommand(takeCode, "", make([]string, 0), nil),
+			command: NewCommand(takeCode, 0, make([]string, 0), nil),
 			errMsg:  itemCodeNotSupplied,
 		},
 		{
-			command: NewCommand(takeCode, "", []string{strconv.Itoa(itemId)}, nil),
+			command: NewCommand(takeCode, 0, []string{strconv.Itoa(itemId)}, nil),
 			errMsg:  "",
 		},
 		{
-			command: NewCommand(takeCode, "", []string{strconv.Itoa(itemId + 1)}, nil),
+			command: NewCommand(takeCode, 0, []string{strconv.Itoa(itemId + 1)}, nil),
 			errMsg:  fmt.Sprintf(entities.FailedToTakeTemplate, itemId+1),
 		},
 		{
-			command: NewCommand(takeCode, "", []string{strconv.Itoa(bigItemId)}, nil),
+			command: NewCommand(takeCode, 0, []string{strconv.Itoa(bigItemId)}, nil),
 			errMsg:  fmt.Sprintf(entities.FailedToTakeTemplate, bigItemId),
 		},
 		{
-			command: NewCommand(putCode, "", []string{strconv.Itoa(playerItemId)}, nil),
+			command: NewCommand(putCode, 0, []string{strconv.Itoa(playerItemId)}, nil),
 			errMsg:  "",
 		},
 		{
-			command: NewCommand(putCode, "", []string{strconv.Itoa(playerItemId + 1)}, nil),
+			command: NewCommand(putCode, 0, []string{strconv.Itoa(playerItemId + 1)}, nil),
 			errMsg:  fmt.Sprintf(entities.CanNotPutItemTemplate, playerItemId+1, ""),
 		},
 		{
-			command: NewCommand(-100, "", nil, nil),
+			command: NewCommand(-100, 0, nil, nil),
 			errMsg:  badCode,
 		},
 	}

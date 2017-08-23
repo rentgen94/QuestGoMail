@@ -1,9 +1,9 @@
 package dao
 
 import (
-	"testing"
-	"gopkg.in/DATA-DOG/go-sqlmock.v1"
 	"github.com/stretchr/testify/assert"
+	"gopkg.in/DATA-DOG/go-sqlmock.v1"
+	"testing"
 )
 
 func TestSlotDAO_getSlot_Success(t *testing.T) {
@@ -17,7 +17,7 @@ func TestSlotDAO_getSlot_Success(t *testing.T) {
 		AddRow(1, "box", 100, true)
 
 	mock.
-	ExpectQuery("SELECT ").
+		ExpectQuery("SELECT ").
 		WithArgs(1).
 		WillReturnRows(rows)
 
@@ -42,7 +42,7 @@ func TestSlotDAO_getSlot_Empty(t *testing.T) {
 	var rows = sqlmock.NewRows([]string{"id", "name", "capacity", "isAccessible"})
 
 	mock.
-	ExpectQuery("SELECT ").
+		ExpectQuery("SELECT ").
 		WithArgs(1).
 		WillReturnRows(rows)
 
@@ -67,12 +67,12 @@ func TestSlotDAO_getSlotItems_Success(t *testing.T) {
 		AddRow(1, "box", 1000, true)
 
 	mock.
-	ExpectQuery("SELECT id").
+		ExpectQuery("SELECT id").
 		WithArgs(1).
 		WillReturnRows(slotRows)
 
 	mock.
-	ExpectQuery("SELECT i.id").
+		ExpectQuery("SELECT i.id").
 		WithArgs(1).
 		WillReturnRows(itemRows)
 
@@ -104,12 +104,12 @@ func TestSlotDAO_GetById_Overfilled(t *testing.T) {
 		AddRow(1, "box", 100, true)
 
 	mock.
-	ExpectQuery("SELECT id").
+		ExpectQuery("SELECT id").
 		WithArgs(1).
 		WillReturnRows(slotRows)
 
 	mock.
-	ExpectQuery("SELECT i.id").
+		ExpectQuery("SELECT i.id").
 		WithArgs(1).
 		WillReturnRows(itemRows)
 

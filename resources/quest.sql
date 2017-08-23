@@ -37,6 +37,7 @@ CREATE TABLE Item (
 
 CREATE TABLE Slot (
   id           SERIAL PRIMARY KEY,
+  room         INT REFERENCES Room (id),
   name         VARCHAR(100),
   capacity     INT,
   isAccessible BOOLEAN
@@ -72,29 +73,26 @@ CREATE TABLE InteractiveObjectNeed (
 CREATE TABLE ActionInteractiveSwitch (
   id          SERIAL PRIMARY KEY,
   action      INT REFERENCES Action (id),
-  interactive INT REFERENCES Interactive (id)
+  interactive INT REFERENCES Interactive (id),
+  newState    BOOLEAN
 );
 
 CREATE TABLE ActionDoorSwitch (
-  id     SERIAL PRIMARY KEY,
-  action INT REFERENCES Action (id),
-  door   INT REFERENCES Door (id)
+  id       SERIAL PRIMARY KEY,
+  action   INT REFERENCES Action (id),
+  door     INT REFERENCES Door (id),
+  newState BOOLEAN
 );
 
 CREATE TABLE ActionSlotSwitch (
-  id     SERIAL PRIMARY KEY,
-  action INT REFERENCES Action (id),
-  slot   INT REFERENCES Slot (id)
+  id       SERIAL PRIMARY KEY,
+  action   INT REFERENCES Action (id),
+  slot     INT REFERENCES Slot (id),
+  newState BOOLEAN
 );
 
 CREATE TABLE SlotItemLink (
   id   SERIAL PRIMARY KEY,
   slot INT REFERENCES Slot (id),
   item INT REFERENCES Item (id)
-);
-
-CREATE TABLE RoomScenarioLink (
-  id       SERIAL PRIMARY KEY,
-  scenario INT REFERENCES Scenario (id),
-  room     INT REFERENCES Room (id)
 );

@@ -15,8 +15,9 @@ type Door struct {
 	room2        *Room
 }
 
-func NewDoor(name string, isAccessible bool, room1 *Room, room2 *Room) *Door {
+func NewDoor(id int, name string, isAccessible bool, room1 *Room, room2 *Room) *Door {
 	return &Door{
+		id: id,
 		name:         name,
 		isAccessible: isAccessible,
 		room1:        room1,

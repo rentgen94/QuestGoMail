@@ -1,23 +1,23 @@
 package server
 
 import (
-	"github.com/rentgen94/QuestGoMail/server/database"
 	"github.com/gorilla/sessions"
+	"github.com/rentgen94/QuestGoMail/server/database"
 	"net/http"
 )
 
 type Env struct {
-	PlayerDAO database.PlayerDAO
-	Store *sessions.CookieStore
-	authToken string
+	PlayerDAO  database.PlayerDAO
+	Store      *sessions.CookieStore
+	authToken  string
 	cookieName string
 }
 
 func NewEnv() Env {
-	return Env {
-		PlayerDAO: database.NewDBPlayerDAO(database.Init()),
-		Store: sessions.NewCookieStore([]byte("server-cookie-store")),
-		authToken: "auth_token",
+	return Env{
+		PlayerDAO:  database.NewDBPlayerDAO(database.Init()),
+		Store:      sessions.NewCookieStore([]byte("server-cookie-store")),
+		authToken:  "auth_token",
 		cookieName: "quest_go_mail",
 	}
 }

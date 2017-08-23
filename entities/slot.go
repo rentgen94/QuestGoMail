@@ -24,7 +24,7 @@ type Slot struct {
 
 func NewSlot(id int, name string, capacity int, isAccessible bool) *Slot {
 	return &Slot{
-		id: id,
+		id:           id,
 		capacity:     capacity,
 		contains:     0,
 		name:         name,
