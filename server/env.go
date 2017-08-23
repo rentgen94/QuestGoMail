@@ -4,6 +4,7 @@ import (
 	"github.com/rentgen94/QuestGoMail/server/database"
 	"github.com/gorilla/sessions"
 	"net/http"
+	"github.com/rentgen94/QuestGoMail/management"
 )
 
 const (
@@ -13,6 +14,7 @@ const (
 type Env struct {
 	PlayerDAO  database.PlayerDAO
 	Store      *sessions.CookieStore
+	Pool       *management.ManagerPool
 	playerId   string
 	cookieName string
 }
@@ -23,6 +25,7 @@ func NewEnv() Env {
 		Store:      sessions.NewCookieStore([]byte("server-cookie-store")),
 		playerId:   "player_id",
 		cookieName: "quest_go_mail",
+		Pool: management.NewManagerPool(10, 10),
 	}
 }
 

@@ -7,6 +7,7 @@ import (
 	"io/ioutil"
 	"net/http"
 	"errors"
+	"github.com/rentgen94/QuestGoMail/management"
 )
 
 const (
@@ -30,6 +31,10 @@ func (env *Env) PlayerLoginPost(w http.ResponseWriter, r *http.Request) {
 	if equal(founded, player) && err == nil {
 		session.Values[env.playerId] = founded.Id
 		session.Save(r, w)
+		room := entities.NewRoom(0, "my first room", "our demons hide in the dark")
+		*player.Room() = *room
+		var manager, _ = management.NewPlayerManager(player)
+		env.Pool.AddManager(manager)
 		w.WriteHeader(http.StatusOK)
 		w.Write([]byte(PlayerFoundOk))
 		return
