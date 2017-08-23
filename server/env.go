@@ -2,14 +2,20 @@ package server
 
 import (
 	"github.com/gorilla/sessions"
+	"github.com/rentgen94/QuestGoMail/management"
 	"github.com/rentgen94/QuestGoMail/server/database"
 	"net/http"
+)
+
+const (
+	maxReadBytes = 1048576
 )
 
 type Env struct {
 	PlayerDAO  database.PlayerDAO
 	Store      *sessions.CookieStore
-	authToken  string
+	Pool       *management.ManagerPool
+	playerId   string
 	cookieName string
 }
 
@@ -17,8 +23,9 @@ func NewEnv() Env {
 	return Env{
 		PlayerDAO:  database.NewDBPlayerDAO(database.Init()),
 		Store:      sessions.NewCookieStore([]byte("server-cookie-store")),
-		authToken:  "auth_token",
+		playerId:   "player_id",
 		cookieName: "quest_go_mail",
+		Pool:       management.NewManagerPool(1, 10, 10),
 	}
 }
 
@@ -30,4 +37,8 @@ func (env *Env) getSession(w http.ResponseWriter, r *http.Request) *sessions.Ses
 		return nil
 	}
 	return session
+}
+
+func writeInternalError(w http.ResponseWriter) {
+	w.WriteHeader(http.StatusInternalServerError)
 }

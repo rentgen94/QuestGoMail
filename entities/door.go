@@ -17,7 +17,7 @@ type Door struct {
 
 func NewDoor(id int, name string, isAccessible bool, room1 *Room, room2 *Room) *Door {
 	return &Door{
-		id: id,
+		id:           id,
 		name:         name,
 		isAccessible: isAccessible,
 		room1:        room1,

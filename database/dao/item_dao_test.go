@@ -44,7 +44,7 @@ func TestItemDAO_GetById_Success(t *testing.T) {
 		AddRow(0, "sword", "big", 100)
 
 	mock.
-	ExpectQuery("SELECT *").
+		ExpectQuery("SELECT *").
 		WithArgs(0).
 		WillReturnRows(rows)
 

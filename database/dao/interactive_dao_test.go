@@ -1,12 +1,12 @@
 package dao
 
 import (
-	"testing"
-	"gopkg.in/DATA-DOG/go-sqlmock.v1"
-	"github.com/rentgen94/QuestGoMail/entities"
-	"github.com/stretchr/testify/assert"
 	"errors"
 	"fmt"
+	"github.com/rentgen94/QuestGoMail/entities"
+	"github.com/stretchr/testify/assert"
+	"gopkg.in/DATA-DOG/go-sqlmock.v1"
+	"testing"
 )
 
 func TestInteractiveDAO_getNecessaryItems_Success(t *testing.T) {
@@ -27,17 +27,17 @@ func TestInteractiveDAO_getNecessaryItems_Success(t *testing.T) {
 		AddRow(1, "axe", "small", 100)
 
 	mock.
-	ExpectQuery("SELECT *").
+		ExpectQuery("SELECT *").
 		WithArgs(0).
 		WillReturnRows(itemIds)
 
 	mock.
-	ExpectQuery("SELECT *").
+		ExpectQuery("SELECT *").
 		WithArgs(0).
 		WillReturnRows(firstItemRows)
 
 	mock.
-	ExpectQuery("SELECT *").
+		ExpectQuery("SELECT *").
 		WithArgs(1).
 		WillReturnRows(secondItemRows)
 
@@ -49,8 +49,8 @@ func TestInteractiveDAO_getNecessaryItems_Success(t *testing.T) {
 	assert.Equal(t, 2, len(items))
 
 	var expectedItems = []entities.Item{
-		{Id: 0, Size:100, Description:"big", Name:"sword"},
-		{Id:1, Size:100, Description:"small", Name:"axe"},
+		{Id: 0, Size: 100, Description: "big", Name: "sword"},
+		{Id: 1, Size: 100, Description: "small", Name: "axe"},
 	}
 
 	for i := range expectedItems {
@@ -66,7 +66,7 @@ func TestInteractiveDAO_getNecessaryItems_DBItemsFail(t *testing.T) {
 	defer db.Close()
 
 	mock.
-	ExpectQuery("SELECT *").
+		ExpectQuery("SELECT *").
 		WithArgs(0).
 		WillReturnError(errors.New("err"))
 
@@ -89,12 +89,12 @@ func TestInteractiveDAO_getNecessaryItems_DBItemFail(t *testing.T) {
 		AddRow(1)
 
 	mock.
-	ExpectQuery("SELECT *").
+		ExpectQuery("SELECT *").
 		WithArgs(0).
 		WillReturnRows(itemIds)
 
 	mock.
-	ExpectQuery("SELECT *").
+		ExpectQuery("SELECT *").
 		WithArgs(0).
 		WillReturnError(errors.New("err"))
 
@@ -106,12 +106,12 @@ func TestInteractiveDAO_getNecessaryItems_DBItemFail(t *testing.T) {
 }
 
 func TestInteractiveDAO_getInputChecker(t *testing.T) {
-	var testData = []struct{
-		expectedArgs []string
+	var testData = []struct {
+		expectedArgs  []string
 		expectedItems []entities.Item
-		args []string
-		items []entities.Item
-		err error
+		args          []string
+		items         []entities.Item
+		err           error
 	}{
 		{
 			[]string{},
@@ -137,49 +137,48 @@ func TestInteractiveDAO_getInputChecker(t *testing.T) {
 		{
 			[]string{},
 			[]entities.Item{
-				{Id:100},
-				{Id:200},
+				{Id: 100},
+				{Id: 200},
 			},
 			[]string{},
 			[]entities.Item{
-				{Id:200},
-				{Id:100},
+				{Id: 200},
+				{Id: 100},
+			},
+			nil,
+		},
+		{
+			[]string{},
+			[]entities.Item{},
+			[]string{},
+			[]entities.Item{
+				{Id: 200},
+				{Id: 100},
 			},
 			nil,
 		},
 		{
 			[]string{},
 			[]entities.Item{
+				{Id: 100},
+				{Id: 200},
 			},
 			[]string{},
 			[]entities.Item{
-				{Id:200},
-				{Id:100},
-			},
-			nil,
-		},
-		{
-			[]string{},
-			[]entities.Item{
-				{Id:100},
-				{Id:200},
-			},
-			[]string{},
-			[]entities.Item{
-				{Id:200},
+				{Id: 200},
 			},
 			errors.New(itemListLengthDoesNotMatch),
 		},
 		{
 			[]string{},
 			[]entities.Item{
-				{Id:100},
-				{Id:200},
+				{Id: 100},
+				{Id: 200},
 			},
 			[]string{},
 			[]entities.Item{
-				{Id:200},
-				{Id:300},
+				{Id: 200},
+				{Id: 300},
 			},
 			errors.New(notFoundNecessaryItem),
 		},
@@ -206,12 +205,12 @@ func TestInteractiveDAO_GetById_Success(t *testing.T) {
 	var itemIdRows = sqlmock.NewRows([]string{"id"})
 
 	mock.
-	ExpectQuery("SELECT").
+		ExpectQuery("SELECT").
 		WithArgs(0).
 		WillReturnRows(interRows)
 
 	mock.
-	ExpectQuery("SELECT").
+		ExpectQuery("SELECT").
 		WithArgs(0).
 		WillReturnRows(itemIdRows)
 
@@ -222,14 +221,14 @@ func TestInteractiveDAO_GetById_Success(t *testing.T) {
 	var action = entities.NewAction(
 		"",
 		func(labyrinth *entities.Labyrinth) (result entities.InteractionResult, err error) {
-			return entities.InteractionResult{Msg:"ui"}, nil
+			return entities.InteractionResult{Msg: "ui"}, nil
 		},
 	)
 
 	inter.SetAction(action)
-	var testCases = []struct{
+	var testCases = []struct {
 		args []string
-		err error
+		err  error
 	}{
 		{
 			[]string{},

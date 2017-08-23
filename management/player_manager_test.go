@@ -15,8 +15,8 @@ const (
 	itemId          = 100
 	bigItemId       = 200
 	playerItemId    = 300
-	doorId = 10
-	interactiveId = 15
+	doorId          = 10
+	interactiveId   = 15
 )
 
 func getRoom() *entities.Room {
