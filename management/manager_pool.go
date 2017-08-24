@@ -3,10 +3,12 @@ package management
 import (
 	"fmt"
 	"errors"
+	"time"
 )
 
 const (
 	managerNotFoundTemplate = "Game %d not found"
+	failedOnTimeOut = "Failed on time out"
 )
 
 type AddressedCommand struct {
@@ -73,10 +75,9 @@ func (pool *ManagerPool) Stop() {
 	pool.stop()
 }
 
-func (pool *ManagerPool) AddManager(manager *PlayerManager, gameid int) {
-	//var id = pool.cnt
-	//pool.cnt++
-	pool.managers[gameid] = manager
+func (pool *ManagerPool) AddManager(manager *PlayerManager, gameId int) {
+	pool.respMap[gameId] = make(chan Response, pool.respBuffSize)
+	pool.managers[gameId] = manager
 }
 
 func (pool *ManagerPool) DeleteManager(id int) {
@@ -88,12 +89,20 @@ func (pool *ManagerPool) SendCommand(command AddressedCommand) {
 	pool.commandChan <- command
 }
 
-func (pool *ManagerPool) GetResponseSync(gameId int) (Response, error) {
+func (pool *ManagerPool) GetResponseSync(gameId int, timeout time.Duration) (Response, error) {
 	var ch, ok = pool.respMap[gameId]
 	if !ok {
-		return Response{}, errors.New (fmt.Sprint(managerNotFoundTemplate, gameId))
+		return Response{}, errors.New(fmt.Sprint(managerNotFoundTemplate, gameId))
 	}
 
+	for {
+		select {
+		case result := <-ch:
+			return result, nil
+		case <-time.After(timeout):
+			return Response{}, errors.New(failedOnTimeOut)
+		}
+	}
 	return <-ch, nil
 }
 
