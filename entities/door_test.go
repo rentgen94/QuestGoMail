@@ -9,7 +9,10 @@ func TestDoor_Enter(t *testing.T) {
 	var room2 = NewRoom(1, "Room2", "")
 	var room3 = NewRoom(2, "Room3", "")
 
-	var door = NewDoor(10, "", true, room1, room2)
+	var door = NewDoor(10, "", true)
+	door.SetRoom1(room1)
+	door.SetRoom2(room2)
+
 	var player = &Player{room: room1}
 
 	if player.room.name != "Room1" {

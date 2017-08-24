@@ -4,7 +4,7 @@ DROP TABLE IF EXISTS Item CASCADE;
 DROP TABLE IF EXISTS Interactive CASCADE;
 DROP TABLE IF EXISTS Action CASCADE;
 DROP TABLE IF EXISTS Slot CASCADE;
-DROP TABLE IF EXISTS Scenario CASCADE;
+DROP TABLE IF EXISTS Labyrinth CASCADE;
 DROP TABLE IF EXISTS InteractiveObjectNeed;
 DROP TABLE IF EXISTS ActionInteractiveSwitch;
 DROP TABLE IF EXISTS ActionDoorSwitch;
@@ -23,7 +23,6 @@ CREATE TABLE Door (
   room1        INT REFERENCES Room (id),
   room2        INT REFERENCES Room (id),
   name         VARCHAR(100) UNIQUE,
-  description  VARCHAR(500),
   isAccessible BOOLEAN,
   UNIQUE (room1, room2)
 );
@@ -59,7 +58,7 @@ CREATE TABLE Action (
   resultMsg  VARCHAR(500)
 );
 
-CREATE TABLE Scenario (
+CREATE TABLE Labyrinth (
   id   SERIAL PRIMARY KEY,
   name VARCHAR(100) UNIQUE
 );
