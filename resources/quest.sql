@@ -28,6 +28,8 @@ CREATE TABLE Door (
   isAccessible BOOLEAN,
   UNIQUE (room1, room2)
 );
+CREATE INDEX door_room1_idx ON Door(room1);
+CREATE INDEX door_room2_idx ON Door(room2);
 
 CREATE TABLE Item (
   id          SERIAL PRIMARY KEY,
@@ -43,6 +45,7 @@ CREATE TABLE Slot (
   capacity     INT,
   isAccessible BOOLEAN
 );
+CREATE INDEX slot_room_idx ON Slot(room);
 
 CREATE TABLE Interactive (
   id           SERIAL PRIMARY KEY,
@@ -52,6 +55,7 @@ CREATE TABLE Interactive (
   isAccessible BOOLEAN,
   args         VARCHAR(100) --this is an argument string. Arguments has to be divided with ' '
 );
+CREATE INDEX interactive_room_idx ON Interactive(room);
 
 CREATE TABLE Action (
   id         SERIAL PRIMARY KEY,
@@ -65,6 +69,7 @@ CREATE TABLE Labyrinth (
   name      VARCHAR(100) UNIQUE,
   startRoom INT REFERENCES Room (id)
 );
+CREATE INDEX labyrinth_room_idx ON Labyrinth(startRoom);
 
 CREATE TABLE InteractiveObjectNeed (
   id          SERIAL PRIMARY KEY,
@@ -72,6 +77,7 @@ CREATE TABLE InteractiveObjectNeed (
   item        INT REFERENCES Item (id),
   UNIQUE (interactive, item)
 );
+CREATE INDEX interactiveObjectNeed_idx ON InteractiveObjectNeed(interactive, item);
 
 CREATE TABLE ActionInteractiveLink (
   id          SERIAL PRIMARY KEY,
@@ -79,6 +85,7 @@ CREATE TABLE ActionInteractiveLink (
   interactive INT REFERENCES Interactive (id),
   UNIQUE (action, interactive)
 );
+CREATE INDEX actionInteractiveLink_idx ON ActionInteractiveLink(action, interactive);
 
 CREATE TABLE ActionInteractiveSwitch (
   id          SERIAL PRIMARY KEY,
@@ -87,6 +94,7 @@ CREATE TABLE ActionInteractiveSwitch (
   newState    BOOLEAN,
   UNIQUE (action, interactive)
 );
+CREATE INDEX ActionInteractiveSwitch_idx ON ActionSlotSwitch(action, slot);
 
 CREATE TABLE ActionDoorSwitch (
   id       SERIAL PRIMARY KEY,
@@ -95,6 +103,7 @@ CREATE TABLE ActionDoorSwitch (
   newState BOOLEAN,
   UNIQUE (action, door)
 );
+CREATE INDEX actionDoorSwitch_idx ON ActionDoorSwitch(action, door);
 
 CREATE TABLE ActionSlotSwitch (
   id       SERIAL PRIMARY KEY,
@@ -103,6 +112,7 @@ CREATE TABLE ActionSlotSwitch (
   newState BOOLEAN,
   UNIQUE (action, slot)
 );
+CREATE INDEX actionSlotSwitch_idx ON ActionSlotSwitch(action, slot);
 
 CREATE TABLE SlotItemLink (
   id   SERIAL PRIMARY KEY,
@@ -110,6 +120,7 @@ CREATE TABLE SlotItemLink (
   item INT REFERENCES Item (id),
   UNIQUE (slot, item)
 );
+CREATE INDEX SlotItemLink_idx ON SlotItemLink(slot, item);
 
 CREATE TABLE LabyrinthRoomLink (
   id        SERIAL PRIMARY KEY,
@@ -117,6 +128,7 @@ CREATE TABLE LabyrinthRoomLink (
   labyrinth INT REFERENCES Labyrinth (id),
   UNIQUE (room, labyrinth)
 );
+CREATE INDEX labyrinthRoomLink_idx ON LabyrinthRoomLink(room, labyrinth);
 
 CREATE TABLE LabyrinthActionLink (
   id SERIAL PRIMARY KEY ,
@@ -124,3 +136,4 @@ CREATE TABLE LabyrinthActionLink (
   labyrinth INT REFERENCES Labyrinth(id),
   UNIQUE (action, labyrinth)
 );
+CREATE INDEX labyrinthActionLink_idx ON LabyrinthActionLink(action, labyrinth);
