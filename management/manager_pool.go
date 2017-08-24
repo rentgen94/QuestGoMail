@@ -70,11 +70,10 @@ func (pool *ManagerPool) Stop() {
 	pool.stop()
 }
 
-func (pool *ManagerPool) AddManager(manager *PlayerManager) {
-	var id = pool.cnt
-	pool.cnt++
-	pool.managers[id] = manager
-	pool.respMap[id] = make(chan Response, pool.respBuffSize)
+func (pool *ManagerPool) AddManager(manager *PlayerManager,gameid int) {
+	//var id = pool.cnt
+	//pool.cnt++
+	pool.managers[gameid] = manager
 }
 
 func (pool *ManagerPool) DeleteManager(id int) {

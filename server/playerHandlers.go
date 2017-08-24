@@ -32,9 +32,10 @@ func (env *Env) PlayerLoginPost(w http.ResponseWriter, r *http.Request) {
 		session.Values[env.playerId] = founded.Id
 		session.Save(r, w)
 		room := entities.NewRoom(0, "my first room", "our demons hide in the dark")
-		*player.Room() = *room
-		var manager, _ = management.NewPlayerManager(player)
-		env.Pool.AddManager(manager)
+		founded.SetRoom(room)
+		founded.GameId = env.NewGame()
+		var manager, _ = management.NewPlayerManager(founded, 10, 10)
+		env.Pool.AddManager(manager, founded.GameId)
 		w.WriteHeader(http.StatusOK)
 		w.Write([]byte(PlayerFoundOk))
 		return

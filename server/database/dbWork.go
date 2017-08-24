@@ -9,9 +9,9 @@ import (
 
 const (
 	PostgresUser = "postgres"
-	Password     = "qwerty456"
+	Password     = "45274245"
 	Server       = "localhost:5432"
-	DbName       = "testdb"
+	DbName       = "testDB"
 	Schema       = "QuestGoMail"
 )
 

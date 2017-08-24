@@ -39,7 +39,12 @@ func (env *Env) GameComandGet(w http.ResponseWriter, r *http.Request, comandType
 		w.WriteHeader(http.StatusForbidden)
 	}
 
-	command := management.NewCommand(comandType, 0, nil, nil)
+	player, err := env.PlayerDAO.FindPlayer(player)
+	if err != nil {
+		w.Header().Set("Content-Type", "application/json; charset=UTF-8")
+		w.WriteHeader(http.StatusForbidden)
+	}
+	command := management.NewCommand (comandType, "", nil, nil)
 	game_id, _ := session.Values[env.playerId].(int)
 	env.Pool.SendCommand(management.AddressedCommand{game_id, command})
 	response := env.Pool.GetResponseSync(game_id)

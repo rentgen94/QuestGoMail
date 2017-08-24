@@ -17,6 +17,7 @@ type Env struct {
 	Pool       *management.ManagerPool
 	playerId   string
 	cookieName string
+	gameid     int
 }
 
 func NewEnv() Env {
@@ -41,4 +42,10 @@ func (env *Env) getSession(w http.ResponseWriter, r *http.Request) *sessions.Ses
 
 func writeInternalError(w http.ResponseWriter) {
 	w.WriteHeader(http.StatusInternalServerError)
+}
+
+
+func (env *Env) NewGame() int {
+	env.gameid += 1
+	return env.gameid
 }
