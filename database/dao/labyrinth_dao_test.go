@@ -1,10 +1,10 @@
 package dao
 
 import (
-	"testing"
-	"gopkg.in/DATA-DOG/go-sqlmock.v1"
-	"github.com/stretchr/testify/assert"
 	"errors"
+	"github.com/stretchr/testify/assert"
+	"gopkg.in/DATA-DOG/go-sqlmock.v1"
+	"testing"
 )
 
 func TestLabyrinthDAO_getEmptyLabyrinthInfo_Success(t *testing.T) {
@@ -18,7 +18,7 @@ func TestLabyrinthDAO_getEmptyLabyrinthInfo_Success(t *testing.T) {
 		AddRow(0, "a", 100)
 
 	mock.
-	ExpectQuery("SELECT ").
+		ExpectQuery("SELECT ").
 		WithArgs(1).
 		WillReturnRows(rows)
 
@@ -41,7 +41,7 @@ func TestLabyrinthDAO_getEmptyLabyrinthInfo_Empty(t *testing.T) {
 	var rows = sqlmock.NewRows([]string{"id", "name", "start_room_id"})
 
 	mock.
-	ExpectQuery("SELECT ").
+		ExpectQuery("SELECT ").
 		WithArgs(1).
 		WillReturnRows(rows)
 
@@ -59,7 +59,7 @@ func TestLabyrinthDAO_getEmptyLabyrinthInfo_DBErr(t *testing.T) {
 	defer db.Close()
 
 	mock.
-	ExpectQuery("SELECT ").
+		ExpectQuery("SELECT ").
 		WithArgs(1).
 		WillReturnError(errors.New("err"))
 

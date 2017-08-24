@@ -31,6 +31,8 @@ func NewEnv() Env {
 		curGame:    1,
 		Pool:       management.NewManagerPool(1, 10, 10),
 	}
+	//Env.Pool.Run ()
+	//return Env
 }
 
 func (env *Env) getSession(w http.ResponseWriter, r *http.Request) *sessions.Session {
@@ -46,7 +48,6 @@ func (env *Env) getSession(w http.ResponseWriter, r *http.Request) *sessions.Ses
 func writeInternalError(w http.ResponseWriter) {
 	w.WriteHeader(http.StatusInternalServerError)
 }
-
 
 func (env *Env) NewGame() int {
 	env.curGame += 1

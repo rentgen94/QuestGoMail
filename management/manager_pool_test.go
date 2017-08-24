@@ -1,8 +1,8 @@
 package management
 
 import (
-	"testing"
 	"github.com/stretchr/testify/assert"
+	"testing"
 	"time"
 )
 
@@ -25,7 +25,7 @@ func TestManagerPool_Run_Success(t *testing.T) {
 	}
 
 	pool.SendCommand(command)
-	var _, respErr = pool.GetResponseSync(1, 1 * time.Second)
+	var _, respErr = pool.GetResponseSync(1, 1*time.Second)
 	assert.Nil(t, respErr)
 }
 
@@ -48,6 +48,6 @@ func TestManagerPool_Run_TriedWrongGame(t *testing.T) {
 	}
 
 	pool.SendCommand(command)
-	var _, respErr = pool.GetResponseSync(1, 1 * time.Second)
+	var _, respErr = pool.GetResponseSync(1, 1*time.Second)
 	assert.Error(t, respErr, failedOnTimeOut)
 }

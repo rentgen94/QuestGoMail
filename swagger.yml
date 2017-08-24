@@ -45,6 +45,33 @@ paths:
           description: |
             Пользователь не найден в базе
 
+  /game/start:
+    post:
+      summary: |
+        Начать игру
+        - name: login
+          in: body
+          description: Информация о пользователе
+          required: true
+          schema:
+            $ref: '#/definitions/Labirinth'
+      responses:
+        200:
+          description: |
+            Игра началась.
+        404:
+          description: |
+            Лабиринта с таким айди не существует
+
+  /game/end:
+    get:
+      summary: |
+        Прервать игру
+      responses:
+        200:
+          description: |
+            Информация о комнате успешно получена
+
   /game/look_around:
     get:
       summary: |
@@ -174,6 +201,17 @@ definitions:
     required:
     - login
     - password
+
+
+  Labirith:
+    type: object
+    properties:
+      id:
+        type: int
+        description: Айди лабиринта
+        example: 1
+    required:
+    - id
 
   Room:
     type: object
@@ -334,5 +372,4 @@ definitions:
         type: string
         description: Сообщение о неуспешном исполнении команды
         example: Некуда положить большой красивый меч
-
 

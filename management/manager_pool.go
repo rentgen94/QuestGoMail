@@ -1,14 +1,14 @@
 package management
 
 import (
-	"fmt"
 	"errors"
+	"fmt"
 	"time"
 )
 
 const (
 	managerNotFoundTemplate = "Game %d not found"
-	failedOnTimeOut = "Failed on time out"
+	failedOnTimeOut         = "Failed on time out"
 )
 
 type AddressedCommand struct {

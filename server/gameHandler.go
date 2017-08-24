@@ -1,7 +1,6 @@
 package server
 
 import (
-	"encoding/json"
 	"github.com/rentgen94/QuestGoMail/management"
 	"net/http"
 	"time"
@@ -47,27 +46,18 @@ func (env *Env) GameComandGet(w http.ResponseWriter, r *http.Request, comandType
 		return
 	}
 
-	command := management.NewCommand (comandType, 0, nil, nil)
+	command := management.NewCommand(comandType, 0, nil, nil)
 
+	go env.Pool.Run()
 	env.Pool.SendCommand(management.AddressedCommand{session.Values[env.gameId].(int), command})
-	response, err := env.Pool.GetResponseSync(session.Values[env.gameId].(int), time.Minute)
+	response, err := env.Pool.GetResponseSync(session.Values[env.gameId].(int), 1*time.Second)
 	if err != nil {
 		w.Header().Set("Content-Type", "application/json; charset=UTF-8")
 		w.WriteHeader(http.StatusBadRequest)
 		return
 	}
 
-	res, err := json.Marshal(response)
-	if err != nil {
-		w.Header().Set("Content-Type", "application/json; charset=UTF-8")
-		w.WriteHeader(http.StatusBadRequest)
-		return
-	}
 	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
 	w.WriteHeader(http.StatusOK)
-	w.Write(res)
-	if err := json.NewEncoder(w).Encode(response); err != nil {
-		writeInternalError(w)
-		return
-	}
+	w.Write(response.Data.([]byte))
 }

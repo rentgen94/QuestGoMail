@@ -112,24 +112,24 @@ func (dao *RoomDAO) getRelatedSlots(roomId int) (entities.SlotsType, error) {
 func getRelatedEntityIds(db *sql.DB, query string, roomId int) ([]int, error) {
 	var rows, err = db.Query(query, roomId)
 	if err != nil {
-	return nil, err
+		return nil, err
 	}
 	defer rows.Close()
 
 	var ids = make([]int, 0)
 	for rows.Next() {
-	var id int
-	err = rows.Scan(&id)
-	if err != nil {
-	return nil, err
-	}
+		var id int
+		err = rows.Scan(&id)
+		if err != nil {
+			return nil, err
+		}
 
-	ids = append(ids, id)
+		ids = append(ids, id)
 	}
 
 	err = rows.Err()
 	if err != nil {
-	return nil, err
+		return nil, err
 	}
 
 	return ids, nil

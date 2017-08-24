@@ -107,14 +107,14 @@ func (manager *PlayerManager) getCommandResponse(command Command) Response {
 }
 
 type roomResponse struct {
-	name        string `json:"name"`
-	description string `json:"description"`
+	Name        string `json:"name"`
+	Description string `json:"description"`
 }
 
 func handleRoomCode(resp *Response, manager *PlayerManager, command Command) {
 	a := &roomResponse{
-		name:        manager.player.Room().Name(),
-		description: manager.player.Room().Description(),
+		Name:        manager.player.Room().Name(),
+		Description: manager.player.Room().Description(),
 	}
 	res, err := json.Marshal(a)
 	if err != nil {
@@ -125,20 +125,20 @@ func handleRoomCode(resp *Response, manager *PlayerManager, command Command) {
 }
 
 type slotsResponse struct {
-	id       int    `json:"id"`
-	name     string `json:"name"`
-	capacity int    `json:"capacity"`
-	contains int    `json:"contains"`
+	Id       int    `json:"id"`
+	Name     string `json:"name"`
+	Capacity int    `json:"capacity"`
+	Contains int    `json:"contains"`
 }
 
 func handleSlotsCode(resp *Response, manager *PlayerManager, command Command) {
 	a := []slotsResponse{}
 	for _, elem := range manager.player.Room().Slots() {
 		slt := &slotsResponse{
-			name:     elem.Name(),
-			capacity: elem.Capacity(),
-			contains: elem.Contains(),
-			id:       elem.Id(),
+			Name:     elem.Name(),
+			Capacity: elem.Capacity(),
+			Contains: elem.Contains(),
+			Id:       elem.Id(),
 		}
 		a = append(a, *slt)
 	}
@@ -151,16 +151,16 @@ func handleSlotsCode(resp *Response, manager *PlayerManager, command Command) {
 }
 
 type doorsResponse struct {
-	id   int    `json:"id"`
-	name string `json:"name"`
+	Id   int    `json:"id"`
+	Name string `json:"name"`
 }
 
 func handleDoorsCode(resp *Response, manager *PlayerManager, command Command) {
 	a := []doorsResponse{}
 	for _, elem := range manager.player.Room().Doors() {
 		slt := &doorsResponse{
-			name: elem.Name(),
-			id:   elem.Id(),
+			Name: elem.Name(),
+			Id:   elem.Id(),
 		}
 		a = append(a, *slt)
 	}
@@ -173,20 +173,20 @@ func handleDoorsCode(resp *Response, manager *PlayerManager, command Command) {
 }
 
 type itemResponse struct {
-	id          int    `json:"id"`
-	name        string `json:"name"`
-	description string `json:"description"`
-	size        int    `json:"size"`
+	Id          int    `json:"id"`
+	Name        string `json:"name"`
+	Description string `json:"description"`
+	Size        int    `json:"size"`
 }
 
 func handleItemsCode(resp *Response, manager *PlayerManager, command Command) {
 	a := []itemResponse{}
 	for _, elem := range manager.player.Room().AccessibleItems() {
 		slt := &itemResponse{
-			name:        elem.Name,
-			id:          elem.Id,
-			description: elem.Description,
-			size:        elem.Size,
+			Name:        elem.Name,
+			Id:          elem.Id,
+			Description: elem.Description,
+			Size:        elem.Size,
 		}
 		a = append(a, *slt)
 	}
@@ -203,10 +203,10 @@ func handleBagCode(resp *Response, manager *PlayerManager, command Command) {
 	for k := range manager.player.Bag().Items() {
 		it, _ := manager.player.Bag().GetItem(k)
 		slt := &itemResponse{
-			name:        it.Name,
-			id:          it.Id,
-			description: it.Description,
-			size:        it.Size,
+			Name:        it.Name,
+			Id:          it.Id,
+			Description: it.Description,
+			Size:        it.Size,
 		}
 		a = append(a, *slt)
 	}
@@ -219,18 +219,18 @@ func handleBagCode(resp *Response, manager *PlayerManager, command Command) {
 }
 
 type intaractiveResponse struct {
-	id          int    `json:"id"`
-	name        string `json:"name"`
-	description string `json:"description"`
+	Id          int    `json:"id"`
+	Name        string `json:"name"`
+	Description string `json:"description"`
 }
 
 func handleIteractivesCode(resp *Response, manager *PlayerManager, command Command) {
 	a := []intaractiveResponse{}
 	for _, elem := range manager.player.Room().Interactives() {
 		slt := &intaractiveResponse{
-			name:        elem.Name(),
-			id:          elem.Id(),
-			description: elem.Description(),
+			Name:        elem.Name(),
+			Id:          elem.Id(),
+			Description: elem.Description(),
 		}
 		a = append(a, *slt)
 	}

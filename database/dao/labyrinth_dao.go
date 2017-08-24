@@ -96,9 +96,9 @@ func (dao *LabyrinthDAO) bindActions(labyrinth *entities.Labyrinth) error {
 	}
 
 	type idInfoType struct {
-		roomId int
+		roomId        int
 		interactiveId int
-		actionId int
+		actionId      int
 	}
 	var idInfoSlice = make([]idInfoType, 0)
 

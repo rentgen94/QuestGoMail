@@ -31,11 +31,20 @@ func (env *Env) PlayerLoginPost(w http.ResponseWriter, r *http.Request) {
 	founded, err := env.PlayerDAO.FindPlayer(player)
 	if equal(founded, player) && err == nil {
 		session.Values[env.playerId] = founded.Id
-		session.Save(r, w)
 		room := entities.NewRoom(0, "my first room", "our demons hide in the dark")
+		bag := entities.NewSlot(0, "dark hole", 100, true)
+		item := entities.Item{
+			Id:          0,
+			Name:        "pillow",
+			Description: "its my pillow!",
+			Size:        20,
+		}
+		_ = bag.PutItem(item)
 		founded.SetRoom(room)
+		founded.SetBag(bag)
 		founded.GameId = env.NewGame()
 		session.Values[env.gameId] = founded.GameId
+		session.Save(r, w)
 		var manager, _ = management.NewPlayerManager(founded, 10, 10)
 		env.Pool.AddManager(manager, founded.GameId)
 		w.WriteHeader(http.StatusOK)

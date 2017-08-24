@@ -6,8 +6,8 @@ import (
 	"github.com/rentgen94/QuestGoMail/entities"
 	"github.com/stretchr/testify/assert"
 	"gopkg.in/DATA-DOG/go-sqlmock.v1"
-	"testing"
 	"strings"
+	"testing"
 )
 
 func TestInteractiveDAO_getNecessaryItems_Success(t *testing.T) {

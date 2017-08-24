@@ -20,10 +20,14 @@ func (p *Player) Room() *Room {
 	return p.room
 }
 
-func (p *Player) SetRoom (room *Room) {
+func (p *Player) SetRoom(room *Room) {
 	p.room = room
 }
 
 func (p *Player) Bag() *Slot {
 	return p.bag
+}
+
+func (p *Player) SetBag(bag *Slot) {
+	p.bag = bag
 }
