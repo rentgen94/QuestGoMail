@@ -7,6 +7,7 @@ import (
 	"github.com/stretchr/testify/assert"
 	"gopkg.in/DATA-DOG/go-sqlmock.v1"
 	"testing"
+	"strings"
 )
 
 func TestInteractiveDAO_getNecessaryItems_Success(t *testing.T) {
@@ -200,7 +201,7 @@ func TestInteractiveDAO_GetById_Success(t *testing.T) {
 	defer db.Close()
 
 	var interRows = sqlmock.NewRows([]string{"id", "room", "name", "description", "isAccessible", "args"}).
-		AddRow(0, 0, "Some", "Description", true, []string{"alpha", "beta", "gamma"})
+		AddRow(0, 0, "Some", "Description", true, "alpha beta gamma")
 
 	var itemIdRows = sqlmock.NewRows([]string{"id"})
 
@@ -219,6 +220,7 @@ func TestInteractiveDAO_GetById_Success(t *testing.T) {
 	assert.Nil(t, iErr)
 
 	var action = entities.NewAction(
+		0,
 		"",
 		func(labyrinth *entities.Labyrinth) (result entities.InteractionResult, err error) {
 			return entities.InteractionResult{Msg: "ui"}, nil
@@ -227,21 +229,21 @@ func TestInteractiveDAO_GetById_Success(t *testing.T) {
 
 	inter.SetAction(action)
 	var testCases = []struct {
-		args []string
+		args string
 		err  error
 	}{
 		{
-			[]string{},
+			"",
 			errors.New(argumentLengthDoesNotMatch),
 		},
 		{
-			[]string{"alpha", "beta", "gamma"},
+			"alpha beta gamma",
 			nil,
 		},
 	}
 
 	for i, testCase := range testCases {
-		var _, e = inter.Interact(testCase.args, []entities.Item{})
+		var _, e = inter.Interact(strings.Fields(testCase.args), []entities.Item{})
 		assert.Equal(t, testCase.err, e, fmt.Sprintf("i = %d", i))
 	}
 }

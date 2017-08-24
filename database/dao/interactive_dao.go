@@ -4,6 +4,7 @@ import (
 	"database/sql"
 	"errors"
 	"github.com/rentgen94/QuestGoMail/entities"
+	"strings"
 )
 
 const (
@@ -11,7 +12,7 @@ const (
 		SELECT id, room, name, description, isAccessible, args FROM Interactive WHERE id = $1
 	`
 	getNecessaryItemsQuery = `
-		SELECT id FROM Item i JOIN InteractiveObjectNeed need ON i.id = need.item WHERE need.interactive = $1
+		SELECT i.id id FROM Item i JOIN InteractiveObjectNeed need ON i.id = need.item WHERE need.interactive = $1
 	`
 
 	argumentLengthDoesNotMatch = "Argument length does not match"
@@ -40,7 +41,7 @@ func (dao *InteractiveDAO) getInteractiveById(id int) (entities.InteractiveObjec
 		name         string
 		description  string
 		isAccessible bool
-		args         []string
+		args         string
 	}{}
 
 	var err = dao.db.
@@ -56,7 +57,7 @@ func (dao *InteractiveDAO) getInteractiveById(id int) (entities.InteractiveObjec
 		return nil, itemsErr
 	}
 
-	var inputChecker = dao.getInputChecker(acceptor.args, necessaryItems)
+	var inputChecker = dao.getInputChecker(strings.Fields(acceptor.args), necessaryItems)
 
 	var inter = entities.NewInteractiveObject(
 		acceptor.id,

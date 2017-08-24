@@ -22,6 +22,7 @@ const (
 func getRoom() *entities.Room {
 	var room = entities.NewRoom(0, "", "")
 	var action = entities.NewAction(
+		0,
 		"open",
 		func(labyrinth *entities.Labyrinth) (result entities.InteractionResult, err error) {
 			return entities.ContinueResult("Success"), nil
@@ -51,6 +52,8 @@ func getRoom() *entities.Room {
 	slot.PutItem(bigItem)
 
 	var door = entities.NewDoor(doorId, doorName, true)
+	door.SetRoom1(room)
+	door.SetRoom2(room)
 	room.Doors()[door.Id()] = door
 
 	return room

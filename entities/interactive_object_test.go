@@ -8,6 +8,7 @@ import (
 
 func getFailAction() *Action {
 	return NewAction(
+		0,
 		"",
 		func(l *Labyrinth) (res InteractionResult, err error) {
 			return ContinueResult(""), errors.New(fmt.Sprintf(ActionNotAvailableTemplate, 0))
@@ -17,6 +18,7 @@ func getFailAction() *Action {
 
 func getSuccessAction() *Action {
 	return NewAction(
+		0,
 		"",
 		func(l *Labyrinth) (res InteractionResult, err error) {
 			return ContinueResult("Success"), nil

@@ -26,7 +26,7 @@ func TestRoomDAO_getRelatedEntityIds_Success(t *testing.T) {
 		WillReturnRows(rows)
 
 	var roomDao = NewRoomDAO(db)
-	var ids, idsErr = roomDao.getRelatedEntityIds(getRoomRelatedSlotIdsQuery, 1)
+	var ids, idsErr = getRelatedEntityIds(roomDao.db, getRoomRelatedSlotIdsQuery, 1)
 
 	assert.Nil(t, idsErr)
 	assert.Equal(t, len(ids), 3)
@@ -51,7 +51,7 @@ func TestRoomDAO_getRelatedEntityIds_Empty(t *testing.T) {
 		WillReturnRows(rows)
 
 	var roomDao = NewRoomDAO(db)
-	var ids, idsErr = roomDao.getRelatedEntityIds(getRoomRelatedSlotIdsQuery, 1)
+	var ids, idsErr = getRelatedEntityIds(roomDao.db, getRoomRelatedSlotIdsQuery, 1)
 
 	assert.Nil(t, idsErr)
 	assert.Equal(t, len(ids), 0)
@@ -70,7 +70,7 @@ func TestRoomDAO_getRelatedEntityIds_DBErr(t *testing.T) {
 		WillReturnError(errors.New("err"))
 
 	var roomDao = NewRoomDAO(db)
-	var _, idsErr = roomDao.getRelatedEntityIds(getRoomRelatedSlotIdsQuery, 1)
+	var _, idsErr = getRelatedEntityIds(roomDao.db, getRoomRelatedSlotIdsQuery, 1)
 
 	assert.Error(t, idsErr, "err")
 }

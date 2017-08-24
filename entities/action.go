@@ -10,12 +10,17 @@ type Action struct {
 	act       ActType
 }
 
-func NewAction(name string, act ActType) *Action {
+func NewAction(id int, name string, act ActType) *Action {
 	return &Action{
+		id:        id,
 		name:      name,
 		act:       act,
 		labyrinth: nil,
 	}
+}
+
+func (a *Action) Id() int {
+	return a.id
 }
 
 func (a *Action) Name() string {

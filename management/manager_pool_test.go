@@ -15,8 +15,8 @@ func TestManagerPool_Run(t *testing.T) { // smoke test :)
 	go pool.Run()
 	defer pool.Stop()
 
-	pool.AddManager(manager1)
-	pool.AddManager(manager2)
+	pool.AddManager(manager1, 1)
+	pool.AddManager(manager2, 2)
 
 	var command = AddressedCommand{
 		Address: 0,
@@ -24,6 +24,6 @@ func TestManagerPool_Run(t *testing.T) { // smoke test :)
 	}
 
 	pool.SendCommand(command)
-	var resp = pool.GetResponseSync(0)
+	var resp, _ = pool.GetResponseSync(0)
 	fmt.Println(resp)
 }

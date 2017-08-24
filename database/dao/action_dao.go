@@ -27,7 +27,7 @@ const (
 	`
 	actionRelatedSlotsQuery = `
 		SELECT s.id, s.room, sw.newState FROM Slot s
-			JOIN ActionSlotSwitch sw ON i.id = sw.slot
+			JOIN ActionSlotSwitch sw ON s.id = sw.slot
 		WHERE sw.action = $1
 		ORDER BY s.id
 	`
@@ -77,7 +77,7 @@ func (dao *ActionDAO) getAction(id int) (*entities.Action, error) {
 		return nil, funcErr
 	}
 
-	return entities.NewAction(acceptor.name, actFunc), nil
+	return entities.NewAction(id, acceptor.name, actFunc), nil
 }
 
 func (dao *ActionDAO) getActFunc(actionId int, resultMsg string, resultCode int) (entities.ActType, error) {

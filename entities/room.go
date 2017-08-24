@@ -13,17 +13,17 @@ const (
 	CanNotPutItemTemplate      = "Can not put item \"%d\" to the action \"%s\""
 )
 
-type slotsType map[int]*Slot
-type doorsType map[int]*Door
-type interactivesType map[int]InteractiveObject
+type SlotsType map[int]*Slot
+type DoorsType map[int]*Door
+type InteractivesType map[int]InteractiveObject
 
 type Room struct {
 	id           int
 	name         string
 	description  string
-	slots        slotsType
-	interactives interactivesType
-	doors        doorsType
+	slots        SlotsType
+	interactives InteractivesType
+	doors        DoorsType
 }
 
 func NewRoom(id int, name string, description string) *Room {
@@ -31,10 +31,14 @@ func NewRoom(id int, name string, description string) *Room {
 		id:           id,
 		name:         name,
 		description:  description,
-		slots:        make(slotsType),
-		interactives: make(interactivesType),
-		doors:        make(doorsType),
+		slots:        make(SlotsType),
+		interactives: make(InteractivesType),
+		doors:        make(DoorsType),
 	}
+}
+
+func (r *Room) Id() int {
+	return r.id
 }
 
 func (r *Room) Name() string {
@@ -49,8 +53,12 @@ func (r *Room) Equals(another *Room) bool {
 	return r.id == another.id
 }
 
-func (r *Room) Slots() slotsType {
+func (r *Room) Slots() SlotsType {
 	return r.slots
+}
+
+func (r *Room) SetSlots(slots SlotsType) {
+	r.slots = slots
 }
 
 func (r *Room) AccessibleSlots() (slots []*Slot) {
@@ -97,8 +105,12 @@ func (r *Room) AccessibleItems() (items []Item) {
 	return items
 }
 
-func (r *Room) Interactives() interactivesType {
+func (r *Room) Interactives() InteractivesType {
 	return r.interactives
+}
+
+func (r *Room) SetInteractives(interactives InteractivesType) {
+	r.interactives = interactives
 }
 
 func (r *Room) AccessibleInteractives() (interactives []InteractiveObject) {
@@ -110,7 +122,7 @@ func (r *Room) AccessibleInteractives() (interactives []InteractiveObject) {
 	return
 }
 
-func (r *Room) Doors() doorsType {
+func (r *Room) Doors() DoorsType {
 	return r.doors
 }
 

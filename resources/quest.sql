@@ -10,7 +10,9 @@ DROP TABLE IF EXISTS ActionInteractiveSwitch;
 DROP TABLE IF EXISTS ActionDoorSwitch;
 DROP TABLE IF EXISTS ActionSlotSwitch;
 DROP TABLE IF EXISTS SlotItemLink;
-DROP TABLE IF EXISTS RoomScenarioLink;
+DROP TABLE IF EXISTS LabyrinthRoomLink;
+DROP TABLE IF EXISTS LabyrinthActionLink;
+DROP TABLE IF EXISTS ActionInteractiveLink;
 
 CREATE TABLE Room (
   id          SERIAL PRIMARY KEY,
@@ -48,7 +50,7 @@ CREATE TABLE Interactive (
   name         VARCHAR(100),
   description  VARCHAR(500),
   isAccessible BOOLEAN,
-  args         VARCHAR(25) []
+  args         VARCHAR(100) --this is an argument string. Arguments has to be divided with ' '
 );
 
 CREATE TABLE Action (
@@ -59,39 +61,66 @@ CREATE TABLE Action (
 );
 
 CREATE TABLE Labyrinth (
-  id   SERIAL PRIMARY KEY,
-  name VARCHAR(100) UNIQUE
+  id        SERIAL PRIMARY KEY,
+  name      VARCHAR(100) UNIQUE,
+  startRoom INT REFERENCES Room (id)
 );
 
 CREATE TABLE InteractiveObjectNeed (
   id          SERIAL PRIMARY KEY,
   interactive INT REFERENCES Interactive (id),
-  item        INT REFERENCES Item (id)
+  item        INT REFERENCES Item (id),
+  UNIQUE (interactive, item)
+);
+
+CREATE TABLE ActionInteractiveLink (
+  id          SERIAL PRIMARY KEY,
+  action      INT REFERENCES Action (id),
+  interactive INT REFERENCES Interactive (id),
+  UNIQUE (action, interactive)
 );
 
 CREATE TABLE ActionInteractiveSwitch (
   id          SERIAL PRIMARY KEY,
   action      INT REFERENCES Action (id),
   interactive INT REFERENCES Interactive (id),
-  newState    BOOLEAN
+  newState    BOOLEAN,
+  UNIQUE (action, interactive)
 );
 
 CREATE TABLE ActionDoorSwitch (
   id       SERIAL PRIMARY KEY,
   action   INT REFERENCES Action (id),
   door     INT REFERENCES Door (id),
-  newState BOOLEAN
+  newState BOOLEAN,
+  UNIQUE (action, door)
 );
 
 CREATE TABLE ActionSlotSwitch (
   id       SERIAL PRIMARY KEY,
   action   INT REFERENCES Action (id),
   slot     INT REFERENCES Slot (id),
-  newState BOOLEAN
+  newState BOOLEAN,
+  UNIQUE (action, slot)
 );
 
 CREATE TABLE SlotItemLink (
   id   SERIAL PRIMARY KEY,
   slot INT REFERENCES Slot (id),
-  item INT REFERENCES Item (id)
+  item INT REFERENCES Item (id),
+  UNIQUE (slot, item)
+);
+
+CREATE TABLE LabyrinthRoomLink (
+  id        SERIAL PRIMARY KEY,
+  room      INT REFERENCES Room (id),
+  labyrinth INT REFERENCES Labyrinth (id),
+  UNIQUE (room, labyrinth)
+);
+
+CREATE TABLE LabyrinthActionLink (
+  id SERIAL PRIMARY KEY ,
+  action INT REFERENCES Action(id),
+  labyrinth INT REFERENCES Labyrinth(id),
+  UNIQUE (action, labyrinth)
 );

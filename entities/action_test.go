@@ -3,7 +3,7 @@ package entities
 import "testing"
 
 func TestAction_Name(t *testing.T) {
-	var action = NewAction("name", func(l *Labyrinth) (result InteractionResult, err error) {
+	var action = NewAction(0, "name", func(l *Labyrinth) (result InteractionResult, err error) {
 		return ContinueResult(""), nil
 	})
 

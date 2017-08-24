@@ -73,7 +73,7 @@ func (pool *ManagerPool) Stop() {
 	pool.stop()
 }
 
-func (pool *ManagerPool) AddManager(manager *PlayerManager,gameid int) {
+func (pool *ManagerPool) AddManager(manager *PlayerManager, gameid int) {
 	//var id = pool.cnt
 	//pool.cnt++
 	pool.managers[gameid] = manager
