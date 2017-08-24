@@ -1,9 +1,12 @@
 package management
 
-import "fmt"
+import (
+	"fmt"
+	"errors"
+)
 
 const (
-	managerNotFoundTemplate = "Manager %d not found"
+	managerNotFoundTemplate = "Game %d not found"
 )
 
 type AddressedCommand struct {
@@ -85,15 +88,13 @@ func (pool *ManagerPool) SendCommand(command AddressedCommand) {
 	pool.commandChan <- command
 }
 
-func (pool *ManagerPool) GetResponseSync(gameId int) Response {
+func (pool *ManagerPool) GetResponseSync(gameId int) (Response, error) {
 	var ch, ok = pool.respMap[gameId]
 	if !ok {
-		return Response{
-			ErrMsg: fmt.Sprintf(managerNotFoundTemplate, gameId),
-		}
+		return Response{}, errors.New (fmt.Sprint(managerNotFoundTemplate, gameId))
 	}
 
-	return <-ch
+	return <-ch, nil
 }
 
 func (pool *ManagerPool) stop() {

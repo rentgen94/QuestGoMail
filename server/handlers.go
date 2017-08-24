@@ -40,12 +40,22 @@ func (env *Env) GameCommandPost(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	//Todo Привязать к основному PoolManager
-	managerPool := management.NewManagerPool(10, 10)
-	//Todo получать game_id
-	game_id, _ := session.Values[env.playerId].(int)
-	managerPool.SendCommand(management.AddressedCommand{game_id, command})
-	response := managerPool.GetResponseSync(game_id)
+
+	if session.Values[env.gameId] == nil {
+		// Игрок не в игре
+		w.Header().Set("Content-Type", "application/json; charset=UTF-8")
+		w.WriteHeader(http.StatusBadRequest)
+		return
+	}
+
+	env.Pool.SendCommand(management.AddressedCommand{session.Values[env.gameId].(int), command})
+	response, err := env.Pool.GetResponseSync(session.Values[env.gameId].(int))
+	if err != nil {
+		w.Header().Set("Content-Type", "application/json; charset=UTF-8")
+		w.WriteHeader(http.StatusBadRequest)
+		return
+	}
+
 	w.WriteHeader(http.StatusOK)
 	if err := json.NewEncoder(w).Encode(response); err != nil {
 		writeInternalError(w)

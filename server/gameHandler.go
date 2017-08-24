@@ -39,15 +39,22 @@ func (env *Env) GameComandGet(w http.ResponseWriter, r *http.Request, comandType
 		w.WriteHeader(http.StatusForbidden)
 	}
 
-	player, err := env.PlayerDAO.FindPlayer(player)
+	if session.Values[env.gameId] == nil {
+		// Игрок не в игре
+		w.Header().Set("Content-Type", "application/json; charset=UTF-8")
+		w.WriteHeader(http.StatusBadRequest)
+		return
+	}
+
+	command := management.NewCommand (comandType, 0, nil, nil)
+
+	env.Pool.SendCommand(management.AddressedCommand{session.Values[env.gameId].(int), command})
+	response, err := env.Pool.GetResponseSync(session.Values[env.gameId].(int))
 	if err != nil {
 		w.Header().Set("Content-Type", "application/json; charset=UTF-8")
-		w.WriteHeader(http.StatusForbidden)
+		w.WriteHeader(http.StatusBadRequest)
+		return
 	}
-	command := management.NewCommand (comandType, "", nil, nil)
-	game_id, _ := session.Values[env.playerId].(int)
-	env.Pool.SendCommand(management.AddressedCommand{game_id, command})
-	response := env.Pool.GetResponseSync(game_id)
 
 	res, err := json.Marshal(response)
 	if err != nil {
@@ -59,6 +66,7 @@ func (env *Env) GameComandGet(w http.ResponseWriter, r *http.Request, comandType
 	w.WriteHeader(http.StatusOK)
 	w.Write(res)
 	if err := json.NewEncoder(w).Encode(response); err != nil {
-		panic(err)
+		writeInternalError(w)
+		return
 	}
 }

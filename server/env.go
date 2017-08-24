@@ -17,7 +17,8 @@ type Env struct {
 	Pool       *management.ManagerPool
 	playerId   string
 	cookieName string
-	gameid     int
+	gameId     string
+	curGame    int
 }
 
 func NewEnv() Env {
@@ -25,7 +26,9 @@ func NewEnv() Env {
 		PlayerDAO:  database.NewDBPlayerDAO(database.Init()),
 		Store:      sessions.NewCookieStore([]byte("server-cookie-store")),
 		playerId:   "player_id",
+		gameId:     "game_id",
 		cookieName: "quest_go_mail",
+		curGame:    1,
 		Pool:       management.NewManagerPool(1, 10, 10),
 	}
 }
@@ -46,6 +49,6 @@ func writeInternalError(w http.ResponseWriter) {
 
 
 func (env *Env) NewGame() int {
-	env.gameid += 1
-	return env.gameid
+	env.curGame += 1
+	return env.curGame
 }
