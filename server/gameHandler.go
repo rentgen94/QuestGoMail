@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"github.com/rentgen94/QuestGoMail/management"
 	"net/http"
+	"time"
 )
 
 func (env *Env) GameLookAroundGet(w http.ResponseWriter, r *http.Request) {
@@ -49,7 +50,7 @@ func (env *Env) GameComandGet(w http.ResponseWriter, r *http.Request, comandType
 	command := management.NewCommand (comandType, 0, nil, nil)
 
 	env.Pool.SendCommand(management.AddressedCommand{session.Values[env.gameId].(int), command})
-	response, err := env.Pool.GetResponseSync(session.Values[env.gameId].(int))
+	response, err := env.Pool.GetResponseSync(session.Values[env.gameId].(int), time.Minute)
 	if err != nil {
 		w.Header().Set("Content-Type", "application/json; charset=UTF-8")
 		w.WriteHeader(http.StatusBadRequest)

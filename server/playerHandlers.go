@@ -8,6 +8,7 @@ import (
 	"io"
 	"io/ioutil"
 	"net/http"
+	"github.com/gorilla/sessions"
 )
 
 const (
@@ -96,4 +97,11 @@ func equal(this, other *entities.Player) bool {
 	}
 
 	return true
+}
+
+func (env *Env) isValidPlayer(session *sessions.Session) (bool) {
+	if session.Values[env.playerId] != nil {
+		return true
+	}
+	return false;
 }

@@ -22,14 +22,14 @@ func Init() *sql.DB {
 		log.Fatal(err)
 	}
 
-	setSCH, err := db.Query("SET SCHEMA '" + Schema + "';")
-	if err != nil {
-		log.Fatal(err)
-	}
-	defer setSCH.Close()
+	//setSCH, err := db.Query("SET SCHEMA '" + Schema + "';")
+	//if err != nil {
+	//	log.Fatal(err)
+	//}
+	//defer setSCH.Close()
 
-	for setSCH.Next() {
-	}
+	//for setSCH.Next() {
+	//}
 
 	return db
 }
