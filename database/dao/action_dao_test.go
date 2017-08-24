@@ -141,8 +141,8 @@ func TestActionDAO_getActFunc_Success(t *testing.T) {
 		},
 		nil,
 	)
-	room.Doors()[4] = entities.NewDoor(4, "Some", false, room, room)
-	room.Doors()[5] = entities.NewDoor(5, "Any", false, room, room)
+	room.Doors()[4] = entities.NewDoor(4, "Some", false)
+	room.Doors()[5] = entities.NewDoor(5, "Any", false)
 
 	var lab = entities.NewLabyrinth(entities.RoomsType{0: room}, room, nil)
 
@@ -264,8 +264,8 @@ func TestActionDAO_getActFunc_NoSlot(t *testing.T) {
 		},
 		nil,
 	)
-	room.Doors()[4] = entities.NewDoor(4, "Some", false, room, room)
-	room.Doors()[5] = entities.NewDoor(5, "Any", false, room, room)
+	room.Doors()[4] = entities.NewDoor(4, "Some", false)
+	room.Doors()[5] = entities.NewDoor(5, "Any", false)
 
 	var lab = entities.NewLabyrinth(entities.RoomsType{1: room}, nil, nil)
 

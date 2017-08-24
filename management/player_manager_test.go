@@ -50,7 +50,7 @@ func getRoom() *entities.Room {
 	var bigItem = entities.Item{Name: itemName, Size: 6, Id: bigItemId}
 	slot.PutItem(bigItem)
 
-	var door = entities.NewDoor(doorId, doorName, true, room, room)
+	var door = entities.NewDoor(doorId, doorName, true)
 	room.Doors()[door.Id()] = door
 
 	return room
