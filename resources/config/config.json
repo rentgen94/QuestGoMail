@@ -1,8 +1,9 @@
 {
     "port":         ":8080",
+    "clientPort":   ":8070",
     "driverName":   "postgres",
-    "userName":     "go_user",
-    "password":     "go",
+    "userName":     "postgres",
+    "password":     "qwerty456",
     "server":       "localhost:5432",
-    "dbName":       "quest_db"
+    "dbName":       "testdb"
 }

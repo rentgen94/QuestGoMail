@@ -1,0 +1,14 @@
+﻿{{ define "index" }}
+
+{{ template "header" }}
+
+    {{ if . }}
+        <h1 style="text-align: center">Hello {{.Name}}</h1>
+        <button onclick="window.open('/logout?id={{.Id}}', '_self')">Logout</button>
+    {{ else }}
+        <button onclick="window.open('/player/login', '_self')">Sign In</button>
+    {{ end }}
+
+{{ template "footer" }}
+
+{{ end }}

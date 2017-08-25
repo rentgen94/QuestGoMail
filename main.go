@@ -3,21 +3,22 @@ package main
 import (
 	"database/sql"
 	"encoding/json"
-	"fmt"
 	_ "github.com/lib/pq"
 	"github.com/rentgen94/QuestGoMail/server"
 	"log"
 	"net/http"
 	"os"
+	"github.com/rentgen94/QuestGoMail/client"
 )
 
 type Configuration struct {
-	Port       string `json:"port"`
-	DriverName string `json:"driverName"`
-	UserName   string `json:"userName"`
-	Password   string `json:"password"`
-	Server     string `json:"server"`
-	DbName     string `json:"dbName"`
+	Port       string  `json:"port"`
+	ClientPort string  `json:"clientPort"`
+	DriverName string  `json:"driverName"`
+	UserName   string  `json:"userName"`
+	Password   string  `json:"password"`
+	Server     string  `json:"server"`
+	DbName     string  `json:"dbName"`
 }
 
 func main() {
@@ -28,7 +29,13 @@ func main() {
 	var routes = server.GetRoutes(env)
 	router := server.NewRouter(routes)
 
-	log.Fatal(http.ListenAndServe(conf.Port, router))
+	http.Handle("/assets/", http.StripPrefix("/assets/", http.FileServer(http.Dir("./assets/"))))
+	var clientRoutes = client.GetRoutes()
+	var clientRouter = client.NewRouter(clientRoutes)
+	clientRouter.PathPrefix("/assets/").Handler(http.StripPrefix("/assets/", http.FileServer(http.Dir("./assets/"))))
+	go http.ListenAndServe(conf.ClientPort, clientRouter)
+
+	http.ListenAndServe(conf.Port, router)
 }
 
 func getDb(conf *Configuration) *sql.DB {
@@ -51,6 +58,5 @@ func getConfig(configPath string) Configuration {
 	if err != nil {
 		panic(err)
 	}
-	fmt.Println(configuration)
 	return configuration
 }

@@ -1,0 +1,32 @@
+{{ define "login" }}
+
+{{ template "header" }}
+
+{{ if not . }}
+<form method="post" id="nameform" action="javascript:void(null);" onsubmit="login()" enctype='application/json'>
+    <div class="imgcontainer">
+        <img src="../assets/images/login_avatar.svg" alt="Avatar" class="avatar">
+    </div>
+
+    <div class="container">
+        <label><b>Username</b></label>
+        <input type="text" placeholder="Enter Username" name="login" required>
+
+        <label><b>Password</b></label>
+        <input type="password" placeholder="Enter Password" name="password" required>
+
+        <button name="btnSubmit" type="submit">Login</button>
+    </div>
+
+    <div class="container" style="background-color:#f1f1f1">
+        <button type="button" class="cancelbtn" onclick="window.open('/', '_self')">Cancel</button>
+        <span class="psw">Forgot <a href="#">password?</a></span>
+    </div>
+</form>
+{{ else }}
+
+{{ end}}
+
+{{ template "footer" }}
+
+{{ end }}
