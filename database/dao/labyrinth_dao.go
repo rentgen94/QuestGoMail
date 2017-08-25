@@ -103,7 +103,7 @@ func (dao *LabyrinthDAO) GetAll() ([]LabyrinthDescription, error) {
 	var result = make([]LabyrinthDescription, 0)
 	for rows.Next() {
 		var description = LabyrinthDescription{}
-		err = rows.Scan(description.Id, description.Name, description.Description, description.startRoomId)
+		err = rows.Scan(&description.Id, &description.Name, &description.Description, &description.startRoomId)
 		if err != nil {
 			return nil, err
 		}
@@ -234,7 +234,7 @@ func (dao *LabyrinthDAO) getEmptyLabyrinthInfo(id int) (*LabyrinthDescription, e
 
 	var err = dao.db.
 		QueryRow(getLabyrinthByIdQuery, id).
-		Scan(&acceptor.Id, &acceptor.Name, &acceptor.startRoomId)
+		Scan(&acceptor.Id, &acceptor.Name, &acceptor.Description, &acceptor.startRoomId)
 
 	if err != nil {
 		return nil, err

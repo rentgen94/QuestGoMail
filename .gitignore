@@ -17,3 +17,4 @@
 
 # ide
 .idea
+/resources/init.sh

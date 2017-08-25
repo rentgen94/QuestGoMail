@@ -9,10 +9,10 @@ import (
 )
 
 const (
-	PostgresUser = "postgres"
-	Password     = "45274245"
+	PostgresUser = "go_user"
+	Password     = "go"
 	Server       = "localhost:5432"
-	DbName       = "testDB"
+	DbName       = "quest_db"
 	Schema       = "QuestGoMail"
 )
 

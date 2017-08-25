@@ -13,6 +13,13 @@ DROP TABLE IF EXISTS SlotItemLink;
 DROP TABLE IF EXISTS LabyrinthRoomLink;
 DROP TABLE IF EXISTS LabyrinthActionLink;
 DROP TABLE IF EXISTS ActionInteractiveLink;
+DROP TABLE IF EXISTS users;
+
+CREATE TABLE users(
+  id       serial primary key,
+  name     varchar(256) UNIQUE ,
+  password varchar(256)
+);
 
 CREATE TABLE Room (
   id          SERIAL PRIMARY KEY,

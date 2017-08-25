@@ -16,6 +16,7 @@ import (
 const (
 	alreadyPlaying = "You are already playing"
 	notPlaying = "You are not playing yet"
+	notAuthorized = "Not authorized"
 
 	bagCapacity = 1000
 	inputPlayerBuffSize = 10
@@ -26,6 +27,7 @@ func (env *Env) GameListLabyrinthsGet(w http.ResponseWriter, r *http.Request) {
 	var labs, err = env.LabyrinthDao.GetAll()
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
+		w.Write([]byte(err.Error()))
 		return
 	}
 
@@ -66,23 +68,27 @@ func (env *Env) GameStartPost(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		w.WriteHeader(http.StatusBadRequest)
 		w.Write([]byte(err.Error()))
+		return
 	}
 
 	var session = env.getSession(w, r)
 	if !env.authorized(session) {
 		w.WriteHeader(http.StatusForbidden)
+		w.Write([]byte(notAuthorized))
 		return
 	}
 
 	if env.playing(session) {
 		w.WriteHeader(http.StatusForbidden)
 		w.Write([]byte(alreadyPlaying))
+		return
 	}
 
 	var labyrinth, labErr = env.LabyrinthDao.GetById(labId)
 	if labErr != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		w.Write([]byte(labErr.Error()))
+		return
 	}
 
 	var player = entities.NewPlayer(labyrinth, bagCapacity)
@@ -91,6 +97,7 @@ func (env *Env) GameStartPost(w http.ResponseWriter, r *http.Request) {
 	if managerErr != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		w.Write([]byte(managerErr.Error()))
+		return
 	}
 
 	var gameId = env.Pool.AddManager(manager)
@@ -102,12 +109,14 @@ func (env *Env) GameQuitPost(w http.ResponseWriter, r *http.Request) {
 	var session = env.getSession(w, r)
 	if !env.authorized(session) {
 		w.WriteHeader(http.StatusForbidden)
+		w.Write([]byte(notAuthorized))
 		return
 	}
 
-	if env.playing(session) {
+	if !env.playing(session) {
 		w.WriteHeader(http.StatusForbidden)
 		w.Write([]byte(notPlaying))
+		return
 	}
 
 	var gameId = session.Values[env.gameId].(int)
@@ -151,11 +160,13 @@ func (env *Env) handleGameCommand(w http.ResponseWriter, r *http.Request, comman
 	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
 	if !env.authorized(session) {
 		w.WriteHeader(http.StatusForbidden)
+		w.Write([]byte(notAuthorized))
 		return
 	}
 
 	if !env.playing(session) {
 		w.WriteHeader(http.StatusForbidden)
+		w.Write([]byte(notPlaying))
 		return
 	}
 
@@ -168,6 +179,7 @@ func (env *Env) handleGameCommand(w http.ResponseWriter, r *http.Request, comman
 	response, err := env.Pool.GetResponseSync(session.Values[env.gameId].(int), 1*time.Second)
 	if err != nil {
 		w.WriteHeader(http.StatusBadRequest)
+		w.Write([]byte(err.Error()))
 		return
 	}
 
@@ -182,5 +194,10 @@ func (env *Env) authorized(session *sessions.Session) bool {
 }
 
 func (env *Env) playing(session *sessions.Session) bool {
-	return session.Values[env.gameId] != nil
+	if session.Values[env.gameId] == nil {
+		return false
+	}
+
+	var gameId = session.Values[env.gameId].(int)
+	return env.Pool.Running(gameId)
 }

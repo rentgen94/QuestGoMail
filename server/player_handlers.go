@@ -17,7 +17,6 @@ const (
 
 func (env *Env) PlayerLoginPost(w http.ResponseWriter, r *http.Request) {
 	session := env.getSession(w, r)
-	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
 
 	player := new(entities.Player)
 	if success := parsePlayer(w, r, player); !success {
@@ -40,7 +39,6 @@ func (env *Env) PlayerLoginPost(w http.ResponseWriter, r *http.Request) {
 
 func (env *Env) PlayerRegisterPost(w http.ResponseWriter, r *http.Request) {
 	var player entities.Player
-	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
 	if success := parsePlayer(w, r, &player); !success {
 		return
 	}
@@ -51,7 +49,7 @@ func (env *Env) PlayerRegisterPost(w http.ResponseWriter, r *http.Request) {
 		w.Write([]byte(RegisterOk))
 	} else {
 		w.WriteHeader(http.StatusConflict)
-		w.Write([]byte(RegisterError))
+		w.Write([]byte(err.Error()))
 	}
 }
 

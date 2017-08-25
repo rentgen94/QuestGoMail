@@ -4,6 +4,7 @@ import (
 	"errors"
 	"fmt"
 	"time"
+	"sync"
 )
 
 const (
@@ -30,6 +31,9 @@ type ManagerPool struct {
 	stopChan     chan interface{}
 	running      bool
 	respBuffSize int
+	managerMutex sync.Mutex
+	cntMutex sync.Mutex
+	respMutex sync.Mutex
 }
 
 func NewManagerPool(workerNum int, commandBuffSize int, respBuffSize int) *ManagerPool {
@@ -42,6 +46,9 @@ func NewManagerPool(workerNum int, commandBuffSize int, respBuffSize int) *Manag
 		stopChan:     make(chan interface{}, 1),
 		running:      false,
 		respBuffSize: respBuffSize,
+		managerMutex: sync.Mutex{},
+		cntMutex: sync.Mutex{},
+		respMutex: sync.Mutex{},
 	}
 }
 
@@ -77,16 +84,39 @@ func (pool *ManagerPool) Stop() {
 
 func (pool *ManagerPool) AddManager(manager *PlayerManager) int {
 	var gameId = pool.cnt
+
+	pool.cntMutex.Lock()
 	pool.cnt++
+	pool.cntMutex.Unlock()
+
+	pool.respMutex.Lock()
 	pool.respMap[gameId] = make(chan Response, pool.respBuffSize)
+	pool.respMutex.Unlock()
+
+	pool.managerMutex.Lock()
 	pool.managers[gameId] = manager
+	pool.managerMutex.Unlock()
 
 	return gameId
 }
 
 func (pool *ManagerPool) DeleteManager(id int) {
+	pool.managerMutex.Lock()
 	delete(pool.managers, id)
+	pool.managerMutex.Unlock()
+
+	pool.respMutex.Lock()
 	delete(pool.respMap, id)
+	pool.respMutex.Unlock()
+}
+
+func (pool *ManagerPool) Running(id int) bool {
+	var _, ok = pool.managers[id]
+	if !ok {
+		return false
+	}
+
+	return pool.managers[id].stateCode == managerWorkCode
 }
 
 func (pool *ManagerPool) SendCommand(command AddressedCommand) {
@@ -114,18 +144,24 @@ func (pool *ManagerPool) stop() {
 	pool.running = false
 	pool.stopChan <- 1
 
+	pool.managerMutex.Lock()
 	for _, manager := range pool.managers {
 		manager.Stop()
 	}
+	pool.managerMutex.Unlock()
 }
 
 func (pool *ManagerPool) monitorManagers() {
 	for pool.running {
+
+		pool.managerMutex.Lock()
 		for key, manager := range pool.managers {
 			if manager.Finished() {
 				delete(pool.managers, key)
 			}
 		}
+		pool.managerMutex.Unlock()
+
 	}
 }
 

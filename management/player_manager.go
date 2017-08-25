@@ -32,13 +32,16 @@ func NewPlayerManager(player *entities.Player, commandBuffSize int, responseBuff
 		return nil, errors.New(playerInTheVoid)
 	}
 
-	return &PlayerManager{
+	var result = &PlayerManager{
 		stateCode: managerNotStartedCode,
 		player:    player,
 		inChan:    make(chan Command, commandBuffSize),
 		outChan:   make(chan Response, responseBuffSize),
 		stopChan:  make(chan interface{}, 1),
-	}, nil
+	}
+	go result.Run()
+
+	return result, nil
 }
 
 func (manager *PlayerManager) Player() *entities.Player {

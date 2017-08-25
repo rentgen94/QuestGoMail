@@ -1,4 +1,6 @@
 
+GRANT ALL ON users TO go_user;
+GRANT ALL ON users_id_seq TO go_user;
 GRANT ALL ON Room TO go_user;
 GRANT ALL ON Door TO go_user;
 GRANT ALL ON Item TO go_user;
