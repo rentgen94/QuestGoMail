@@ -16,6 +16,18 @@ type Routes []Route
 func GetRoutes(env *Env) Routes {
 	return Routes{
 		{
+			"GameStartPost",
+			http.MethodPost,
+			"/game/start/{labyrinth_id}",
+			env.GameStartPost,
+		},
+		{
+			"GameQuitPost",
+			http.MethodPost,
+			"/game/quit",
+			env.GameQuitPost,
+		},
+		{
 			"GameCommandPost",
 			http.MethodPost,
 			"/game/command",

@@ -52,8 +52,3 @@ func (env *Env) getSession(w http.ResponseWriter, r *http.Request) *sessions.Ses
 func writeInternalError(w http.ResponseWriter) {
 	w.WriteHeader(http.StatusInternalServerError)
 }
-
-func (env *Env) NewGameId() int {
-	env.currGameId += 1
-	return env.currGameId
-}

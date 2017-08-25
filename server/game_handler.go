@@ -8,6 +8,18 @@ import (
 	"net/http"
 	"time"
 	"github.com/gorilla/sessions"
+	"github.com/gorilla/mux"
+	"strconv"
+	"github.com/rentgen94/QuestGoMail/entities"
+)
+
+const (
+	alreadyPlaying = "You are already playing"
+	notPlaying = "You are not playing yet"
+
+	bagCapacity = 1000
+	inputPlayerBuffSize = 10
+	outputPlayerBuffSize = 10
 )
 
 func (env *Env) GameListLabyrinthsGet(w http.ResponseWriter, r *http.Request) {
@@ -24,32 +36,84 @@ func (env *Env) GameListLabyrinthsGet(w http.ResponseWriter, r *http.Request) {
 }
 
 func (env *Env) GameLookAroundGet(w http.ResponseWriter, r *http.Request) {
-	env.GameCommandGet(w, r, management.GetRoomCode)
+	env.gameCommandGet(w, r, management.GetRoomCode)
 }
 
 func (env *Env) GameSlotsGet(w http.ResponseWriter, r *http.Request) {
-	env.GameCommandGet(w, r, management.GetSlotsCode)
+	env.gameCommandGet(w, r, management.GetSlotsCode)
 }
 
 func (env *Env) GameBagGet(w http.ResponseWriter, r *http.Request) {
-	env.GameCommandGet(w, r, management.GetBagCode)
+	env.gameCommandGet(w, r, management.GetBagCode)
 }
 
 func (env *Env) GameDoorsGet(w http.ResponseWriter, r *http.Request) {
-	env.GameCommandGet(w, r, management.GetDoorsCode)
+	env.gameCommandGet(w, r, management.GetDoorsCode)
 }
 
 func (env *Env) GameItemsGet(w http.ResponseWriter, r *http.Request) {
-	env.GameCommandGet(w, r, management.GetItemsCode)
+	env.gameCommandGet(w, r, management.GetItemsCode)
 }
 
 func (env *Env) GameInteractivesGet(w http.ResponseWriter, r *http.Request) {
-	env.GameCommandGet(w, r, management.GetIteractivesCode)
+	env.gameCommandGet(w, r, management.GetIteractivesCode)
 }
 
-func (env *Env) GameCommandGet(w http.ResponseWriter, r *http.Request, commandType int) {
-	command := management.NewCommand(commandType, 0, nil, nil)
-	env.handleGameCommand(w, r, command)
+func (env *Env) GameStartPost(w http.ResponseWriter, r *http.Request) {
+	var vars = mux.Vars(r)
+	var labIdStr = vars["labyrinth_id"]
+	var labId, err = strconv.Atoi(labIdStr)
+	if err != nil {
+		w.WriteHeader(http.StatusBadRequest)
+		w.Write([]byte(err.Error()))
+	}
+
+	var session = env.getSession(w, r)
+	if !env.authorized(session) {
+		w.WriteHeader(http.StatusForbidden)
+		return
+	}
+
+	if env.playing(session) {
+		w.WriteHeader(http.StatusForbidden)
+		w.Write([]byte(alreadyPlaying))
+	}
+
+	var labyrinth, labErr = env.LabyrinthDao.GetById(labId)
+	if labErr != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		w.Write([]byte(labErr.Error()))
+	}
+
+	var player = entities.NewPlayer(labyrinth, bagCapacity)
+	var manager, managerErr = management.NewPlayerManager(player, inputPlayerBuffSize, outputPlayerBuffSize)
+
+	if managerErr != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		w.Write([]byte(managerErr.Error()))
+	}
+
+	var gameId = env.Pool.AddManager(manager)
+	session.Values[env.gameId] = gameId
+	session.Save(r, w)
+}
+
+func (env *Env) GameQuitPost(w http.ResponseWriter, r *http.Request) {
+	var session = env.getSession(w, r)
+	if !env.authorized(session) {
+		w.WriteHeader(http.StatusForbidden)
+		return
+	}
+
+	if env.playing(session) {
+		w.WriteHeader(http.StatusForbidden)
+		w.Write([]byte(notPlaying))
+	}
+
+	var gameId = session.Values[env.gameId].(int)
+	env.Pool.DeleteManager(gameId)
+	delete(session.Values, env.gameId)
+	session.Save(r, w)
 }
 
 func (env *Env) GameCommandPost(w http.ResponseWriter, r *http.Request) {
@@ -73,6 +137,11 @@ func (env *Env) GameCommandPost(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	env.handleGameCommand(w, r, command)
+}
+
+func (env *Env) gameCommandGet(w http.ResponseWriter, r *http.Request, commandType int) {
+	command := management.NewCommand(commandType, 0, nil, nil)
 	env.handleGameCommand(w, r, command)
 }
 

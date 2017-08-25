@@ -14,7 +14,6 @@ const (
 	doorNotFoundTemplate        = "Door %v not found"
 	interactiveNotFoundTemplate = "Interactive \"%s\" not found"
 	itemCodeNotSupplied         = "Item code not supplied"
-	cant_create_json            = "can't get data"
 
 	managerNotStartedCode = iota
 	managerWorkCode
@@ -41,6 +40,10 @@ func NewPlayerManager(player *entities.Player, commandBuffSize int, responseBuff
 		outChan:   make(chan Response, responseBuffSize),
 		stopChan:  make(chan interface{}, 1),
 	}, nil
+}
+
+func (manager *PlayerManager) Player() *entities.Player {
+	return manager.player
 }
 
 func (manager *PlayerManager) CommandChan() chan Command {
@@ -116,12 +119,7 @@ func handleRoomCode(resp *Response, manager *PlayerManager, command Command) {
 		Name:        manager.player.Room().Name(),
 		Description: manager.player.Room().Description(),
 	}
-	res, err := json.Marshal(a)
-	if err != nil {
-		resp.ErrMsg = cant_create_json
-		return
-	}
-	resp.Data = res
+	resp.Data = a
 }
 
 func handleSlotsCode(resp *Response, manager *PlayerManager, command Command) {
@@ -142,12 +140,7 @@ func handleSlotsCode(resp *Response, manager *PlayerManager, command Command) {
 		}
 		a = append(a, *slt)
 	}
-	res, err := json.Marshal(a)
-	if err != nil {
-		resp.ErrMsg = cant_create_json
-		return
-	}
-	resp.Data = res
+	resp.Data = a
 }
 
 func handleDoorsCode(resp *Response, manager *PlayerManager, command Command) {
@@ -164,12 +157,7 @@ func handleDoorsCode(resp *Response, manager *PlayerManager, command Command) {
 		}
 		a = append(a, *slt)
 	}
-	res, err := json.Marshal(a)
-	if err != nil {
-		resp.ErrMsg = cant_create_json
-		return
-	}
-	resp.Data = res
+	resp.Data = a
 }
 
 type itemResponse struct {
@@ -190,12 +178,7 @@ func handleItemsCode(resp *Response, manager *PlayerManager, command Command) {
 		}
 		a = append(a, *slt)
 	}
-	res, err := json.Marshal(a)
-	if err != nil {
-		resp.ErrMsg = cant_create_json
-		return
-	}
-	resp.Data = res
+	resp.Data = a
 }
 
 func handleBagCode(resp *Response, manager *PlayerManager, command Command) {
@@ -210,12 +193,7 @@ func handleBagCode(resp *Response, manager *PlayerManager, command Command) {
 		}
 		a = append(a, *slt)
 	}
-	res, err := json.Marshal(a)
-	if err != nil {
-		resp.ErrMsg = cant_create_json
-		return
-	}
-	resp.Data = res
+	resp.Data = a
 }
 
 func handleInteractivesCode(resp *Response, manager *PlayerManager, command Command) {
@@ -234,12 +212,7 @@ func handleInteractivesCode(resp *Response, manager *PlayerManager, command Comm
 		}
 		a = append(a, *slt)
 	}
-	res, err := json.Marshal(a)
-	if err != nil {
-		resp.ErrMsg = cant_create_json
-		return
-	}
-	resp.Data = res
+	resp.Data = a
 }
 
 func handleEnterCode(resp *Response, manager *PlayerManager, command Command) {
@@ -285,7 +258,6 @@ func handleTakeCode(resp *Response, manager *PlayerManager, command Command) {
 	if moveErr != nil {
 		resp.ErrMsg = moveErr.Error()
 	}
-	return
 }
 
 func handlePutCode(resp *Response, manager *PlayerManager, command Command) {
@@ -304,5 +276,4 @@ func handlePutCode(resp *Response, manager *PlayerManager, command Command) {
 	if moveErr != nil {
 		resp.ErrMsg = moveErr.Error()
 	}
-	return
 }
