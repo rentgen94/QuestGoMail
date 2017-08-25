@@ -8,7 +8,6 @@ import (
 )
 
 const (
-	managerNotFoundTemplate = "Game %d not found"
 	failedOnTimeOut         = "Failed on time out"
 )
 
