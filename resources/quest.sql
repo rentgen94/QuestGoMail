@@ -109,8 +109,8 @@ CREATE TABLE ActionInteractiveSwitch (
   newState    BOOLEAN,
   UNIQUE (action, interactive)
 );
-CREATE INDEX ActionInteractiveSwitch_idx
-  ON ActionSlotSwitch (action, slot);
+CREATE INDEX actionInteractiveSwitch_idx
+  ON ActionInteractiveSwitch (action, interactive);
 
 CREATE TABLE ActionDoorSwitch (
   id       SERIAL PRIMARY KEY,
