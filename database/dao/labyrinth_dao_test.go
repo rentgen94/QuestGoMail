@@ -14,8 +14,8 @@ func TestLabyrinthDAO_getEmptyLabyrinthInfo_Success(t *testing.T) {
 	}
 	defer db.Close()
 
-	var rows = sqlmock.NewRows([]string{"id", "name", "start_room_id"}).
-		AddRow(0, "a", 100)
+	var rows = sqlmock.NewRows([]string{"id", "name", "description", "start_room_id"}).
+		AddRow(0, "a", "", 100)
 
 	mock.
 		ExpectQuery("SELECT ").

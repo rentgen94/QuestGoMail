@@ -3,14 +3,18 @@ package management
 import (
 	"errors"
 	"fmt"
-	"time"
 	"sync"
+	"time"
 )
 
 const (
 	managerNotFoundTemplate = "Game %d not found"
 	failedOnTimeOut         = "Failed on time out"
 )
+
+func getManagerNotFoundMsg(id int) string {
+	return fmt.Sprintf("Game %d not found", id)
+}
 
 type AddressedCommand struct {
 	Address int
@@ -32,8 +36,8 @@ type ManagerPool struct {
 	running      bool
 	respBuffSize int
 	managerMutex sync.Mutex
-	cntMutex sync.Mutex
-	respMutex sync.Mutex
+	cntMutex     sync.Mutex
+	respMutex    sync.Mutex
 }
 
 func NewManagerPool(workerNum int, commandBuffSize int, respBuffSize int) *ManagerPool {
@@ -47,8 +51,8 @@ func NewManagerPool(workerNum int, commandBuffSize int, respBuffSize int) *Manag
 		running:      false,
 		respBuffSize: respBuffSize,
 		managerMutex: sync.Mutex{},
-		cntMutex: sync.Mutex{},
-		respMutex: sync.Mutex{},
+		cntMutex:     sync.Mutex{},
+		respMutex:    sync.Mutex{},
 	}
 }
 
@@ -126,7 +130,7 @@ func (pool *ManagerPool) SendCommand(command AddressedCommand) {
 func (pool *ManagerPool) GetResponseSync(gameId int, timeout time.Duration) (Response, error) {
 	var ch, ok = pool.respMap[gameId]
 	if !ok {
-		return Response{}, errors.New(fmt.Sprint(managerNotFoundTemplate, gameId))
+		return Response{}, errors.New(getManagerNotFoundMsg(gameId))
 	}
 
 	for {
@@ -179,7 +183,7 @@ func (pool *ManagerPool) handleCommandChan() {
 		var manager, ok = pool.managers[command.Address]
 		if !ok {
 			pool.respMap[command.Address] <- Response{
-				ErrMsg: fmt.Sprintf(managerNotFoundTemplate, command.Address),
+				ErrMsg: getManagerNotFoundMsg(command.Address),
 			}
 		}
 		manager.CommandChan() <- command.Command

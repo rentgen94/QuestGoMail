@@ -4,7 +4,7 @@ import "errors"
 
 const (
 	objectNotAccessible = "Object not accessible"
-	actionNotAssigned = "Action not assigned"
+	actionNotAssigned   = "Action not assigned"
 )
 
 type InteractiveObject interface {

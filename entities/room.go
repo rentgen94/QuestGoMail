@@ -6,12 +6,21 @@ import (
 	"sort"
 )
 
-const (
-	ActionNotFoundTemplate     = "Action %d not found"
-	ActionNotAvailableTemplate = "Action %d not available"
-	FailedToTakeTemplate       = "Failed to take item (id = %d)"
-	CanNotPutItemTemplate      = "Can not put item \"%d\" to the action \"%s\""
-)
+func GetActionNotFoundMsg(id int) string {
+	return fmt.Sprintf("Action %d not found", id)
+}
+
+func GetActionNotAvailableMsg(id int) string {
+	return fmt.Sprintf("Action %d not available", id)
+}
+
+func GetFailedToTakeMsg(id int) string {
+	return fmt.Sprintf("Failed to take item (id = %d)", id)
+}
+
+func GetCanNotPutItemMsg(id int, roomName string) string {
+	return fmt.Sprintf("Can not put item \"%d\" to the room \"%s\"", id, roomName)
+}
 
 type SlotsType map[int]*Slot
 type DoorsType map[int]*Door
@@ -74,7 +83,7 @@ func (r *Room) GetItem(itemId int, player *Player) error {
 		}
 	}
 
-	return errors.New(fmt.Sprintf(FailedToTakeTemplate, itemId))
+	return errors.New(GetFailedToTakeMsg(itemId))
 }
 
 func (r *Room) PutItem(itemId int, player *Player) error {
@@ -86,7 +95,7 @@ func (r *Room) PutItem(itemId int, player *Player) error {
 		}
 	}
 
-	return errors.New(fmt.Sprintf(CanNotPutItemTemplate, itemId, r.Name()))
+	return errors.New(GetCanNotPutItemMsg(itemId, r.Name()))
 }
 
 func (r *Room) AccessibleItems() (items []Item) {
@@ -113,13 +122,14 @@ func (r *Room) SetInteractives(interactives InteractivesType) {
 	r.interactives = interactives
 }
 
-func (r *Room) AccessibleInteractives() (interactives []InteractiveObject) {
+func (r *Room) AccessibleInteractives() InteractivesType {
+	var result = make(InteractivesType)
 	for _, inter := range r.interactives {
 		if inter.IsAccessible() {
-			interactives = append(interactives, inter)
+			result[inter.Id()] = inter
 		}
 	}
-	return
+	return result
 }
 
 func (r *Room) Doors() DoorsType {

@@ -1,7 +1,6 @@
 package mocks
 
 import (
-	"database/sql"
 	"errors"
 	"github.com/rentgen94/QuestGoMail/entities"
 )
@@ -14,6 +13,10 @@ func (*ExistPlayerDAOMock) FindPlayer(player *entities.Player) (*entities.Player
 
 func (*ExistPlayerDAOMock) CreatePlayer(player *entities.Player) error {
 	return nil
+}
+
+func (*ExistPlayerDAOMock) Exist(player *entities.Player) (bool, error) {
+	return true, nil
 }
 
 func (*ExistPlayerDAOMock) FindPlayerById(id int) (*entities.Player, error) {
@@ -31,7 +34,11 @@ func (*NotExistPlayerDAOMock) FindPlayer(player *entities.Player) (*entities.Pla
 }
 
 func (*NotExistPlayerDAOMock) CreatePlayer(player *entities.Player) error {
-	return sql.ErrNoRows
+	return errors.New("\"Player register error.\"")
+}
+
+func (*NotExistPlayerDAOMock) Exist(player *entities.Player) (bool, error) {
+	return false, nil
 }
 
 func (*NotExistPlayerDAOMock) FindPlayerById(id int) (*entities.Player, error) {

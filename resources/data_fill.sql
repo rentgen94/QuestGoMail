@@ -32,3 +32,4 @@ INSERT INTO ActionInteractiveSwitch (action, interactive, newstate) VALUES (1, 2
 INSERT INTO ActionInteractiveLink (action, interactive) VALUES (1, 1);
 INSERT INTO LabyrinthActionLink (action, labyrinth) VALUES (1, 1);
 INSERT INTO Door (room1, room2, name, isAccessible) VALUES (1, 1, 'black door', TRUE );
+INSERT INTO InteractiveObjectNeed (interactive, item) VALUES (2, 1);

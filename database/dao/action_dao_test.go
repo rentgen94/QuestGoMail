@@ -2,7 +2,6 @@ package dao
 
 import (
 	"errors"
-	"fmt"
 	"github.com/rentgen94/QuestGoMail/entities"
 	"github.com/stretchr/testify/assert"
 	"gopkg.in/DATA-DOG/go-sqlmock.v1"
@@ -202,7 +201,7 @@ func TestActionDAO_getActFunc_NoRoom(t *testing.T) {
 	assert.Nil(t, funcErr)
 
 	var _, actErr = actFunc(lab)
-	assert.Error(t, actErr, fmt.Sprintf(roomDoesNotExistsTemplate, 0))
+	assert.Error(t, actErr, getRoomDoesNotExistMsg(0))
 }
 
 func TestActionDAO_getActFunc_NoSlot(t *testing.T) {
@@ -277,5 +276,5 @@ func TestActionDAO_getActFunc_NoSlot(t *testing.T) {
 	assert.Nil(t, funcErr)
 
 	var _, actErr = actFunc(lab)
-	assert.Error(t, actErr, fmt.Sprintf(slotDoesNotExistsTemplate, 1, 0))
+	assert.Error(t, actErr, getSlotDoesNotExistMsg(1, 0))
 }

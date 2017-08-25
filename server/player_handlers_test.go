@@ -41,7 +41,7 @@ func TestEnv_PlayerLoginPost_Successful(t *testing.T) {
 		playerId:   "player_id",
 		cookieName: "quest_go_mail",
 		gameId:     "game_id",
-		currGameId:    1,
+		currGameId: 1,
 		Pool:       management.NewManagerPool(1, 10, 10),
 	}
 	var inputMsg = "{\"login\":\"qqq\", \"password\":\"111\"}"

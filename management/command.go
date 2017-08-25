@@ -17,9 +17,9 @@ const (
 )
 
 type Command struct {
-	TypeCode int `json:"code"`
-	ItemKey  int `json:"item_key"`
-	Args     []string `json:"args"`
+	TypeCode int             `json:"code"`
+	ItemKey  int             `json:"item_key"`
+	Args     []string        `json:"args"`
 	Items    []entities.Item `json:"items"`
 }
 

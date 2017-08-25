@@ -8,16 +8,23 @@ import (
 )
 
 const (
-	playerInTheVoid             = "Player is not in a room"
-	badCode                     = "Bad code"
-	doorNotFoundTemplate        = "Door %v not found"
-	interactiveNotFoundTemplate = "Interactive \"%s\" not found"
-	itemCodeNotSupplied         = "Item code not supplied"
+	playerInTheVoid     = "Player is not in a room"
+	badCode             = "Bad code"
+	itemCodeNotSupplied = "Item code not supplied"
+	itemsAbsent         = "Not all items are in your bag"
 
 	managerNotStartedCode = iota
 	managerWorkCode
 	managerFinishedCode
 )
+
+func getDoorNotFoundMsg(id int) string {
+	return fmt.Sprintf("Door %d not found", id)
+}
+
+func getInteractiveNotFoundMsg(id int) string {
+	return fmt.Sprintf("Interactive \"%s\" not found", id)
+}
 
 type PlayerManager struct {
 	stateCode int
@@ -25,7 +32,7 @@ type PlayerManager struct {
 	inChan    chan Command
 	outChan   chan Response
 	stopChan  chan interface{}
-	timeOut time.Duration
+	timeOut   time.Duration
 }
 
 func NewPlayerManager(
@@ -44,7 +51,7 @@ func NewPlayerManager(
 		inChan:    make(chan Command, commandBuffSize),
 		outChan:   make(chan Response, responseBuffSize),
 		stopChan:  make(chan interface{}, 1),
-		timeOut: timeOut,
+		timeOut:   timeOut,
 	}
 	go result.Run()
 
@@ -199,7 +206,7 @@ func handleItemsCode(resp *Response, manager *PlayerManager, command Command) {
 func handleBagCode(resp *Response, manager *PlayerManager, command Command) {
 	a := []itemResponse{}
 	for k := range manager.player.Bag().Items() {
-		it, _ := manager.player.Bag().WatchItem(k)
+		it, _ := manager.player.Bag().TakeItem(k)
 		slt := &itemResponse{
 			Name:        it.Name,
 			Id:          it.Id,
@@ -233,7 +240,7 @@ func handleInteractivesCode(resp *Response, manager *PlayerManager, command Comm
 func handleEnterCode(resp *Response, manager *PlayerManager, command Command) {
 	var door, ok = manager.player.Room().Doors()[command.ItemKey]
 	if !ok {
-		resp.ErrMsg = fmt.Sprintf(doorNotFoundTemplate, command.ItemKey)
+		resp.ErrMsg = getDoorNotFoundMsg(command.ItemKey)
 		return
 	}
 	var err = door.Enter(manager.player)
@@ -245,11 +252,29 @@ func handleEnterCode(resp *Response, manager *PlayerManager, command Command) {
 }
 
 func handleInteractCode(resp *Response, manager *PlayerManager, command Command) {
-	var inter, ok = manager.player.Room().Interactives()[command.ItemKey]
+	var itemsInBag = func(items []entities.Item, bag *entities.Slot) error {
+		for _, item := range items {
+			var _, ok = bag.Items()[item.Id]
+			if !ok {
+				return errors.New(itemsAbsent)
+			}
+		}
+
+		return nil
+	}
+
+	var inter, ok = manager.player.Room().AccessibleInteractives()[command.ItemKey]
 	if !ok {
-		resp.ErrMsg = fmt.Sprintf(interactiveNotFoundTemplate, command.ItemKey)
+		resp.ErrMsg = getInteractiveNotFoundMsg(command.ItemKey)
 		return
 	}
+
+	var bagErr = itemsInBag(command.Items, manager.Player().Bag())
+	if bagErr != nil {
+		resp.ErrMsg = bagErr.Error()
+		return
+	}
+
 	var result, err = inter.Interact(command.Args, command.Items)
 	if err != nil {
 		resp.ErrMsg = err.Error()

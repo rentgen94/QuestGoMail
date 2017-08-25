@@ -1,9 +1,7 @@
 package management
 
 import (
-	"fmt"
 	"github.com/rentgen94/QuestGoMail/entities"
-	"strconv"
 	"testing"
 	"time"
 )
@@ -87,7 +85,7 @@ func TestPlayerManager_getCommandResponse(t *testing.T) {
 		},
 		{
 			command: NewCommand(enterCode, 1, nil, nil),
-			errMsg:  fmt.Sprintf(doorNotFoundTemplate, 1),
+			errMsg:  getDoorNotFoundMsg(1),
 		},
 		{
 			command: NewCommand(interactCode, interactiveId, nil, nil),
@@ -95,31 +93,27 @@ func TestPlayerManager_getCommandResponse(t *testing.T) {
 		},
 		{
 			command: NewCommand(interactCode, 100, nil, nil),
-			errMsg:  fmt.Sprintf(interactiveNotFoundTemplate, 100),
+			errMsg:  getInteractiveNotFoundMsg(100),
 		},
 		{
-			command: NewCommand(takeCode, 0, make([]string, 0), nil),
-			errMsg:  itemCodeNotSupplied,
-		},
-		{
-			command: NewCommand(takeCode, 0, []string{strconv.Itoa(itemId)}, nil),
+			command: NewCommand(takeCode, itemId, nil, nil),
 			errMsg:  "",
 		},
 		{
-			command: NewCommand(takeCode, 0, []string{strconv.Itoa(itemId + 1)}, nil),
-			errMsg:  fmt.Sprintf(entities.FailedToTakeTemplate, itemId+1),
+			command: NewCommand(takeCode, itemId+1, nil, nil),
+			errMsg:  entities.GetFailedToTakeMsg(itemId + 1),
 		},
 		{
-			command: NewCommand(takeCode, 0, []string{strconv.Itoa(bigItemId)}, nil),
-			errMsg:  fmt.Sprintf(entities.FailedToTakeTemplate, bigItemId),
+			command: NewCommand(takeCode, bigItemId, nil, nil),
+			errMsg:  entities.GetFailedToTakeMsg(bigItemId),
 		},
 		{
-			command: NewCommand(putCode, 0, []string{strconv.Itoa(playerItemId)}, nil),
+			command: NewCommand(putCode, playerItemId, nil, nil),
 			errMsg:  "",
 		},
 		{
-			command: NewCommand(putCode, 0, []string{strconv.Itoa(playerItemId + 1)}, nil),
-			errMsg:  fmt.Sprintf(entities.CanNotPutItemTemplate, playerItemId+1, ""),
+			command: NewCommand(putCode, playerItemId+1, nil, nil),
+			errMsg:  entities.GetCanNotPutItemMsg(playerItemId+1, ""),
 		},
 		{
 			command: NewCommand(-100, 0, nil, nil),
@@ -162,7 +156,7 @@ func TestPlayerManager_Run(t *testing.T) {
 		},
 		{
 			command: NewCommand(enterCode, 100, nil, nil),
-			errMsg:  fmt.Sprintf(doorNotFoundTemplate, 100),
+			errMsg:  getDoorNotFoundMsg(100),
 		},
 		{
 			command: NewCommand(interactCode, interactiveId, nil, nil),
@@ -170,31 +164,27 @@ func TestPlayerManager_Run(t *testing.T) {
 		},
 		{
 			command: NewCommand(interactCode, 100, nil, nil),
-			errMsg:  fmt.Sprintf(interactiveNotFoundTemplate, 100),
+			errMsg:  getInteractiveNotFoundMsg(100),
 		},
 		{
-			command: NewCommand(takeCode, 0, make([]string, 0), nil),
-			errMsg:  itemCodeNotSupplied,
-		},
-		{
-			command: NewCommand(takeCode, 0, []string{strconv.Itoa(itemId)}, nil),
+			command: NewCommand(takeCode, itemId, nil, nil),
 			errMsg:  "",
 		},
 		{
-			command: NewCommand(takeCode, 0, []string{strconv.Itoa(itemId + 1)}, nil),
-			errMsg:  fmt.Sprintf(entities.FailedToTakeTemplate, itemId+1),
+			command: NewCommand(takeCode, itemId+1, nil, nil),
+			errMsg:  entities.GetFailedToTakeMsg(itemId + 1),
 		},
 		{
-			command: NewCommand(takeCode, 0, []string{strconv.Itoa(bigItemId)}, nil),
-			errMsg:  fmt.Sprintf(entities.FailedToTakeTemplate, bigItemId),
+			command: NewCommand(takeCode, bigItemId, nil, nil),
+			errMsg:  entities.GetFailedToTakeMsg(bigItemId),
 		},
 		{
-			command: NewCommand(putCode, 0, []string{strconv.Itoa(playerItemId)}, nil),
+			command: NewCommand(putCode, playerItemId, nil, nil),
 			errMsg:  "",
 		},
 		{
-			command: NewCommand(putCode, 0, []string{strconv.Itoa(playerItemId + 1)}, nil),
-			errMsg:  fmt.Sprintf(entities.CanNotPutItemTemplate, playerItemId+1, ""),
+			command: NewCommand(putCode, playerItemId+1, nil, nil),
+			errMsg:  entities.GetCanNotPutItemMsg(playerItemId+1, ""),
 		},
 		{
 			command: NewCommand(-100, 0, nil, nil),

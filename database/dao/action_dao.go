@@ -8,11 +8,6 @@ import (
 )
 
 const (
-	roomDoesNotExistsTemplate        = "Room id = %d does not exists in labyrinth"
-	slotDoesNotExistsTemplate        = "Slot id = %d does not exists in room %d"
-	interactiveDoesNotExistsTemplate = "Interactive id = %d does not exists in room %d"
-	doorDoesNotExistsTemplate        = "Door id = %d does not exists in room %d"
-
 	actionRelatedDoorsQuery = `
 		SELECT d.id, d.room1, sw.newState FROM Door d
 			JOIN ActionDoorSwitch sw ON d.id = sw.door
@@ -35,6 +30,22 @@ const (
 		SELECT id, name, resultCode, resultMsg FROM Action WHERE id = $1
 	`
 )
+
+func getRoomDoesNotExistMsg(id int) string {
+	return fmt.Sprintf("Room id = %d does not exists in labyrinth", id)
+}
+
+func getSlotDoesNotExistMsg(slotId int, roomId int) string {
+	return fmt.Sprintf("Slot id = %d does not exists in room %d", slotId, roomId)
+}
+
+func getInteractiveDoesNotExistMsg(slotId int, roomId int) string {
+	return fmt.Sprintf("Interactive id = %d does not exists in room %d", slotId, roomId)
+}
+
+func getDoorDoesNotExistMsg(slotId int, roomId int) string {
+	return fmt.Sprintf("Door id = %d does not exists in room %d", slotId, roomId)
+}
 
 type ActionDAO struct {
 	db *sql.DB
@@ -103,7 +114,7 @@ func (dao *ActionDAO) getActFunc(actionId int, resultMsg string, resultCode int)
 		) error {
 			var room, okRoom = labyrinth.Rooms()[accessibleData.roomId]
 			if !okRoom {
-				return errors.New(fmt.Sprintf(roomDoesNotExistsTemplate, accessibleData.roomId))
+				return errors.New(getRoomDoesNotExistMsg(accessibleData.roomId))
 			}
 
 			var accessible, err = extractor(room)
@@ -123,7 +134,7 @@ func (dao *ActionDAO) getActFunc(actionId int, resultMsg string, resultCode int)
 				func(room *entities.Room) (entities.Accessible, error) {
 					var slot, ok = room.Slots()[slotData.id]
 					if !ok {
-						return nil, errors.New(fmt.Sprintf(slotDoesNotExistsTemplate, slotData.id, slotData.roomId))
+						return nil, errors.New(getSlotDoesNotExistMsg(slotData.id, slotData.roomId))
 					}
 					return slot, nil
 				},
@@ -139,7 +150,7 @@ func (dao *ActionDAO) getActFunc(actionId int, resultMsg string, resultCode int)
 				func(room *entities.Room) (entities.Accessible, error) {
 					var inter, ok = room.Interactives()[interData.id]
 					if !ok {
-						return nil, errors.New(fmt.Sprintf(interactiveDoesNotExistsTemplate, interData.id, interData.roomId))
+						return nil, errors.New(getInteractiveDoesNotExistMsg(interData.id, interData.roomId))
 					}
 					return inter, nil
 				},
@@ -149,14 +160,13 @@ func (dao *ActionDAO) getActFunc(actionId int, resultMsg string, resultCode int)
 			return entities.InteractionResult{}, err
 		}
 
-		// TODO maybe doors must be keeped inside the labyrinth
 		for _, doorData := range doorsData {
 			err = processAccessible(
 				doorData,
 				func(room *entities.Room) (entities.Accessible, error) {
 					var inter, ok = room.Doors()[doorData.id]
 					if !ok {
-						return nil, errors.New(fmt.Sprintf(doorDoesNotExistsTemplate, doorData.id, doorData.roomId))
+						return nil, errors.New(getDoorDoesNotExistMsg(doorData.id, doorData.roomId))
 					}
 					return inter, nil
 				},

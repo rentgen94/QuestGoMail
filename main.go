@@ -2,22 +2,22 @@ package main
 
 import (
 	"database/sql"
+	"encoding/json"
+	"fmt"
 	_ "github.com/lib/pq"
 	"github.com/rentgen94/QuestGoMail/server"
 	"log"
 	"net/http"
 	"os"
-	"encoding/json"
-	"fmt"
 )
 
 type Configuration struct {
-	Port       string  `json:"port"`
-	DriverName string  `json:"driverName"`
-	UserName   string  `json:"userName"`
-	Password   string  `json:"password"`
-	Server     string  `json:"server"`
-	DbName     string  `json:"dbName"`
+	Port       string `json:"port"`
+	DriverName string `json:"driverName"`
+	UserName   string `json:"userName"`
+	Password   string `json:"password"`
+	Server     string `json:"server"`
+	DbName     string `json:"dbName"`
 }
 
 func main() {
@@ -33,7 +33,7 @@ func main() {
 
 func getDb(conf *Configuration) *sql.DB {
 	db, err := sql.Open(conf.DriverName,
-		conf.DriverName + "://"+conf.UserName+":"+conf.Password+"@"+conf.Server+"/"+conf.DbName+"?sslmode=disable")
+		conf.DriverName+"://"+conf.UserName+":"+conf.Password+"@"+conf.Server+"/"+conf.DbName+"?sslmode=disable")
 	if err != nil {
 		log.Fatal(err)
 	}

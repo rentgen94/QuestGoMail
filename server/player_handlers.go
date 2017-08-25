@@ -40,6 +40,7 @@ func (env *Env) PlayerLoginPost(w http.ResponseWriter, r *http.Request) {
 func (env *Env) PlayerRegisterPost(w http.ResponseWriter, r *http.Request) {
 	var player entities.Player
 	if success := parsePlayer(w, r, &player); !success {
+		w.WriteHeader(http.StatusBadRequest)
 		return
 	}
 

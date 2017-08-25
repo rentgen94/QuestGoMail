@@ -2,7 +2,6 @@ package entities
 
 import (
 	"errors"
-	"fmt"
 	"testing"
 )
 
@@ -11,7 +10,7 @@ func getFailAction() *Action {
 		0,
 		"",
 		func(l *Labyrinth) (res InteractionResult, err error) {
-			return ContinueResult(""), errors.New(fmt.Sprintf(ActionNotAvailableTemplate, 0))
+			return ContinueResult(""), errors.New(GetActionNotAvailableMsg(0))
 		},
 	)
 }
@@ -53,7 +52,7 @@ func TestBoundInteractiveObject_Interact(t *testing.T) {
 			true,
 			false,
 			"",
-			fmt.Sprintf(ActionNotAvailableTemplate, 0),
+			GetActionNotAvailableMsg(0),
 		},
 		{
 			getSuccessAction(),

@@ -7,7 +7,7 @@ import (
 	"testing"
 )
 
-func TestDbPlayerDAO_FindPlayer_Succesful(t *testing.T) {
+func TestDbPlayerDAO_FindPlayer_Successful(t *testing.T) {
 	var db, mock, err = sqlmock.New()
 
 	if err != nil {
@@ -34,17 +34,17 @@ func TestDbPlayerDAO_FindPlayer_Succesful(t *testing.T) {
 	assert.Equal(t, founded.Password, "111")
 }
 
-func TestDbPlayerDAO_CreatePlayer_Succesful(t *testing.T) {
+func TestDbPlayerDAO_CreatePlayer_Successful(t *testing.T) {
 	var db, mock, err = sqlmock.New()
 
 	if err != nil {
 		t.Fatal(err)
 	}
 	defer db.Close()
-	var rows = sqlmock.NewRows([]string{"id", "name", "password"})
+	var rows = sqlmock.NewRows([]string{"cnt"}).AddRow(0)
 
 	mock.ExpectQuery("SELECT *").
-		WithArgs("qqq", "111").
+		WithArgs("qqq").
 		WillReturnRows(rows)
 
 	mock.ExpectExec("INSERT INTO").
@@ -65,11 +65,11 @@ func TestDbPlayerDAO_CreatePlayer_AlreadyExist(t *testing.T) {
 		t.Fatal(err)
 	}
 	defer db.Close()
-	var rows = sqlmock.NewRows([]string{"id", "name", "password"}).
-		AddRow(1, "qqq", "111")
+	var rows = sqlmock.NewRows([]string{"cnt"}).
+		AddRow(1)
 
 	mock.ExpectQuery("SELECT *").
-		WithArgs("qqq", "111").
+		WithArgs("qqq").
 		WillReturnRows(rows)
 
 	mock.ExpectExec("INSERT INTO").

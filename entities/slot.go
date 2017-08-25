@@ -11,6 +11,10 @@ const (
 	ItemNotPresentTemplate = "Item id = %d not present"
 )
 
+func getItemNotPresentMsg(id int) string {
+	return fmt.Sprintf("Item id = %d not present", id)
+}
+
 type itemsType map[int][]Item
 
 type Slot struct {
@@ -92,7 +96,7 @@ func (s *Slot) MoveItem(itemId int, another *Slot) error {
 func (s *Slot) watchItem(id int) (item Item, err error) {
 	var has = s.hasItem(id)
 	if !has {
-		return Item{}, errors.New(fmt.Sprintf(ItemNotPresentTemplate, id))
+		return Item{}, errors.New(getItemNotPresentMsg(id))
 	}
 
 	return s.items[id][0], nil
@@ -101,11 +105,11 @@ func (s *Slot) watchItem(id int) (item Item, err error) {
 func (s *Slot) takeItem(id int) (item Item, err error) {
 	var has = s.hasItem(id)
 	if !has {
-		return Item{}, errors.New(fmt.Sprintf(ItemNotPresentTemplate, id))
+		return Item{}, errors.New(getItemNotPresentMsg(id))
 	}
 
-	item = s.items[id][len(s.items[id]) - 1]
-	s.items[id] = s.items[id][:len(s.items[id]) - 1]
+	item = s.items[id][len(s.items[id])-1]
+	s.items[id] = s.items[id][:len(s.items[id])-1]
 	if len(s.items[id]) == 0 {
 		delete(s.items, id)
 	}

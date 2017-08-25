@@ -2,26 +2,26 @@ package server
 
 import (
 	"encoding/json"
+	"github.com/gorilla/mux"
+	"github.com/gorilla/sessions"
+	"github.com/rentgen94/QuestGoMail/entities"
 	"github.com/rentgen94/QuestGoMail/management"
 	"io"
 	"io/ioutil"
 	"net/http"
-	"time"
-	"github.com/gorilla/sessions"
-	"github.com/gorilla/mux"
 	"strconv"
-	"github.com/rentgen94/QuestGoMail/entities"
+	"time"
 )
 
 const (
 	alreadyPlaying = "You are already playing"
-	notPlaying = "You are not playing yet"
-	notAuthorized = "Not authorized"
+	notPlaying     = "You are not playing yet"
+	notAuthorized  = "Not authorized"
 
-	bagCapacity = 1000
-	inputPlayerBuffSize = 10
+	bagCapacity          = 110
+	inputPlayerBuffSize  = 10
 	outputPlayerBuffSize = 10
-	timeOutMinutes = 15
+	timeOutMinutes       = 15
 )
 
 func (env *Env) GameListLabyrinthsGet(w http.ResponseWriter, r *http.Request) {
@@ -98,7 +98,7 @@ func (env *Env) GameStartPost(w http.ResponseWriter, r *http.Request) {
 		player,
 		inputPlayerBuffSize,
 		outputPlayerBuffSize,
-		timeOutMinutes * time.Minute,
+		timeOutMinutes*time.Minute,
 	)
 
 	if managerErr != nil {
@@ -198,6 +198,14 @@ func (env *Env) handleGameCommand(w http.ResponseWriter, r *http.Request, comman
 }
 
 func (env *Env) authorized(session *sessions.Session) bool {
+	if session.IsNew {
+		return false
+	}
+	var _, ok = session.Values[env.playerId]
+	if !ok {
+		return false
+	}
+
 	return !session.IsNew
 }
 

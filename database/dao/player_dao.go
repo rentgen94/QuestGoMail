@@ -3,14 +3,14 @@ package dao
 import (
 	"database/sql"
 
-	"github.com/rentgen94/QuestGoMail/entities"
 	"errors"
+	"github.com/rentgen94/QuestGoMail/entities"
 )
 
 const (
 	createPlayer   = "INSERT INTO users(name, password) VALUES ($1, $2);"
 	findPlayer     = "SELECT * FROM users WHERE name=$1 AND password=$2"
-	playerExists = "SELECT count(*) FROM users WHERE name=$1"
+	playerExists   = "SELECT count(*) FROM users WHERE name=$1"
 	findById       = "SELECT * FROM users WHERE id=$1"
 	findAllPlayers = "SELECT * FROM users"
 
