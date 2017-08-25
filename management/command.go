@@ -9,7 +9,7 @@ const (
 	GetDoorsCode
 	GetItemsCode
 	GetInteractivesCode
-	GetSlotFilling
+	GetSlotContent
 
 	enterCode
 	interactCode

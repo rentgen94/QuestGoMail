@@ -117,7 +117,7 @@ func (manager *PlayerManager) getCommandResponse(command Command) Response {
 		GetItemsCode:        handleItemsCode,
 		GetBagCode:          handleBagCode,
 		GetInteractivesCode: handleInteractivesCode,
-		GetSlotFilling:      handleSlotFillingCode,
+		GetSlotContent:      handleSlotContentCode,
 		enterCode:           handleEnterCode,
 		interactCode:        handleInteractCode,
 		takeCode:            handleTakeCode,
@@ -223,15 +223,15 @@ func handleBagCode(resp *Response, manager *PlayerManager, command Command) {
 	resp.Data = a
 }
 
-func handleSlotFillingCode(resp *Response, manager *PlayerManager, command Command) {
+func handleSlotContentCode(resp *Response, manager *PlayerManager, command Command) {
 	a := []itemResponse{}
-	val, err := manager.player.Room ().Slots ()[command.ItemKey]
+	slot, err := manager.player.Room().Slots()[command.ItemKey]
 	if err == false {
 		resp.ErrMsg = getSlotNotAvailable(command.ItemKey)
 		return
 	}
-	for k := range val.Items() {
-		it, _ := val.WatchItem(k)
+	for k := range slot.Items() {
+		it, _ := slot.WatchItem(k)
 		slt := &itemResponse {
 			Name:        it.Name,
 			Id:          it.Id,
