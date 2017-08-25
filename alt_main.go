@@ -25,7 +25,6 @@ func main() {
 	var result, interErr = inter.Interact([]string{"alpha", "beta"}, nil)
 
 	fmt.Println(result, interErr)
-
 }
 
 func getDBStr(user string, pass string, name string) string {

@@ -80,6 +80,8 @@ func (pool *ManagerPool) AddManager(manager *PlayerManager) int {
 	pool.cnt++
 	pool.respMap[gameId] = make(chan Response, pool.respBuffSize)
 	pool.managers[gameId] = manager
+
+	return gameId
 }
 
 func (pool *ManagerPool) DeleteManager(id int) {

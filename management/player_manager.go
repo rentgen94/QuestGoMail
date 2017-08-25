@@ -1,7 +1,6 @@
 package management
 
 import (
-	"encoding/json"
 	"errors"
 	"fmt"
 	"github.com/rentgen94/QuestGoMail/entities"
