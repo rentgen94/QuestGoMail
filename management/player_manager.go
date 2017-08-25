@@ -13,6 +13,7 @@ const (
 	doorNotFoundTemplate        = "Door %v not found"
 	interactiveNotFoundTemplate = "Interactive \"%s\" not found"
 	itemCodeNotSupplied         = "Item code not supplied"
+	slotNotAvalible             = "Slot %v not found"
 
 	managerNotStartedCode = iota
 	managerWorkCode
@@ -214,8 +215,13 @@ func handleBagCode(resp *Response, manager *PlayerManager, command Command) {
 
 func handleSlotFillingCode(resp *Response, manager *PlayerManager, command Command) {
 	a := []itemResponse{}
-	for k := range manager.player.Room ().Slots ()[command.ItemKey].Items() {
-		it, _ := manager.player.Room ().Slots ()[command.ItemKey].WatchItem(k)
+	val, err := manager.player.Room ().Slots ()[command.ItemKey]
+	if err == false {
+		resp.ErrMsg = fmt.Sprint(slotNotAvalible, command.ItemKey)
+		return
+	}
+	for k := range val.Items() {
+		it, _ := val.WatchItem(k)
 		slt := &itemResponse {
 			Name:        it.Name,
 			Id:          it.Id,
