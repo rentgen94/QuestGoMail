@@ -8,7 +8,6 @@ import (
 	"log"
 	"net/http"
 	"os"
-	"github.com/rentgen94/QuestGoMail/client"
 )
 
 type Configuration struct {
@@ -28,13 +27,6 @@ func main() {
 	var env = server.NewEnv(db, 1, 10, 10)
 	var routes = server.GetRoutes(env)
 	router := server.NewRouter(routes)
-
-	http.Handle("/assets/", http.StripPrefix("/assets/", http.FileServer(http.Dir("./assets/"))))
-	var clientRoutes = client.GetRoutes()
-	var clientRouter = client.NewRouter(clientRoutes)
-	clientRouter.PathPrefix("/assets/").Handler(http.StripPrefix("/assets/", http.FileServer(http.Dir("./assets/"))))
-	go http.ListenAndServe(conf.ClientPort, clientRouter)
-
 	http.ListenAndServe(conf.Port, router)
 }
 
