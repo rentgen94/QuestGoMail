@@ -87,19 +87,19 @@ func (manager *PlayerManager) Finished() bool {
 
 func (manager *PlayerManager) getCommandResponse(command Command) Response {
 	var methodMap = map[int]func(*Response, *PlayerManager, Command){
-		GetRoomCode:        handleRoomCode,
-		GetSlotsCode:       handleSlotsCode,
-		GetDoorsCode:       handleDoorsCode,
-		GetItemsCode:       handleItemsCode,
-		GetBagCode:         handleBagCode,
-		GetIteractivesCode: handleInteractivesCode,
-		enterCode:          handleEnterCode,
-		interactCode:       handleInteractCode,
-		takeCode:           handleTakeCode,
-		putCode:            handlePutCode,
+		GetRoomCode:         handleRoomCode,
+		GetSlotsCode:        handleSlotsCode,
+		GetDoorsCode:        handleDoorsCode,
+		GetItemsCode:        handleItemsCode,
+		GetBagCode:          handleBagCode,
+		GetInteractivesCode: handleInteractivesCode,
+		enterCode:           handleEnterCode,
+		interactCode:        handleInteractCode,
+		takeCode:            handleTakeCode,
+		putCode:             handlePutCode,
 	}
 
-	var f, ok = methodMap[command.typeCode]
+	var f, ok = methodMap[command.TypeCode]
 
 	var resp = NewResponse()
 	if !ok {
@@ -218,24 +218,26 @@ func handleInteractivesCode(resp *Response, manager *PlayerManager, command Comm
 }
 
 func handleEnterCode(resp *Response, manager *PlayerManager, command Command) {
-	var door, ok = manager.player.Room().Doors()[command.itemKey]
+	var door, ok = manager.player.Room().Doors()[command.ItemKey]
 	if !ok {
-		resp.ErrMsg = fmt.Sprintf(doorNotFoundTemplate, command.itemKey)
+		resp.ErrMsg = fmt.Sprintf(doorNotFoundTemplate, command.ItemKey)
 		return
 	}
 	var err = door.Enter(manager.player)
 	if err != nil {
 		resp.ErrMsg = err.Error()
 	}
+
+	resp.Data = "You entered the door"
 }
 
 func handleInteractCode(resp *Response, manager *PlayerManager, command Command) {
-	var inter, ok = manager.player.Room().Interactives()[command.itemKey]
+	var inter, ok = manager.player.Room().Interactives()[command.ItemKey]
 	if !ok {
-		resp.ErrMsg = fmt.Sprintf(interactiveNotFoundTemplate, command.itemKey)
+		resp.ErrMsg = fmt.Sprintf(interactiveNotFoundTemplate, command.ItemKey)
 		return
 	}
-	var result, err = inter.Interact(command.args, command.items)
+	var result, err = inter.Interact(command.Args, command.Items)
 	if err != nil {
 		resp.ErrMsg = err.Error()
 		return
@@ -245,12 +247,12 @@ func handleInteractCode(resp *Response, manager *PlayerManager, command Command)
 }
 
 func handleTakeCode(resp *Response, manager *PlayerManager, command Command) {
-	if len(command.args) == 0 {
+	if len(command.Args) == 0 {
 		resp.ErrMsg = itemCodeNotSupplied
 		return
 	}
 
-	var itemId, parseErr = strconv.Atoi(command.args[0])
+	var itemId, parseErr = strconv.Atoi(command.Args[0])
 	if parseErr != nil {
 		resp.ErrMsg = parseErr.Error()
 		return
@@ -263,12 +265,12 @@ func handleTakeCode(resp *Response, manager *PlayerManager, command Command) {
 }
 
 func handlePutCode(resp *Response, manager *PlayerManager, command Command) {
-	if len(command.args) == 0 {
+	if len(command.Args) == 0 {
 		resp.ErrMsg = itemCodeNotSupplied
 		return
 	}
 
-	var itemId, parseErr = strconv.Atoi(command.args[0])
+	var itemId, parseErr = strconv.Atoi(command.Args[0])
 	if parseErr != nil {
 		resp.ErrMsg = parseErr.Error()
 		return

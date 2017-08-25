@@ -8,7 +8,7 @@ const (
 	GetBagCode
 	GetDoorsCode
 	GetItemsCode
-	GetIteractivesCode
+	GetInteractivesCode
 
 	enterCode
 	interactCode
@@ -17,17 +17,17 @@ const (
 )
 
 type Command struct {
-	typeCode int
-	itemKey  int
-	args     []string
-	items    []entities.Item
+	TypeCode int `json:"code"`
+	ItemKey  int `json:"item_key"`
+	Args     []string `json:"args"`
+	Items    []entities.Item `json:"items"`
 }
 
 func NewCommand(typeCode int, itemKey int, args []string, items []entities.Item) Command {
 	return Command{
-		typeCode: typeCode,
-		itemKey:  itemKey,
-		args:     args,
-		items:    items,
+		TypeCode: typeCode,
+		ItemKey:  itemKey,
+		Args:     args,
+		Items:    items,
 	}
 }

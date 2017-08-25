@@ -32,7 +32,8 @@ func (env *Env) GameListLabyrinthsGet(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if err := json.NewEncoder(w).Encode(labs); err != nil {
-		writeInternalError(w)
+		w.WriteHeader(http.StatusInternalServerError)
+		w.Write([]byte(err.Error()))
 		return
 	}
 }
@@ -58,7 +59,7 @@ func (env *Env) GameItemsGet(w http.ResponseWriter, r *http.Request) {
 }
 
 func (env *Env) GameInteractivesGet(w http.ResponseWriter, r *http.Request) {
-	env.gameCommandGet(w, r, management.GetIteractivesCode)
+	env.gameCommandGet(w, r, management.GetInteractivesCode)
 }
 
 func (env *Env) GameStartPost(w http.ResponseWriter, r *http.Request) {
@@ -137,6 +138,7 @@ func (env *Env) GameCommandPost(w http.ResponseWriter, r *http.Request) {
 		writeInternalError(w)
 		return
 	}
+
 	if err := json.Unmarshal(body, &command); err != nil {
 		w.WriteHeader(http.StatusBadRequest)
 		if err := json.NewEncoder(w).Encode(err); err != nil {

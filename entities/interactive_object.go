@@ -4,6 +4,7 @@ import "errors"
 
 const (
 	objectNotAccessible = "Object not accessible"
+	actionNotAssigned = "Action not assigned"
 )
 
 type InteractiveObject interface {
@@ -54,6 +55,10 @@ func (inter *boundInteractiveObject) Interact(args []string, items []Item) (Inte
 	var checkErr = inter.checker(args, items)
 	if checkErr != nil {
 		return ContinueResult(""), checkErr
+	}
+
+	if inter.action == nil {
+		return ContinueResult(""), errors.New(actionNotAssigned)
 	}
 
 	return inter.action.Act()
