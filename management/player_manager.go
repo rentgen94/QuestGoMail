@@ -106,6 +106,7 @@ func (manager *PlayerManager) getCommandResponse(command Command) Response {
 		GetItemsCode:        handleItemsCode,
 		GetBagCode:          handleBagCode,
 		GetInteractivesCode: handleInteractivesCode,
+		GetSlotFilling:      handleSlotFillingCode,
 		enterCode:           handleEnterCode,
 		interactCode:        handleInteractCode,
 		takeCode:            handleTakeCode,
@@ -201,6 +202,21 @@ func handleBagCode(resp *Response, manager *PlayerManager, command Command) {
 	for k := range manager.player.Bag().Items() {
 		it, _ := manager.player.Bag().WatchItem(k)
 		slt := &itemResponse{
+			Name:        it.Name,
+			Id:          it.Id,
+			Description: it.Description,
+			Size:        it.Size,
+		}
+		a = append(a, *slt)
+	}
+	resp.Data = a
+}
+
+func handleSlotFillingCode(resp *Response, manager *PlayerManager, command Command) {
+	a := []itemResponse{}
+	for k := range manager.player.Room ().Slots ()[command.ItemKey].Items() {
+		it, _ := manager.player.Room ().Slots ()[command.ItemKey].WatchItem(k)
+		slt := &itemResponse {
 			Name:        it.Name,
 			Id:          it.Id,
 			Description: it.Description,
