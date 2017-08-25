@@ -1,10 +1,10 @@
-package database
+package dao
 
 import (
-	"gopkg.in/DATA-DOG/go-sqlmock.v1"
-	"testing"
 	"github.com/rentgen94/QuestGoMail/entities"
 	"github.com/stretchr/testify/assert"
+	"gopkg.in/DATA-DOG/go-sqlmock.v1"
+	"testing"
 )
 
 func TestDbPlayerDAO_FindPlayer_Succesful(t *testing.T) {

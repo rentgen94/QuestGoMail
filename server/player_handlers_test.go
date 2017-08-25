@@ -1,15 +1,19 @@
 package server
 
 import (
-	"testing"
+	"github.com/gorilla/sessions"
+	"github.com/rentgen94/QuestGoMail/management"
+	"github.com/rentgen94/QuestGoMail/server/mocks"
+	"io"
 	"net/http"
 	"net/http/httptest"
-	"github.com/rentgen94/QuestGoMail/server/mocks"
 	"strings"
-	"github.com/gorilla/sessions"
-	"io"
-	"github.com/rentgen94/QuestGoMail/management"
+	"testing"
 )
+
+func getDefaultEnv() *Env {
+	return NewEnv(nil, 1, 10, 10)
+}
 
 func TestEnv_Index(t *testing.T) {
 	// Create a request to pass to our handler. We don't have any query parameters for now, so we'll
@@ -21,7 +25,7 @@ func TestEnv_Index(t *testing.T) {
 
 	// We create a ResponseRecorder (which satisfies http.ResponseWriter) to record the response.
 	rr := httptest.NewRecorder()
-	handler := http.HandlerFunc(env.Index)
+	handler := http.HandlerFunc(getDefaultEnv().Index)
 
 	// Our handlers satisfy http.Handler, so we can call their ServeHTTP method
 	// directly and pass in our Request and ResponseRecorder.
@@ -42,7 +46,7 @@ func TestEnv_Index(t *testing.T) {
 }
 
 func TestEnc_PlayerRegisterPost_Successful(t *testing.T) {
-	var env = &Env{PlayerDAO: new(mocks.ExistPlayerDAOMock),}
+	var env = &Env{PlayerDAO: new(mocks.ExistPlayerDAOMock)}
 	var inputMsg = "{\"login\":\"qqq\", \"password\":\"111\"}"
 
 	rr := getRecorder(t, "POST", "/player/register",
@@ -54,7 +58,7 @@ func TestEnc_PlayerRegisterPost_Successful(t *testing.T) {
 }
 
 func TestEnv_PlayerRegisterPost_Fail(t *testing.T) {
-	var env = &Env{PlayerDAO: new(mocks.NotExistPlayerDAOMock),}
+	var env = &Env{PlayerDAO: new(mocks.NotExistPlayerDAOMock)}
 	var inputMsg = "{\"login\":\"qqq\", \"password\":\"111\"}"
 
 	rr := getRecorder(t, "POST", "/player/register",
@@ -67,7 +71,7 @@ func TestEnv_PlayerRegisterPost_Fail(t *testing.T) {
 
 func TestEnv_PlayerLoginPost_Successful(t *testing.T) {
 	var env = &Env{PlayerDAO: new(mocks.ExistPlayerDAOMock),
-		Store: sessions.NewCookieStore([]byte("server-cookie-store")),
+		Store:      sessions.NewCookieStore([]byte("server-cookie-store")),
 		playerId:   "player_id",
 		cookieName: "quest_go_mail",
 		gameId:     "game_id",
@@ -86,7 +90,7 @@ func TestEnv_PlayerLoginPost_Successful(t *testing.T) {
 
 func TestEnv_PlayerLoginPost_Fail(t *testing.T) {
 	var env = &Env{PlayerDAO: new(mocks.NotExistPlayerDAOMock),
-		Store: sessions.NewCookieStore([]byte("server-cookie-store")),
+		Store:      sessions.NewCookieStore([]byte("server-cookie-store")),
 		playerId:   "player_id",
 		cookieName: "quest_go_mail",
 	}

@@ -26,7 +26,7 @@ func (env *Env) GameItemsGet(w http.ResponseWriter, r *http.Request) {
 	env.GameComandGet(w, r, management.GetItemsCode)
 }
 
-func (env *Env) GameIteractivesGet(w http.ResponseWriter, r *http.Request) {
+func (env *Env) GameInteractivesGet(w http.ResponseWriter, r *http.Request) {
 	env.GameComandGet(w, r, management.GetIteractivesCode)
 }
 

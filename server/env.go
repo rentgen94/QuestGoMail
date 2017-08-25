@@ -1,9 +1,10 @@
 package server
 
 import (
+	"database/sql"
 	"github.com/gorilla/sessions"
+	"github.com/rentgen94/QuestGoMail/database/dao"
 	"github.com/rentgen94/QuestGoMail/management"
-	"github.com/rentgen94/QuestGoMail/server/database"
 	"net/http"
 )
 
@@ -12,7 +13,7 @@ const (
 )
 
 type Env struct {
-	PlayerDAO  database.PlayerDAO
+	PlayerDAO  dao.PlayerDAO
 	Store      *sessions.CookieStore
 	Pool       *management.ManagerPool
 	playerId   string
@@ -21,18 +22,16 @@ type Env struct {
 	curGame    int
 }
 
-func NewEnv() Env {
-	return Env{
-		PlayerDAO:  database.NewDBPlayerDAO(database.Init()),
+func NewEnv(db *sql.DB, poolWorkerNum int, commandBuffSize int, respBuffSize int) *Env {
+	return &Env{
+		PlayerDAO:  dao.NewDBPlayerDAO(db),
 		Store:      sessions.NewCookieStore([]byte("server-cookie-store")),
+		Pool:       management.NewManagerPool(poolWorkerNum, commandBuffSize, respBuffSize),
 		playerId:   "player_id",
 		gameId:     "game_id",
 		cookieName: "quest_go_mail",
 		curGame:    1,
-		Pool:       management.NewManagerPool(1, 10, 10),
 	}
-	//Env.Pool.Run ()
-	//return Env
 }
 
 func (env *Env) getSession(w http.ResponseWriter, r *http.Request) *sessions.Session {

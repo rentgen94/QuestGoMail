@@ -4,8 +4,6 @@ import (
 	"net/http"
 )
 
-var env = NewEnv()
-
 type Route struct {
 	Name        string
 	Method      string
@@ -15,69 +13,70 @@ type Route struct {
 
 type Routes []Route
 
-var routes = Routes{
+func GetRoutes(env *Env) Routes {
+	return Routes{
+		Route{
+			"Index",
+			"GET",
+			"/",
+			env.Index,
+		},
 
-	Route{
-		"Index",
-		"GET",
-		"/",
-		env.Index,
-	},
+		Route{
+			"GameCommandPost",
+			"POST",
+			"/game/command",
+			env.GameCommandPost,
+		},
 
-	Route{
-		"GameCommandPost",
-		"POST",
-		"/game/command",
-		env.GameCommandPost,
-	},
+		Route{
+			"PlayerLoginPost",
+			"POST",
+			"/player/login",
+			env.PlayerLoginPost,
+		},
 
-	Route{
-		"PlayerLoginPost",
-		"POST",
-		"/player/login",
-		env.PlayerLoginPost,
-	},
-
-	Route{
-		"PlayerRegisterPost",
-		"POST",
-		"/player/register",
-		env.PlayerRegisterPost,
-	},
-	Route{
-		"GameLookAroundGet",
-		"GET",
-		"/game/look_around",
-		env.GameLookAroundGet,
-	},
-	Route{
-		"GameBagGet",
-		"GET",
-		"/game/look_around/bag",
-		env.GameBagGet,
-	},
-	Route{
-		"GameItemsGet",
-		"GET",
-		"/game/look_around/entities/items",
-		env.GameItemsGet,
-	},
-	Route{
-		"GameSlotsGet",
-		"GET",
-		"/game/look_around/entities/slots",
-		env.GameSlotsGet,
-	},
-	Route{
-		"GameInteractivesGet",
-		"GET",
-		"/game/look_around/entities/interactives",
-		env.GameIteractivesGet,
-	},
-	Route{
-		"GameDoorsGet",
-		"GET",
-		"/game/look_around/entities/doors",
-		env.GameDoorsGet,
-	},
+		Route{
+			"PlayerRegisterPost",
+			"POST",
+			"/player/register",
+			env.PlayerRegisterPost,
+		},
+		Route{
+			"GameLookAroundGet",
+			"GET",
+			"/game/look_around",
+			env.GameLookAroundGet,
+		},
+		Route{
+			"GameBagGet",
+			"GET",
+			"/game/look_around/bag",
+			env.GameBagGet,
+		},
+		Route{
+			"GameItemsGet",
+			"GET",
+			"/game/look_around/entities/items",
+			env.GameItemsGet,
+		},
+		Route{
+			"GameSlotsGet",
+			"GET",
+			"/game/look_around/entities/slots",
+			env.GameSlotsGet,
+		},
+		Route{
+			"GameInteractivesGet",
+			"GET",
+			"/game/look_around/entities/interactives",
+			env.GameInteractivesGet,
+		},
+		Route{
+			"GameDoorsGet",
+			"GET",
+			"/game/look_around/entities/doors",
+			env.GameDoorsGet,
+		},
+	}
 }

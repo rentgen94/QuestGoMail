@@ -3,12 +3,12 @@ package server
 import (
 	"encoding/json"
 	"errors"
+	"github.com/gorilla/sessions"
 	"github.com/rentgen94/QuestGoMail/entities"
 	"github.com/rentgen94/QuestGoMail/management"
 	"io"
 	"io/ioutil"
 	"net/http"
-	"github.com/gorilla/sessions"
 )
 
 const (
@@ -108,9 +108,9 @@ func equal(this, other *entities.Player) bool {
 	return true
 }
 
-func (env *Env) isValidPlayer(session *sessions.Session) (bool) {
+func (env *Env) isValidPlayer(session *sessions.Session) bool {
 	if session.Values[env.playerId] != nil {
 		return true
 	}
-	return false;
+	return false
 }

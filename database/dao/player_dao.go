@@ -1,4 +1,4 @@
-package database
+package dao
 
 import (
 	"database/sql"
@@ -12,6 +12,13 @@ const (
 	findById       = "SELECT * FROM users WHERE id=$1"
 	findAllPlayers = "SELECT * FROM users"
 )
+
+type PlayerDAO interface {
+	CreatePlayer(player *entities.Player) error
+	FindPlayer(player *entities.Player) (*entities.Player, error)
+	FindPlayerById(id int) (*entities.Player, error)
+	SelectAllPlayers() ([]*entities.Player, error)
+}
 
 type dbPlayerDAO struct {
 	db *sql.DB
