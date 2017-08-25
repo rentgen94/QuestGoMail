@@ -134,7 +134,7 @@ func TestSlot_GetItem(t *testing.T) {
 		for _, item := range testItem.itemsToPut {
 			testItem.slot.PutItem(item)
 		}
-		testItem.slot.GetItem(testItem.idToGet)
+		testItem.slot.TakeItem(testItem.idToGet)
 
 		if testItem.slot.contains != testItem.expectedContains {
 			t.Errorf("Expected %d, got %d (%d)", testItem.expectedContains, testItem.slot.contains, i)

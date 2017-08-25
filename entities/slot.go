@@ -61,17 +61,21 @@ func (s *Slot) Name() string {
 	return s.name
 }
 
-func (s *Slot) GetItem(id int) (item Item, err error) {
-	return s.getItem(id)
+func (s *Slot) TakeItem(id int) (item Item, err error) {
+	return s.takeItem(id)
 }
 
 func (s *Slot) PutItem(item Item) error {
 	return s.putItem(item)
 }
 
+func (s *Slot) WatchItem(id int) (Item, error) {
+	return s.watchItem(id)
+}
+
 func (s *Slot) MoveItem(itemId int, another *Slot) error {
 	// TODO synchronize on this method
-	var item, getErr = s.getItem(itemId)
+	var item, getErr = s.takeItem(itemId)
 	if getErr != nil {
 		return getErr
 	}
@@ -85,7 +89,16 @@ func (s *Slot) MoveItem(itemId int, another *Slot) error {
 	return nil
 }
 
-func (s *Slot) getItem(id int) (item Item, err error) {
+func (s *Slot) watchItem(id int) (item Item, err error) {
+	var has = s.hasItem(id)
+	if !has {
+		return Item{}, errors.New(fmt.Sprintf(ItemNotPresentTemplate, id))
+	}
+
+	return s.items[id][0], nil
+}
+
+func (s *Slot) takeItem(id int) (item Item, err error) {
 	var has = s.hasItem(id)
 	if !has {
 		return Item{}, errors.New(fmt.Sprintf(ItemNotPresentTemplate, id))

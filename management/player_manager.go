@@ -4,7 +4,6 @@ import (
 	"errors"
 	"fmt"
 	"github.com/rentgen94/QuestGoMail/entities"
-	"strconv"
 	"time"
 )
 
@@ -200,7 +199,7 @@ func handleItemsCode(resp *Response, manager *PlayerManager, command Command) {
 func handleBagCode(resp *Response, manager *PlayerManager, command Command) {
 	a := []itemResponse{}
 	for k := range manager.player.Bag().Items() {
-		it, _ := manager.player.Bag().GetItem(k)
+		it, _ := manager.player.Bag().WatchItem(k)
 		slt := &itemResponse{
 			Name:        it.Name,
 			Id:          it.Id,
