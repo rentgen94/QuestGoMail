@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"github.com/rentgen94/QuestGoMail/entities"
 	"strconv"
+	"time"
 )
 
 const (
@@ -25,9 +26,15 @@ type PlayerManager struct {
 	inChan    chan Command
 	outChan   chan Response
 	stopChan  chan interface{}
+	timeOut time.Duration
 }
 
-func NewPlayerManager(player *entities.Player, commandBuffSize int, responseBuffSize int) (*PlayerManager, error) {
+func NewPlayerManager(
+	player *entities.Player,
+	commandBuffSize int,
+	responseBuffSize int,
+	timeOut time.Duration,
+) (*PlayerManager, error) {
 	if player.Room() == nil {
 		return nil, errors.New(playerInTheVoid)
 	}
@@ -38,6 +45,7 @@ func NewPlayerManager(player *entities.Player, commandBuffSize int, responseBuff
 		inChan:    make(chan Command, commandBuffSize),
 		outChan:   make(chan Response, responseBuffSize),
 		stopChan:  make(chan interface{}, 1),
+		timeOut: timeOut,
 	}
 	go result.Run()
 
@@ -58,8 +66,10 @@ func (manager *PlayerManager) RespChan() chan Response {
 
 func (manager *PlayerManager) Run() {
 	manager.stateCode = managerWorkCode
+	var lastUpdate = time.Now()
 
 	for {
+		time.Sleep(1 * time.Millisecond)
 		select {
 		case command := <-manager.inChan:
 			var resp = manager.getCommandResponse(command)
@@ -67,9 +77,13 @@ func (manager *PlayerManager) Run() {
 			if resp.IsFinish() {
 				break
 			}
+			lastUpdate = time.Now()
 		case <-manager.stopChan:
 			break
 		default:
+			if time.Since(lastUpdate) > manager.timeOut {
+				break
+			}
 		}
 	}
 
@@ -247,16 +261,7 @@ func handleInteractCode(resp *Response, manager *PlayerManager, command Command)
 }
 
 func handleTakeCode(resp *Response, manager *PlayerManager, command Command) {
-	if len(command.Args) == 0 {
-		resp.ErrMsg = itemCodeNotSupplied
-		return
-	}
-
-	var itemId, parseErr = strconv.Atoi(command.Args[0])
-	if parseErr != nil {
-		resp.ErrMsg = parseErr.Error()
-		return
-	}
+	var itemId = command.ItemKey
 
 	var moveErr = manager.player.Room().GetItem(itemId, manager.player)
 	if moveErr != nil {
@@ -265,16 +270,7 @@ func handleTakeCode(resp *Response, manager *PlayerManager, command Command) {
 }
 
 func handlePutCode(resp *Response, manager *PlayerManager, command Command) {
-	if len(command.Args) == 0 {
-		resp.ErrMsg = itemCodeNotSupplied
-		return
-	}
-
-	var itemId, parseErr = strconv.Atoi(command.Args[0])
-	if parseErr != nil {
-		resp.ErrMsg = parseErr.Error()
-		return
-	}
+	var itemId = command.ItemKey
 
 	var moveErr = manager.player.Room().PutItem(itemId, manager.player)
 	if moveErr != nil {

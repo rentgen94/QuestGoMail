@@ -21,6 +21,7 @@ const (
 	bagCapacity = 1000
 	inputPlayerBuffSize = 10
 	outputPlayerBuffSize = 10
+	timeOutMinutes = 15
 )
 
 func (env *Env) GameListLabyrinthsGet(w http.ResponseWriter, r *http.Request) {
@@ -93,7 +94,12 @@ func (env *Env) GameStartPost(w http.ResponseWriter, r *http.Request) {
 	}
 
 	var player = entities.NewPlayer(labyrinth, bagCapacity)
-	var manager, managerErr = management.NewPlayerManager(player, inputPlayerBuffSize, outputPlayerBuffSize)
+	var manager, managerErr = management.NewPlayerManager(
+		player,
+		inputPlayerBuffSize,
+		outputPlayerBuffSize,
+		timeOutMinutes * time.Minute,
+	)
 
 	if managerErr != nil {
 		w.WriteHeader(http.StatusInternalServerError)

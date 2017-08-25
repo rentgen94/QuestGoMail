@@ -5,6 +5,7 @@ import (
 	"github.com/rentgen94/QuestGoMail/entities"
 	"strconv"
 	"testing"
+	"time"
 )
 
 const (
@@ -128,7 +129,7 @@ func TestPlayerManager_getCommandResponse(t *testing.T) {
 
 	for i, item := range testData {
 		var player = getPlayer()
-		var manager, err = NewPlayerManager(player, 10, 10)
+		var manager, err = NewPlayerManager(player, 10, 10, time.Hour)
 		if err != nil {
 			t.Fatal(err)
 		}
@@ -203,7 +204,7 @@ func TestPlayerManager_Run(t *testing.T) {
 
 	for i, item := range testData {
 		var player = getPlayer()
-		var manager, err = NewPlayerManager(player, 10, 10)
+		var manager, err = NewPlayerManager(player, 10, 10, time.Hour)
 		if err != nil {
 			t.Fatal(err)
 		}

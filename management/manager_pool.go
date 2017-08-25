@@ -153,6 +153,7 @@ func (pool *ManagerPool) stop() {
 
 func (pool *ManagerPool) monitorManagers() {
 	for pool.running {
+		time.Sleep(1 * time.Millisecond)
 
 		pool.managerMutex.Lock()
 		for key, manager := range pool.managers {
@@ -167,6 +168,7 @@ func (pool *ManagerPool) monitorManagers() {
 
 func (pool *ManagerPool) handleCommandChanLoop() {
 	for pool.running {
+		time.Sleep(1 * time.Millisecond)
 		pool.handleCommandChan()
 	}
 }

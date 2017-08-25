@@ -9,15 +9,15 @@ import (
 func TestManagerPool_Run_Success(t *testing.T) {
 	var player1 = getPlayer()
 	var player2 = getPlayer()
-	var manager1, _ = NewPlayerManager(player1, 10, 10)
-	var manager2, _ = NewPlayerManager(player2, 10, 10)
+	var manager1, _ = NewPlayerManager(player1, 10, 10, time.Hour)
+	var manager2, _ = NewPlayerManager(player2, 10, 10, time.Hour)
 	var pool = NewManagerPool(3, 10, 10)
 
 	go pool.Run()
 	defer pool.Stop()
 
-	pool.AddManager(manager1, 1)
-	pool.AddManager(manager2, 2)
+	pool.AddManager(manager1)
+	pool.AddManager(manager2)
 
 	var command = AddressedCommand{
 		Address: 1,
@@ -32,15 +32,15 @@ func TestManagerPool_Run_Success(t *testing.T) {
 func TestManagerPool_Run_TriedWrongGame(t *testing.T) {
 	var player1 = getPlayer()
 	var player2 = getPlayer()
-	var manager1, _ = NewPlayerManager(player1, 10, 10)
-	var manager2, _ = NewPlayerManager(player2, 10, 10)
+	var manager1, _ = NewPlayerManager(player1, 10, 10, time.Hour)
+	var manager2, _ = NewPlayerManager(player2, 10, 10, time.Hour)
 	var pool = NewManagerPool(3, 10, 10)
 
 	go pool.Run()
 	defer pool.Stop()
 
-	pool.AddManager(manager1, 1)
-	pool.AddManager(manager2, 2)
+	pool.AddManager(manager1)
+	pool.AddManager(manager2)
 
 	var command = AddressedCommand{
 		Address: 0,
