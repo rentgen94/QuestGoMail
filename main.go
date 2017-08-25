@@ -6,30 +6,51 @@ import (
 	"github.com/rentgen94/QuestGoMail/server"
 	"log"
 	"net/http"
+	"os"
+	"encoding/json"
+	"fmt"
 )
 
-const (
-	PostgresUser = "go_user"
-	Password     = "go"
-	Server       = "localhost:5432"
-	DbName       = "quest_db"
-	Schema       = "QuestGoMail"
-)
+type Configuration struct {
+	Port       string  `json:"port"`
+	DriverName string  `json:"driverName"`
+	UserName   string  `json:"userName"`
+	Password   string  `json:"password"`
+	Server     string  `json:"server"`
+	DbName     string  `json:"dbName"`
+}
 
 func main() {
-	var db = getDb()
+	conf := getConfig("resources/config/config.json")
+
+	var db = getDb(&conf)
 	var env = server.NewEnv(db, 1, 10, 10)
 	var routes = server.GetRoutes(env)
 	router := server.NewRouter(routes)
 
-	log.Fatal(http.ListenAndServe(":8080", router))
+	log.Fatal(http.ListenAndServe(conf.Port, router))
 }
 
-func getDb() *sql.DB {
-	db, err := sql.Open("postgres",
-		"postgres://"+PostgresUser+":"+Password+"@"+Server+"/"+DbName+"?sslmode=disable")
+func getDb(conf *Configuration) *sql.DB {
+	db, err := sql.Open(conf.DriverName,
+		conf.DriverName + "://"+conf.UserName+":"+conf.Password+"@"+conf.Server+"/"+conf.DbName+"?sslmode=disable")
 	if err != nil {
 		log.Fatal(err)
 	}
 	return db
+}
+
+func getConfig(configPath string) Configuration {
+	file, err := os.Open(configPath)
+	if err != nil {
+		panic(err)
+	}
+	decoder := json.NewDecoder(file)
+	configuration := Configuration{}
+	err = decoder.Decode(&configuration)
+	if err != nil {
+		panic(err)
+	}
+	fmt.Println(configuration)
+	return configuration
 }

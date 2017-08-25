@@ -1,0 +1,8 @@
+{
+    "port":         ":8080",
+    "driverName":   "postgres",
+    "userName":     "postgres",
+    "password":     "qwerty456",
+    "server":       "localhost:5432",
+    "dbName":       "testdb"
+}
