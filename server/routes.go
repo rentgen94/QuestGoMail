@@ -54,6 +54,12 @@ func GetRoutes(env *Env) Routes {
 			env.GameListLabyrinthsGet,
 		},
 		{
+			"GameGetSlotFilling",
+			http.MethodGet,
+			"/game/slots/{slot_id}",
+			env.GameGetSlotFilling,
+		},
+		{
 			"GameLookAroundGet",
 			http.MethodGet,
 			"/game/look_around",

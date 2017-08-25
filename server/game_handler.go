@@ -43,6 +43,21 @@ func (env *Env) GameLookAroundGet(w http.ResponseWriter, r *http.Request) {
 	env.gameCommandGet(w, r, management.GetRoomCode)
 }
 
+
+func (env *Env) GameGetSlotFilling(w http.ResponseWriter, r *http.Request) {
+	var vars = mux.Vars(r)
+	var labIdStr = vars["slot_id"]
+	var labId, err = strconv.Atoi(labIdStr)
+	if err != nil {
+		w.WriteHeader(http.StatusBadRequest)
+		w.Write([]byte(err.Error()))
+		return
+	}
+
+	command := management.NewCommand(management.GetSlotFilling, labId, nil, nil)
+	env.handleGameCommand(w, r, command)
+}
+
 func (env *Env) GameSlotsGet(w http.ResponseWriter, r *http.Request) {
 	env.gameCommandGet(w, r, management.GetSlotsCode)
 }

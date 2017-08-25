@@ -26,6 +26,10 @@ func getInteractiveNotFoundMsg(id int) string {
 	return fmt.Sprintf("Interactive \"%s\" not found", id)
 }
 
+func getSlotNotAvailable(id int) string {
+	return fmt.Sprintf("Slot %v not found", id)
+}
+
 type PlayerManager struct {
 	stateCode int
 	player    *entities.Player
@@ -113,6 +117,7 @@ func (manager *PlayerManager) getCommandResponse(command Command) Response {
 		GetItemsCode:        handleItemsCode,
 		GetBagCode:          handleBagCode,
 		GetInteractivesCode: handleInteractivesCode,
+		GetSlotFilling:      handleSlotFillingCode,
 		enterCode:           handleEnterCode,
 		interactCode:        handleInteractCode,
 		takeCode:            handleTakeCode,
@@ -208,6 +213,26 @@ func handleBagCode(resp *Response, manager *PlayerManager, command Command) {
 	for k := range manager.player.Bag().Items() {
 		it, _ := manager.player.Bag().TakeItem(k)
 		slt := &itemResponse{
+			Name:        it.Name,
+			Id:          it.Id,
+			Description: it.Description,
+			Size:        it.Size,
+		}
+		a = append(a, *slt)
+	}
+	resp.Data = a
+}
+
+func handleSlotFillingCode(resp *Response, manager *PlayerManager, command Command) {
+	a := []itemResponse{}
+	val, err := manager.player.Room ().Slots ()[command.ItemKey]
+	if err == false {
+		resp.ErrMsg = getSlotNotAvailable(command.ItemKey)
+		return
+	}
+	for k := range val.Items() {
+		it, _ := val.WatchItem(k)
+		slt := &itemResponse {
 			Name:        it.Name,
 			Id:          it.Id,
 			Description: it.Description,
