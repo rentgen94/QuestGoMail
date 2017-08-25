@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"github.com/rentgen94/QuestGoMail/entities"
 	"time"
+	"strconv"
 )
 
 const (
@@ -312,7 +313,17 @@ func handleInteractCode(resp *Response, manager *PlayerManager, command Command)
 func handleTakeCode(resp *Response, manager *PlayerManager, command Command) {
 	var itemId = command.ItemKey
 
-	var moveErr = manager.player.Room().GetItem(itemId, manager.player)
+	if len(command.Args) < 1 {
+		resp.ErrMsg = "No slot in command"
+		return
+	}
+	slt := command.Args[0]
+	slotID, err := strconv.Atoi(slt)
+	if err != nil {
+		resp.ErrMsg = "Bad slot id"
+		return
+	}
+	var moveErr = manager.player.Room().GetItem(itemId, slotID, manager.player)
 	if moveErr != nil {
 		resp.ErrMsg = moveErr.Error()
 	}
@@ -321,7 +332,17 @@ func handleTakeCode(resp *Response, manager *PlayerManager, command Command) {
 func handlePutCode(resp *Response, manager *PlayerManager, command Command) {
 	var itemId = command.ItemKey
 
-	var moveErr = manager.player.Room().PutItem(itemId, manager.player)
+	if len(command.Args) < 1 {
+		resp.ErrMsg = "No slot in command"
+		return
+	}
+	slt := command.Args[0]
+	slotID, err := strconv.Atoi(slt)
+	if err != nil {
+		resp.ErrMsg = "Bad slot id"
+		return
+	}
+	var moveErr = manager.player.Room().PutItem(itemId, slotID, manager.player)
 	if moveErr != nil {
 		resp.ErrMsg = moveErr.Error()
 	}
