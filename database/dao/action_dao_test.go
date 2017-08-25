@@ -144,7 +144,7 @@ func TestActionDAO_getActFunc_Success(t *testing.T) {
 	room.Doors()[4] = entities.NewDoor(4, "Some", false)
 	room.Doors()[5] = entities.NewDoor(5, "Any", false)
 
-	var lab = entities.NewLabyrinth(0, "lab")
+	var lab = entities.NewLabyrinth(0, "lab", "lab")
 	lab.SetRooms(entities.RoomsType{0: room})
 	lab.SetStartRoom(room)
 
@@ -196,7 +196,7 @@ func TestActionDAO_getActFunc_NoRoom(t *testing.T) {
 	var resultMsg = "Result message"
 	var resultCode = 10
 
-	var lab = entities.NewLabyrinth(0, "lab")
+	var lab = entities.NewLabyrinth(0, "lab", "lab")
 
 	var actFunc, funcErr = actionDao.getActFunc(1, resultMsg, resultCode)
 	assert.Nil(t, funcErr)
@@ -269,7 +269,7 @@ func TestActionDAO_getActFunc_NoSlot(t *testing.T) {
 	room.Doors()[4] = entities.NewDoor(4, "Some", false)
 	room.Doors()[5] = entities.NewDoor(5, "Any", false)
 
-	var lab = entities.NewLabyrinth(0, "lab")
+	var lab = entities.NewLabyrinth(0, "lab", "lab")
 	lab.SetRooms(entities.RoomsType{1: room})
 	lab.SetStartRoom(room)
 

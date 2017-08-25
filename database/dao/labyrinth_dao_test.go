@@ -26,8 +26,8 @@ func TestLabyrinthDAO_getEmptyLabyrinthInfo_Success(t *testing.T) {
 	var labInfo, infoErr = labyrinthDAO.getEmptyLabyrinthInfo(1)
 
 	assert.Nil(t, infoErr)
-	assert.Equal(t, labInfo.id, 0)
-	assert.Equal(t, labInfo.name, "a")
+	assert.Equal(t, labInfo.Id, 0)
+	assert.Equal(t, labInfo.Name, "a")
 	assert.Equal(t, labInfo.startRoomId, 100)
 }
 

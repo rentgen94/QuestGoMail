@@ -87,7 +87,7 @@ func (manager *PlayerManager) getCommandResponse(command Command) Response {
 		GetDoorsCode:       handleDoorsCode,
 		GetItemsCode:       handleItemsCode,
 		GetBagCode:         handleBagCode,
-		GetIteractivesCode: handleIteractivesCode,
+		GetIteractivesCode: handleInteractivesCode,
 		enterCode:          handleEnterCode,
 		interactCode:       handleInteractCode,
 		takeCode:           handleTakeCode,
@@ -106,12 +106,12 @@ func (manager *PlayerManager) getCommandResponse(command Command) Response {
 	return resp
 }
 
-type roomResponse struct {
-	Name        string `json:"name"`
-	Description string `json:"description"`
-}
-
 func handleRoomCode(resp *Response, manager *PlayerManager, command Command) {
+	type roomResponse struct {
+		Name        string `json:"name"`
+		Description string `json:"description"`
+	}
+
 	a := &roomResponse{
 		Name:        manager.player.Room().Name(),
 		Description: manager.player.Room().Description(),
@@ -124,14 +124,14 @@ func handleRoomCode(resp *Response, manager *PlayerManager, command Command) {
 	resp.Data = res
 }
 
-type slotsResponse struct {
-	Id       int    `json:"id"`
-	Name     string `json:"name"`
-	Capacity int    `json:"capacity"`
-	Contains int    `json:"contains"`
-}
-
 func handleSlotsCode(resp *Response, manager *PlayerManager, command Command) {
+	type slotsResponse struct {
+		Id       int    `json:"id"`
+		Name     string `json:"name"`
+		Capacity int    `json:"capacity"`
+		Contains int    `json:"contains"`
+	}
+
 	a := []slotsResponse{}
 	for _, elem := range manager.player.Room().Slots() {
 		slt := &slotsResponse{
@@ -150,12 +150,12 @@ func handleSlotsCode(resp *Response, manager *PlayerManager, command Command) {
 	resp.Data = res
 }
 
-type doorsResponse struct {
-	Id   int    `json:"id"`
-	Name string `json:"name"`
-}
-
 func handleDoorsCode(resp *Response, manager *PlayerManager, command Command) {
+	type doorsResponse struct {
+		Id   int    `json:"id"`
+		Name string `json:"name"`
+	}
+
 	a := []doorsResponse{}
 	for _, elem := range manager.player.Room().Doors() {
 		slt := &doorsResponse{
@@ -218,16 +218,16 @@ func handleBagCode(resp *Response, manager *PlayerManager, command Command) {
 	resp.Data = res
 }
 
-type intaractiveResponse struct {
-	Id          int    `json:"id"`
-	Name        string `json:"name"`
-	Description string `json:"description"`
-}
+func handleInteractivesCode(resp *Response, manager *PlayerManager, command Command) {
+	type interactiveResponse struct {
+		Id          int    `json:"id"`
+		Name        string `json:"name"`
+		Description string `json:"description"`
+	}
 
-func handleIteractivesCode(resp *Response, manager *PlayerManager, command Command) {
-	a := []intaractiveResponse{}
+	a := []interactiveResponse{}
 	for _, elem := range manager.player.Room().Interactives() {
-		slt := &intaractiveResponse{
+		slt := &interactiveResponse{
 			Name:        elem.Name(),
 			Id:          elem.Id(),
 			Description: elem.Description(),
@@ -242,7 +242,6 @@ func handleIteractivesCode(resp *Response, manager *PlayerManager, command Comma
 	resp.Data = res
 }
 
-// TODO choose identifier type
 func handleEnterCode(resp *Response, manager *PlayerManager, command Command) {
 	var door, ok = manager.player.Room().Doors()[command.itemKey]
 	if !ok {
@@ -255,7 +254,6 @@ func handleEnterCode(resp *Response, manager *PlayerManager, command Command) {
 	}
 }
 
-// TODO choose identifier type
 func handleInteractCode(resp *Response, manager *PlayerManager, command Command) {
 	var inter, ok = manager.player.Room().Interactives()[command.itemKey]
 	if !ok {

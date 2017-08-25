@@ -60,7 +60,9 @@ func getRoom() *entities.Room {
 }
 
 func getPlayer() *entities.Player {
-	var player = entities.NewPlayer(getRoom(), 5)
+	var lab = entities.NewLabyrinth(0, "", "")
+	lab.SetStartRoom(getRoom())
+	var player = entities.NewPlayer(lab, 5)
 	player.Bag().PutItem(entities.Item{Id: playerItemId, Size: 0})
 	return player
 }

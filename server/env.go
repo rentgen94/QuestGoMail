@@ -13,25 +13,30 @@ const (
 )
 
 type Env struct {
-	PlayerDAO  dao.PlayerDAO
-	Store      *sessions.CookieStore
-	Pool       *management.ManagerPool
-	playerId   string
-	cookieName string
-	gameId     string
-	curGame    int
+	PlayerDAO    dao.PlayerDAO
+	LabyrinthDao *dao.LabyrinthDAO
+	Store        *sessions.CookieStore
+	Pool         *management.ManagerPool
+	playerId     string
+	cookieName   string
+	gameId       string
+	currGameId   int
 }
 
 func NewEnv(db *sql.DB, poolWorkerNum int, commandBuffSize int, respBuffSize int) *Env {
-	return &Env{
-		PlayerDAO:  dao.NewDBPlayerDAO(db),
-		Store:      sessions.NewCookieStore([]byte("server-cookie-store")),
-		Pool:       management.NewManagerPool(poolWorkerNum, commandBuffSize, respBuffSize),
-		playerId:   "player_id",
-		gameId:     "game_id",
-		cookieName: "quest_go_mail",
-		curGame:    1,
+	var result = &Env{
+		PlayerDAO:    dao.NewDBPlayerDAO(db),
+		LabyrinthDao: dao.NewLabyrinthDAO(db),
+		Store:        sessions.NewCookieStore([]byte("server-cookie-store")),
+		Pool:         management.NewManagerPool(poolWorkerNum, commandBuffSize, respBuffSize),
+		playerId:     "player_id",
+		gameId:       "game_id",
+		cookieName:   "quest_go_mail",
+		currGameId:   1,
 	}
+	go result.Pool.Run()
+
+	return result
 }
 
 func (env *Env) getSession(w http.ResponseWriter, r *http.Request) *sessions.Session {
@@ -48,7 +53,7 @@ func writeInternalError(w http.ResponseWriter) {
 	w.WriteHeader(http.StatusInternalServerError)
 }
 
-func (env *Env) NewGame() int {
-	env.curGame += 1
-	return env.curGame
+func (env *Env) NewGameId() int {
+	env.currGameId += 1
+	return env.currGameId
 }

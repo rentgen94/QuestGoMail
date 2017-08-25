@@ -3,21 +3,23 @@ package entities
 type ActionsType map[int]*Action
 
 type Labyrinth struct {
-	id        int
-	name      string
-	rooms     RoomsType
-	startRoom *Room
-	actions   ActionsType
-	doors     DoorsType
+	id          int
+	name        string
+	description string
+	rooms       RoomsType
+	startRoom   *Room
+	actions     ActionsType
+	doors       DoorsType
 }
 
-func NewLabyrinth(id int, name string) *Labyrinth {
+func NewLabyrinth(id int, name string, description string) *Labyrinth {
 	var lab = &Labyrinth{
-		id:      id,
-		name:    name,
-		rooms:   make(RoomsType),
-		actions: make(ActionsType),
-		doors:   make(DoorsType),
+		id:          id,
+		name:        name,
+		description: description,
+		rooms:       make(RoomsType),
+		actions:     make(ActionsType),
+		doors:       make(DoorsType),
 	}
 
 	return lab

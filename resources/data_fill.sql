@@ -23,7 +23,7 @@ INSERT INTO Interactive (room, name, description, isAccessible, args) VALUES (1,
 INSERT INTO Interactive (room, name, description, isAccessible, args) VALUES (1, 'wheel', 'strange wheel', FALSE, '');
 INSERT INTO SlotItemLink (slot, item) VALUES (1, 1);
 INSERT INTO SlotItemLink (slot, item) VALUES (1, 2);
-INSERT INTO Labyrinth (name, startroom) VALUES ('lab', 1);
+INSERT INTO Labyrinth (name, description, startroom) VALUES ('lab', 'lab', 1);
 INSERT INTO LabyrinthRoomLink (room, labyrinth) VALUES (1, 1);
 INSERT INTO Action (name, resultCode, resultMsg) VALUES ('activate_wheel', 0, 'strange wheel activated');
 INSERT INTO ActionInteractiveSwitch (action, interactive, newstate) VALUES (1, 2, TRUE);

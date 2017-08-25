@@ -11,40 +11,6 @@ import (
 	"testing"
 )
 
-func getDefaultEnv() *Env {
-	return NewEnv(nil, 1, 10, 10)
-}
-
-func TestEnv_Index(t *testing.T) {
-	// Create a request to pass to our handler. We don't have any query parameters for now, so we'll
-	// pass 'nil' as the third parameter.
-	req, err := http.NewRequest("GET", "/", nil)
-	if err != nil {
-		t.Fatal(err)
-	}
-
-	// We create a ResponseRecorder (which satisfies http.ResponseWriter) to record the response.
-	rr := httptest.NewRecorder()
-	handler := http.HandlerFunc(getDefaultEnv().Index)
-
-	// Our handlers satisfy http.Handler, so we can call their ServeHTTP method
-	// directly and pass in our Request and ResponseRecorder.
-	handler.ServeHTTP(rr, req)
-
-	// Check the status code is what we expect.
-	if status := rr.Code; status != http.StatusOK {
-		t.Errorf("handler returned wrong status code: got %v <-| want |-> %v",
-			status, http.StatusOK)
-	}
-
-	// Check the response body is what we expect.
-	expected := `Hello world!`
-	if rr.Body.String() != expected {
-		t.Errorf("handler returned unexpected body: got %v <-| want |-> %v",
-			rr.Body.String(), expected)
-	}
-}
-
 func TestEnc_PlayerRegisterPost_Successful(t *testing.T) {
 	var env = &Env{PlayerDAO: new(mocks.ExistPlayerDAOMock)}
 	var inputMsg = "{\"login\":\"qqq\", \"password\":\"111\"}"
@@ -75,7 +41,7 @@ func TestEnv_PlayerLoginPost_Successful(t *testing.T) {
 		playerId:   "player_id",
 		cookieName: "quest_go_mail",
 		gameId:     "game_id",
-		curGame:    1,
+		currGameId:    1,
 		Pool:       management.NewManagerPool(1, 10, 10),
 	}
 	var inputMsg = "{\"login\":\"qqq\", \"password\":\"111\"}"
@@ -99,7 +65,7 @@ func TestEnv_PlayerLoginPost_Fail(t *testing.T) {
 	rr := getRecorder(t, "POST", "/player/login",
 		strings.NewReader(inputMsg), env.PlayerLoginPost)
 
-	checkStatus(t, http.StatusBadRequest, rr)
+	checkStatus(t, http.StatusNotFound, rr)
 
 	checkBody(t, PlayerNotFound, rr)
 }

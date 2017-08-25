@@ -15,66 +15,65 @@ type Routes []Route
 
 func GetRoutes(env *Env) Routes {
 	return Routes{
-		Route{
-			"Index",
-			"GET",
-			"/",
-			env.Index,
-		},
-
-		Route{
+		{
 			"GameCommandPost",
-			"POST",
+			http.MethodPost,
 			"/game/command",
 			env.GameCommandPost,
 		},
 
-		Route{
+		{
 			"PlayerLoginPost",
-			"POST",
+			http.MethodPost,
 			"/player/login",
 			env.PlayerLoginPost,
 		},
 
-		Route{
+		{
 			"PlayerRegisterPost",
-			"POST",
+			http.MethodPost,
 			"/player/register",
 			env.PlayerRegisterPost,
 		},
-		Route{
+		{
+			"GameListLabyrinthsGet",
+			http.MethodGet,
+			"/game/labyrinths",
+			env.GameListLabyrinthsGet,
+		},
+		{
 			"GameLookAroundGet",
-			"GET",
+			http.MethodGet,
 			"/game/look_around",
 			env.GameLookAroundGet,
 		},
-		Route{
+		{
 			"GameBagGet",
-			"GET",
+			http.MethodGet,
 			"/game/look_around/bag",
 			env.GameBagGet,
 		},
-		Route{
+		{
 			"GameItemsGet",
-			"GET",
+			http.MethodGet,
 			"/game/look_around/entities/items",
 			env.GameItemsGet,
 		},
-		Route{
+		{
 			"GameSlotsGet",
-			"GET",
+			http.MethodGet,
 			"/game/look_around/entities/slots",
 			env.GameSlotsGet,
 		},
-		Route{
+		{
 			"GameInteractivesGet",
-			"GET",
+			http.MethodGet,
 			"/game/look_around/entities/interactives",
 			env.GameInteractivesGet,
 		},
-		Route{
+		{
 			"GameDoorsGet",
-			"GET",
+			http.MethodGet,
 			"/game/look_around/entities/doors",
 			env.GameDoorsGet,
 		},

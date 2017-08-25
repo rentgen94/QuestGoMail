@@ -6,8 +6,12 @@ import (
 )
 
 const (
+	getAllLabyrinths = `
+		SELECT id, name, description, startRoom FROM Labyrinth ORDER BY id
+	`
+
 	getLabyrinthByIdQuery = `
-		SELECT id, name, startRoom FROM Labyrinth WHERE id = $1
+		SELECT id, name, description, startRoom FROM Labyrinth WHERE id = $1
 	`
 	getLabyrinthRelatedRoomIdsQuery = `
 		SELECT room FROM LabyrinthRoomLink WHERE labyrinth = $1 ORDER BY room
@@ -42,9 +46,10 @@ type LabyrinthDAO struct {
 	actionDao *ActionDAO
 }
 
-type emptyLabInfo struct {
-	id          int
-	name        string
+type LabyrinthDescription struct {
+	Id          int    `json:"id"`
+	Name        string `json:"name"`
+	Description string `json:"description"`
 	startRoomId int
 }
 
@@ -78,7 +83,7 @@ func (dao *LabyrinthDAO) GetById(id int) (*entities.Labyrinth, error) {
 		return nil, doorErr
 	}
 
-	var lab = entities.NewLabyrinth(labInfo.id, labInfo.name)
+	var lab = entities.NewLabyrinth(labInfo.Id, labInfo.Name, labInfo.Description)
 	lab.SetRooms(rooms)
 	lab.SetStartRoom(rooms[labInfo.startRoomId])
 	lab.SetDoors(doors)
@@ -87,6 +92,31 @@ func (dao *LabyrinthDAO) GetById(id int) (*entities.Labyrinth, error) {
 	dao.bindActions(lab)
 
 	return lab, nil
+}
+
+func (dao *LabyrinthDAO) GetAll() ([]LabyrinthDescription, error) {
+	var rows, err = dao.db.Query(getAllLabyrinths)
+	if err != nil {
+		return nil, err
+	}
+
+	var result = make([]LabyrinthDescription, 0)
+	for rows.Next() {
+		var description = LabyrinthDescription{}
+		err = rows.Scan(description.Id, description.Name, description.Description, description.startRoomId)
+		if err != nil {
+			return nil, err
+		}
+
+		result = append(result, description)
+	}
+
+	err = rows.Err()
+	if err != nil {
+		return nil, err
+	}
+
+	return result, nil
 }
 
 // this function has to be called at the end of labyrinth loading
@@ -199,12 +229,12 @@ func (dao *LabyrinthDAO) getRelatedRooms(labId int) (entities.RoomsType, error) 
 	return rooms, nil
 }
 
-func (dao *LabyrinthDAO) getEmptyLabyrinthInfo(id int) (*emptyLabInfo, error) {
-	var acceptor = new(emptyLabInfo)
+func (dao *LabyrinthDAO) getEmptyLabyrinthInfo(id int) (*LabyrinthDescription, error) {
+	var acceptor = new(LabyrinthDescription)
 
 	var err = dao.db.
 		QueryRow(getLabyrinthByIdQuery, id).
-		Scan(&acceptor.id, &acceptor.name, &acceptor.startRoomId)
+		Scan(&acceptor.Id, &acceptor.Name, &acceptor.startRoomId)
 
 	if err != nil {
 		return nil, err
