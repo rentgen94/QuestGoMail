@@ -18,8 +18,12 @@ func GetFailedToTakeMsg(id int) string {
 	return fmt.Sprintf("Failed to take item (id = %d)", id)
 }
 
-func GetCanNotPutItemMsg(id int, roomName string) string {
-	return fmt.Sprintf("Can not put item \"%d\" to the room \"%s\"", id, roomName)
+func GetCanNotPutItemMsg(id int, slotId int) string {
+	return fmt.Sprintf("Can not put item \"%d\" to the slot \"%s\"", id, slotId)
+}
+
+func GetNoSlotMsg(id int) string {
+	return fmt.Sprintf("Can not find slot \"%d\"", id)
 }
 
 type SlotsType map[int]*Slot
@@ -74,28 +78,36 @@ func (r *Room) AccessibleSlots() (slots []*Slot) {
 	return r.accessibleSlots()
 }
 
-func (r *Room) GetItem(itemId int, player *Player) error {
-	var accessibleSlots = r.accessibleSlots()
-	for _, slot := range accessibleSlots {
-		var err = slot.MoveItem(itemId, player.bag)
-		if err == nil {
-			return nil
-		}
+func (r *Room) GetItem(itemId int, slotId int, player *Player) error {
+	slots := r.Slots()
+	slot, i := slots[slotId]
+	if i == false {
+		return errors.New(GetNoSlotMsg (slotId))
 	}
-
-	return errors.New(GetFailedToTakeMsg(itemId))
+	if !slot.IsAccessible() {
+		return errors.New(SlotNotAccessible)
+	}
+	var err = slot.MoveItem(itemId, player.bag)
+	if err != nil {
+		return errors.New(GetFailedToTakeMsg (itemId))
+	}
+	return nil
 }
 
-func (r *Room) PutItem(itemId int, player *Player) error {
-	var accessibleSlots = r.accessibleSlots()
-	for _, slot := range accessibleSlots {
-		var err = player.bag.MoveItem(itemId, slot)
-		if err == nil {
-			return nil
-		}
+func (r *Room) PutItem(itemId int, slotId int, player *Player) error {
+	slots := r.Slots()
+	slot, i := slots[slotId]
+	if i == false {
+		return errors.New(GetNoSlotMsg (slotId))
 	}
-
-	return errors.New(GetCanNotPutItemMsg(itemId, r.Name()))
+	if !slot.IsAccessible() {
+		return errors.New(SlotNotAccessible)
+	}
+	var err = player.Bag().MoveItem(itemId, slot)
+	if err != nil {
+		return errors.New(GetCanNotPutItemMsg (itemId, slotId))
+	}
+	return nil
 }
 
 func (r *Room) AccessibleItems() (items []Item) {
