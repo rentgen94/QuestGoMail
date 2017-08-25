@@ -18,3 +18,4 @@
 # ide
 .idea
 /resources/init.sh
+/resources/config/config.json

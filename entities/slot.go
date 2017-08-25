@@ -104,8 +104,8 @@ func (s *Slot) takeItem(id int) (item Item, err error) {
 		return Item{}, errors.New(fmt.Sprintf(ItemNotPresentTemplate, id))
 	}
 
-	item = s.items[id][len(s.items[id])-1]
-	s.items[id] = s.items[id][:len(s.items)-1]
+	item = s.items[id][len(s.items[id]) - 1]
+	s.items[id] = s.items[id][:len(s.items[id]) - 1]
 	if len(s.items[id]) == 0 {
 		delete(s.items, id)
 	}
