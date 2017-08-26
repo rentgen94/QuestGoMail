@@ -17,12 +17,12 @@ const (
 		SELECT room FROM LabyrinthRoomLink WHERE labyrinth = $1 ORDER BY room
 	`
 	getLabyrinthRelatedDoorIdsQuery = `
-		SELECT d.id FROM Labyrinth lab
-			JOIN LabyrinthRoomLink link ON lab.id = link.labyrinth
-			JOIN Room r1 ON r1.id = link.room
-			JOIN Room r2 ON r2.id = link.room
+		SELECT d.id FROM LabyrinthRoomLink link1
+			JOIN LabyrinthRoomLink link2 ON TRUE
+			JOIN Room r1 ON r1.id = link1.room
+			JOIN Room r2 ON r2.id = link2.room
 			JOIN Door d ON d.room1 = r1.id AND d.room2 = r2.id
-		WHERE lab.id = $1
+		WHERE link1.labyrinth = $1 AND link2.labyrinth = $1
 		ORDER BY d.id
 	`
 	getLabyrinthRelatedActionIdsQuery = `
