@@ -252,7 +252,7 @@ func handleInteractivesCode(resp *Response, manager *PlayerManager, command Comm
 	}
 
 	a := []interactiveResponse{}
-	for _, elem := range manager.player.Room().Interactives() {
+	for _, elem := range manager.player.Room().AccessibleInteractives() {
 		slt := &interactiveResponse{
 			Name:        elem.Name(),
 			Id:          elem.Id(),

@@ -15,24 +15,24 @@ DROP TABLE IF EXISTS LabyrinthActionLink;
 DROP TABLE IF EXISTS ActionInteractiveLink;
 DROP TABLE IF EXISTS users;
 
-CREATE TABLE users(
-  id       serial primary key,
-  name     varchar(256) UNIQUE ,
-  password varchar(256)
+CREATE TABLE users (
+  id       SERIAL PRIMARY KEY,
+  name     VARCHAR(256) UNIQUE NOT NULL,
+  password VARCHAR(256)        NOT NULL
 );
 
 CREATE TABLE Room (
   id          SERIAL PRIMARY KEY,
-  name        VARCHAR(100),
-  description VARCHAR(500)
+  name        VARCHAR(100) NOT NULL,
+  description VARCHAR(500) NOT NULL
 );
 
 CREATE TABLE Door (
   id           SERIAL PRIMARY KEY,
-  room1        INT REFERENCES Room (id),
-  room2        INT REFERENCES Room (id),
-  name         VARCHAR(100) UNIQUE,
-  isAccessible BOOLEAN,
+  room1        INT REFERENCES Room (id) NOT NULL,
+  room2        INT REFERENCES Room (id) NOT NULL,
+  name         VARCHAR(100) UNIQUE      NOT NULL,
+  isAccessible BOOLEAN                  NOT NULL,
   UNIQUE (room1, room2)
 );
 CREATE INDEX door_room1_idx
@@ -42,9 +42,9 @@ CREATE INDEX door_room2_idx
 
 CREATE TABLE Item (
   id          SERIAL PRIMARY KEY,
-  name        VARCHAR(100) UNIQUE,
-  description VARCHAR(500),
-  size        INT
+  name        VARCHAR(100) UNIQUE NOT NULL,
+  description VARCHAR(500)        NOT NULL,
+  size        INT                 NOT NULL
 );
 
 CREATE TABLE Slot (
@@ -59,35 +59,35 @@ CREATE INDEX slot_room_idx
 
 CREATE TABLE Interactive (
   id           SERIAL PRIMARY KEY,
-  room         INT REFERENCES Room (id),
-  name         VARCHAR(100),
-  description  VARCHAR(500),
-  isAccessible BOOLEAN,
-  args         VARCHAR(100) --this is an argument string. Arguments has to be divided with ' '
+  room         INT REFERENCES Room (id) NOT NULL,
+  name         VARCHAR(100)             NOT NULL,
+  description  VARCHAR(500)             NOT NULL,
+  isAccessible BOOLEAN                  NOT NULL,
+  args         VARCHAR(100)             NOT NULL --this is an argument string. Arguments has to be divided with ' '
 );
 CREATE INDEX interactive_room_idx
   ON Interactive (room);
 
 CREATE TABLE Action (
   id         SERIAL PRIMARY KEY,
-  name       VARCHAR(100),
-  resultCode INT DEFAULT 0,
-  resultMsg  VARCHAR(500)
+  name       VARCHAR(100)  NOT NULL,
+  resultCode INT DEFAULT 0 NOT NULL,
+  resultMsg  VARCHAR(500)  NOT NULL
 );
 
 CREATE TABLE Labyrinth (
   id          SERIAL PRIMARY KEY,
-  name        VARCHAR(100) UNIQUE,
-  description VARCHAR(500),
-  startRoom   INT REFERENCES Room (id)
+  name        VARCHAR(100) UNIQUE      NOT NULL,
+  description VARCHAR(500)             NOT NULL,
+  startRoom   INT REFERENCES Room (id) NOT NULL
 );
 CREATE INDEX labyrinth_room_idx
   ON Labyrinth (startRoom);
 
 CREATE TABLE InteractiveObjectNeed (
   id          SERIAL PRIMARY KEY,
-  interactive INT REFERENCES Interactive (id),
-  item        INT REFERENCES Item (id),
+  interactive INT REFERENCES Interactive (id) NOT NULL,
+  item        INT REFERENCES Item (id)        NOT NULL,
   UNIQUE (interactive, item)
 );
 CREATE INDEX interactiveObjectNeed_idx
@@ -95,8 +95,8 @@ CREATE INDEX interactiveObjectNeed_idx
 
 CREATE TABLE ActionInteractiveLink (
   id          SERIAL PRIMARY KEY,
-  action      INT REFERENCES Action (id),
-  interactive INT REFERENCES Interactive (id),
+  action      INT REFERENCES Action (id)      NOT NULL,
+  interactive INT REFERENCES Interactive (id) NOT NULL,
   UNIQUE (action, interactive)
 );
 CREATE INDEX actionInteractiveLink_idx
@@ -104,9 +104,9 @@ CREATE INDEX actionInteractiveLink_idx
 
 CREATE TABLE ActionInteractiveSwitch (
   id          SERIAL PRIMARY KEY,
-  action      INT REFERENCES Action (id),
-  interactive INT REFERENCES Interactive (id),
-  newState    BOOLEAN,
+  action      INT REFERENCES Action (id)      NOT NULL,
+  interactive INT REFERENCES Interactive (id) NOT NULL,
+  newState    BOOLEAN                         NOT NULL,
   UNIQUE (action, interactive)
 );
 CREATE INDEX actionInteractiveSwitch_idx
@@ -114,8 +114,8 @@ CREATE INDEX actionInteractiveSwitch_idx
 
 CREATE TABLE ActionDoorSwitch (
   id       SERIAL PRIMARY KEY,
-  action   INT REFERENCES Action (id),
-  door     INT REFERENCES Door (id),
+  action   INT REFERENCES Action (id) NOT NULL,
+  door     INT REFERENCES Door (id)   NOT NULL,
   newState BOOLEAN,
   UNIQUE (action, door)
 );
@@ -124,8 +124,8 @@ CREATE INDEX actionDoorSwitch_idx
 
 CREATE TABLE ActionSlotSwitch (
   id       SERIAL PRIMARY KEY,
-  action   INT REFERENCES Action (id),
-  slot     INT REFERENCES Slot (id),
+  action   INT REFERENCES Action (id) NOT NULL,
+  slot     INT REFERENCES Slot (id)   NOT NULL,
   newState BOOLEAN,
   UNIQUE (action, slot)
 );
@@ -134,8 +134,8 @@ CREATE INDEX actionSlotSwitch_idx
 
 CREATE TABLE SlotItemLink (
   id   SERIAL PRIMARY KEY,
-  slot INT REFERENCES Slot (id),
-  item INT REFERENCES Item (id),
+  slot INT REFERENCES Slot (id) NOT NULL,
+  item INT REFERENCES Item (id) NOT NULL,
   UNIQUE (slot, item)
 );
 CREATE INDEX SlotItemLink_idx
@@ -143,8 +143,8 @@ CREATE INDEX SlotItemLink_idx
 
 CREATE TABLE LabyrinthRoomLink (
   id        SERIAL PRIMARY KEY,
-  room      INT REFERENCES Room (id),
-  labyrinth INT REFERENCES Labyrinth (id),
+  room      INT REFERENCES Room (id)      NOT NULL,
+  labyrinth INT REFERENCES Labyrinth (id) NOT NULL,
   UNIQUE (room, labyrinth)
 );
 CREATE INDEX labyrinthRoomLink_idx
@@ -152,8 +152,8 @@ CREATE INDEX labyrinthRoomLink_idx
 
 CREATE TABLE LabyrinthActionLink (
   id        SERIAL PRIMARY KEY,
-  action    INT REFERENCES Action (id),
-  labyrinth INT REFERENCES Labyrinth (id),
+  action    INT REFERENCES Action (id)    NOT NULL,
+  labyrinth INT REFERENCES Labyrinth (id) NOT NULL,
   UNIQUE (action, labyrinth)
 );
 CREATE INDEX labyrinthActionLink_idx

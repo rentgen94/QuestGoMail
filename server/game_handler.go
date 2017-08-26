@@ -215,12 +215,17 @@ func (env *Env) authorized(session *sessions.Session) bool {
 	if session.IsNew {
 		return false
 	}
-	var _, ok = session.Values[env.playerId]
+	var playerId, ok = session.Values[env.playerId]
 	if !ok {
 		return false
 	}
 
-	return !session.IsNew
+	var _, playerErr = env.PlayerDAO.FindPlayerById(playerId.(int))
+	if playerErr != nil {
+		return false
+	}
+
+	return true
 }
 
 func (env *Env) playing(session *sessions.Session) bool {
