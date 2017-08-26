@@ -8,6 +8,8 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"github.com/rentgen94/QuestGoMail/client"
+	"github.com/rs/cors"
 )
 
 type Configuration struct {
@@ -27,7 +29,27 @@ func main() {
 	var env = server.NewEnv(db, 1, 10, 10)
 	var routes = server.GetRoutes(env)
 	router := server.NewRouter(routes)
-	http.ListenAndServe(conf.Port, router)
+
+	http.Handle("/assets/", http.StripPrefix("/assets/", http.FileServer(http.Dir("./assets/"))))
+	var clientRoutes = client.GetRoutes()
+	var clientRouter = client.NewRouter(clientRoutes)
+	clientRouter.PathPrefix("/assets/").Handler(http.StripPrefix("/assets/", http.FileServer(http.Dir("./assets/"))))
+
+	c := cors.New(cors.Options{
+		AllowedOrigins: []string{"http://localhost:8070"},
+		AllowCredentials: true,
+	})
+
+	handler := c.Handler(clientRouter)
+	go http.ListenAndServe(conf.ClientPort, handler)
+
+	c1 := cors.New(cors.Options{
+		AllowedOrigins: []string{"http://localhost:8070"},
+		AllowCredentials: true,
+	})
+
+	handler1 := c1.Handler(router)
+	http.ListenAndServe(conf.Port, handler1)
 }
 
 func getDb(conf *Configuration) *sql.DB {

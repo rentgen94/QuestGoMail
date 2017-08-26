@@ -3,19 +3,21 @@
 {{ template "header" }}
 
 {{ if not . }}
-<form method="post" id="nameform" action="javascript:void(null);" onsubmit="login()" enctype='application/json'>
+<form id="nameform" method="post" action="javascript:void(null);" enctype='application/json'>
     <div class="imgcontainer">
         <img src="../assets/images/login_avatar.svg" alt="Avatar" class="avatar">
     </div>
 
     <div class="container">
         <label><b>Username</b></label>
-        <input type="text" placeholder="Enter Username" name="login" required>
+        <input id="name" type="text" placeholder="Enter Username" name="login" required>
 
         <label><b>Password</b></label>
         <input type="password" placeholder="Enter Password" name="password" required>
 
+
         <button name="btnSubmit" type="submit">Login</button>
+        <button name="btnRegister" type="button" onclick="window.open('/player/register', '_self')">Register</button>
     </div>
 
     <div class="container" style="background-color:#f1f1f1">
@@ -23,9 +25,13 @@
         <span class="psw">Forgot <a href="#">password?</a></span>
     </div>
 </form>
+
+
 {{ else }}
 
 {{ end}}
+
+<script src="../assets/scripts/authLogic.js" rel="script"></script>
 
 {{ template "footer" }}
 

@@ -2,12 +2,38 @@
 
 {{ template "header" }}
 
-    {{ if . }}
-        <h1 style="text-align: center">Hello {{.Name}}</h1>
-        <button onclick="window.open('/logout?id={{.Id}}', '_self')">Logout</button>
-    {{ else }}
-        <button onclick="window.open('/player/login', '_self')">Sign In</button>
-    {{ end }}
+<div class="menu">
+    <h1 id="hello" style="text-align: center"></h1>
+    <button id="logout" onclick="clearCookie()">Logout</button>
+    <button id="login" onclick="window.open('/player/login', '_self')">Sign In</button>
+    <button id="show" onclick="showLabyrinths()">Show Labyrinths</button>
+    <div id="labMenu"></div>
+    <button id="start" onclick="startGame()">Start Game!</button>
+</div>
+
+<script src="../assets/scripts/indexLogic.js" rel="script"></script>
+<script>
+    function clearCookie() {
+        Cookies.set('player', undefined);
+        $('#logout').hide();
+        $('#hello').hide();
+        $('#login').show();
+        $('#start').hide();
+    }
+
+    if (Cookies.get('player') == "undefined") {
+        $('#logout').hide();
+        $('#hello').hide();
+        $('#login').show();
+        $('#start').hide();
+    } else {
+        $('#hello').text("Welcome, " + Cookies.get('player') + "!");
+        $('#hello').show();
+        $('#logout').show();
+        $('#login').hide();
+        $('#start').show();
+    }
+</script>
 
 {{ template "footer" }}
 

@@ -5,22 +5,24 @@
 {{ if . }}
 <h1>Already Registered!</h1>
 {{ else }}
-<form method="post" action="/register">
+<form method="post" id="regform" method="post" action="javascript:void(null);" enctype='application/json'>
     <div class="container">
         <label><b>Username</b></label>
-        <input type="text" placeholder="Enter Username" name="uname" required>
+        <input type="text" placeholder="Enter Username" name="login" required>
 
         <label><b>Password</b></label>
-        <input type="password" placeholder="Enter Password" name="psw" required>
+        <input type="password" placeholder="Enter Password" name="password" required>
 
         <button type="submit">Register</button>
     </div>
 
     <div class="container" style="background-color:#f1f1f1">
-        <button type="button" class="cancelbtn">Cancel</button>
+        <button type="button" class="cancelbtn" onclick="window.open('/', '_self')">Cancel</button>
     </div>
 </form>
 {{ end }}
+
+<script src="../assets/scripts/authLogic.js" rel="script"></script>
 
 {{ template "footer" }}
 
