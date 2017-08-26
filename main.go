@@ -35,18 +35,13 @@ func main() {
 	var clientRouter = client.NewRouter(clientRoutes)
 	clientRouter.PathPrefix("/assets/").Handler(http.StripPrefix("/assets/", http.FileServer(http.Dir("./assets/"))))
 
-	c := cors.New(cors.Options{
-		AllowedOrigins:   []string{"http://localhost:8070"},
-		AllowCredentials: true,
-	})
+
+	c := cors.AllowAll()
 
 	handler := c.Handler(clientRouter)
 	go http.ListenAndServe(conf.ClientPort, handler)
 
-	c1 := cors.New(cors.Options{
-		AllowedOrigins:   []string{"http://localhost:8070"},
-		AllowCredentials: true,
-	})
+	c1 := cors.AllowAll()
 
 	handler1 := c1.Handler(router)
 	http.ListenAndServe(conf.Port, handler1)

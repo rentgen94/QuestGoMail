@@ -81,7 +81,8 @@ function putSlotItem() {
     alert("Take item with id: " + item.getAttribute("slot_id"));
     var command = {
         "code": 9,
-        "item_key": parseInt(item.getAttribute("slot_id")),
+        // Получить от пользователя код предмета
+        "item_key": 0,   //
         "args": [item.getAttribute("slot_id")],
         "items": []
     };
