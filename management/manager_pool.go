@@ -8,7 +8,7 @@ import (
 )
 
 const (
-	failedOnTimeOut         = "Failed on time out"
+	failedOnTimeOut = "Failed on time out"
 )
 
 func getManagerNotFoundMsg(id int) string {

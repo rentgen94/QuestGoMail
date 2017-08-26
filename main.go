@@ -4,22 +4,22 @@ import (
 	"database/sql"
 	"encoding/json"
 	_ "github.com/lib/pq"
+	"github.com/rentgen94/QuestGoMail/client"
 	"github.com/rentgen94/QuestGoMail/server"
+	"github.com/rs/cors"
 	"log"
 	"net/http"
 	"os"
-	"github.com/rentgen94/QuestGoMail/client"
-	"github.com/rs/cors"
 )
 
 type Configuration struct {
-	Port       string  `json:"port"`
-	ClientPort string  `json:"clientPort"`
-	DriverName string  `json:"driverName"`
-	UserName   string  `json:"userName"`
-	Password   string  `json:"password"`
-	Server     string  `json:"server"`
-	DbName     string  `json:"dbName"`
+	Port       string `json:"port"`
+	ClientPort string `json:"clientPort"`
+	DriverName string `json:"driverName"`
+	UserName   string `json:"userName"`
+	Password   string `json:"password"`
+	Server     string `json:"server"`
+	DbName     string `json:"dbName"`
 }
 
 func main() {
@@ -36,7 +36,7 @@ func main() {
 	clientRouter.PathPrefix("/assets/").Handler(http.StripPrefix("/assets/", http.FileServer(http.Dir("./assets/"))))
 
 	c := cors.New(cors.Options{
-		AllowedOrigins: []string{"http://localhost:8070"},
+		AllowedOrigins:   []string{"http://localhost:8070"},
 		AllowCredentials: true,
 	})
 
@@ -44,7 +44,7 @@ func main() {
 	go http.ListenAndServe(conf.ClientPort, handler)
 
 	c1 := cors.New(cors.Options{
-		AllowedOrigins: []string{"http://localhost:8070"},
+		AllowedOrigins:   []string{"http://localhost:8070"},
 		AllowCredentials: true,
 	})
 

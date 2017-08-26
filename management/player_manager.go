@@ -4,8 +4,8 @@ import (
 	"errors"
 	"fmt"
 	"github.com/rentgen94/QuestGoMail/entities"
-	"time"
 	"strconv"
+	"time"
 )
 
 const (
@@ -212,7 +212,7 @@ func handleItemsCode(resp *Response, manager *PlayerManager, command Command) {
 func handleBagCode(resp *Response, manager *PlayerManager, command Command) {
 	a := []itemResponse{}
 	for k := range manager.player.Bag().Items() {
-		it, _ := manager.player.Bag().TakeItem(k)
+		it, _ := manager.player.Bag().WatchItem(k)
 		slt := &itemResponse{
 			Name:        it.Name,
 			Id:          it.Id,
@@ -233,7 +233,7 @@ func handleSlotContentCode(resp *Response, manager *PlayerManager, command Comma
 	}
 	for k := range slot.Items() {
 		it, _ := slot.WatchItem(k)
-		slt := &itemResponse {
+		slt := &itemResponse{
 			Name:        it.Name,
 			Id:          it.Id,
 			Description: it.Description,
@@ -337,12 +337,12 @@ func handlePutCode(resp *Response, manager *PlayerManager, command Command) {
 		return
 	}
 	slt := command.Args[0]
-	slotID, err := strconv.Atoi(slt)
+	slotId, err := strconv.Atoi(slt)
 	if err != nil {
 		resp.ErrMsg = "Bad slot id"
 		return
 	}
-	var moveErr = manager.player.Room().PutItem(itemId, slotID, manager.player)
+	var moveErr = manager.player.Room().PutItem(itemId, slotId, manager.player)
 	if moveErr != nil {
 		resp.ErrMsg = moveErr.Error()
 	}

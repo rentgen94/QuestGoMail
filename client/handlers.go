@@ -2,8 +2,8 @@ package client
 
 import (
 	"github.com/rentgen94/QuestGoMail/entities"
-	"net/http"
 	"html/template"
+	"net/http"
 	"regexp"
 )
 
@@ -18,7 +18,7 @@ var templates = template.Must(template.ParseFiles(
 
 var validPath = regexp.MustCompile("(^/(login|register)/([a-zA-Z0-9]+)$)|(^/)")
 
-func makeHandler(fn func (http.ResponseWriter, *http.Request)) http.HandlerFunc {
+func makeHandler(fn func(http.ResponseWriter, *http.Request)) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		m := validPath.FindStringSubmatch(r.URL.Path)
 		if m == nil {

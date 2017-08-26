@@ -1,9 +1,9 @@
 package client
 
 import (
-"github.com/gorilla/mux"
-"net/http"
+	"github.com/gorilla/mux"
 	"github.com/rentgen94/QuestGoMail/server"
+	"net/http"
 )
 
 func NewRouter(routes Routes) *mux.Router {
@@ -14,7 +14,7 @@ func NewRouter(routes Routes) *mux.Router {
 		handler = server.Logger(handler, route.Name)
 
 		router.
-		Methods(route.Method).
+			Methods(route.Method).
 			Path(route.Pattern).
 			Name(route.Name).
 			Handler(handler)
