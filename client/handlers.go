@@ -13,6 +13,7 @@ var templates = template.Must(template.ParseFiles(
 	"./templates/index.html",
 	"./templates/login.html",
 	"./templates/register.html",
+	"./templates/game.html",
 ))
 
 var validPath = regexp.MustCompile("(^/(login|register)/([a-zA-Z0-9]+)$)|(^/)")
@@ -44,4 +45,12 @@ func indexHandle(w http.ResponseWriter, r *http.Request) {
 
 func loginHandle(w http.ResponseWriter, r *http.Request) {
 	renderTemplate(w, "login", nil)
+}
+
+func registerHandle(w http.ResponseWriter, r *http.Request) {
+	renderTemplate(w, "register", nil)
+}
+
+func gameHandle(w http.ResponseWriter, r *http.Request) {
+	renderTemplate(w, "game", nil)
 }

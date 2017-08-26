@@ -1,0 +1,32 @@
+{{ define "game" }}
+
+{{ template "header" }}
+
+<div class="menu">
+    <h1 style="text-align: center">Hello in game!</h1>
+    <button onclick="showRoomDescription()">Look Around</button>
+    <div id="lookMenu"></div>
+    <button onclick="showBagItem()">Look into Bag</button>
+    <div id="bagMenu"></div>
+    <button onclick="showRoomItem()">Find Items in Room</button>
+    <div id="itemMenu"></div>
+    <button onclick="showSlotItems()">Find slots</button>
+    <div id="slotsMenu"></div>
+    <button onclick="showIntersItems()">Look for some interactive objects</button>
+    <div id="intMenu"></div>
+    <button onclick="showDoorsItems()">Show doors in this place</button>
+    <div id="doorMenu"></div>
+    <button class="button_quit" id="quit" onclick="quit()">Quit Game.</button>
+</div>
+
+<script src="../assets/scripts/lookAround.js" rel="script"></script>
+<script src="../assets/scripts/bagLogic.js" rel="script"></script>
+<script src="../assets/scripts/entitiesItem.js" rel="script"></script>
+<script src="../assets/scripts/slotsLogic.js" rel="script"></script>
+<script src="../assets/scripts/interactiveLogic.js" rel="script"></script>
+<script src="../assets/scripts/doorsLogic.js" rel="script"></script>
+<script src="../assets/scripts/gameLogic.js" rel="script"></script>
+
+{{ template "footer" }}
+
+{{ end }}

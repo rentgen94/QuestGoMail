@@ -27,5 +27,17 @@ func GetRoutes() Routes {
 			"/player/login",
 			makeHandler(loginHandle),
 		},
+		{
+			"Register",
+			http.MethodGet,
+			"/player/register",
+			makeHandler(registerHandle),
+		},
+		{
+			"Game",
+			http.MethodGet,
+			"/game",
+			makeHandler(gameHandle),
+		},
 	}
 }

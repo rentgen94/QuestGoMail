@@ -1,4 +1,11 @@
 /* Bordered form */
+.menu {
+    margin: 0 auto;
+    border: 3px solid #f1f1f1;
+    width: 40%;
+    border-radius: 2%;
+}
+
 form {
     margin: 0 auto;
     border: 3px solid #f1f1f1;
@@ -26,6 +33,14 @@ button {
     border: none;
     cursor: pointer;
     width: 100%;
+}
+
+.button_lab {
+    background-color: yellow;
+}
+
+.button_quit {
+    background-color: red;
 }
 
 /* Add a hover effect for buttons */

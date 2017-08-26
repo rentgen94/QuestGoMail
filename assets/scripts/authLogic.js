@@ -7,30 +7,61 @@ function objectifyForm(formArray) {//serialize data function
     return returnArray;
 }
 
+$("#nameform").on('submit', login);
+
 function login() {
     var credentials = $("#nameform").serializeArray();
     credentials = objectifyForm(credentials);
+    credentials = JSON.stringify(credentials);
     console.log(credentials);
 
     var settings = {
-        "method": "POST",
+        "type": "POST",
         "contentType": "application/json; charset=utf-8",
-        "dataType": "jsonp",
+        "xhrFields": {
+            withCredentials: true
+        },
+        "dataType": "json",
         "crossDomain": true,
         "url": "http://localhost:8080/player/login",
-        "data": credentials,
+        "data": credentials
     }
 
     $.ajax(settings).done(function(response) {
-        alert("Wow");
-//            var in30Minutes = 1 / (24 * 2); // было 12(5 minutes)
-//            Cookies.set('user', $("#nameform #user").val(), {
-//                expires: in30Minutes
-//            });
-//            Cookies.set('token', response, {
-//                expires: in30Minutes
-//            });
+        var in30Minutes = 1 / (24 * 2); // было 12(5 minutes)
+        Cookies.set('player', $("#nameform #name").val(), {
+           expires: in30Minutes
+        });
+        //console.log("Cookie: " + xhr.getResponseHeader("Set-Cookie"));
         window.location = "/";
+    }).fail(function (jqXHR, textStatus) {
+        alert(jqXHR.status + " " + jqXHR.statusText + ". " + jqXHR.responseText);
+        console.log(jqXHR.status + " " + jqXHR.statusText + ". " + jqXHR.responseText);
+    });
+}
+
+$("#regform").on('submit', register);
+
+function register() {
+    var credentials = $("#regform").serializeArray();
+    credentials = objectifyForm(credentials);
+    credentials = JSON.stringify(credentials);
+    console.log(credentials);
+
+    var settings = {
+        "type": "POST",
+        "contentType": "application/json; charset=utf-8",
+        "xhrFields": {
+            withCredentials: true
+        },
+        "dataType": "json",
+        "crossDomain": true,
+        "url": "http://localhost:8080/player/register",
+        "data": credentials
+    }
+
+    $.ajax(settings).done(function(response) {
+        window.location = "/player/login";
     }).fail(function (jqXHR, textStatus) {
         alert(jqXHR.status + " " + jqXHR.statusText + ". " + jqXHR.responseText);
         console.log(jqXHR.status + " " + jqXHR.statusText + ". " + jqXHR.responseText);
